@@ -13,7 +13,7 @@ interface CardBukuProps {
 const CardBuku = ({ judul, penulis, link }: CardBukuProps) => {
   const router = useRouter();
   return (
-    <div className="py-4 flex flex-col items-center justify-between rounded-lg gap-2 flex-shrink-0">
+    <div className="py-4 flex flex-col items-center max-w-36 justify-between rounded-lg gap-2 flex-shrink-0">
       <div>
         <Image
           src={link}
@@ -24,12 +24,15 @@ const CardBuku = ({ judul, penulis, link }: CardBukuProps) => {
         />
       </div>
       <div className="flex flex-col px-0.5 w-full justify-center">
-        <h1 className="font-source-serif text-sm font-bold">{judul}</h1>
-        <h2 className="font-source-sans text-dark-gray text-xs">{penulis}</h2>
+        <h1 className="font-source-serif text-sm font-bold truncate">
+          {judul}
+        </h1>
+        <h2 className="font-source-sans text-gray-text text-xs">{penulis}</h2>
       </div>
       <button
         onClick={() => router.push(`/buku/${toSlug(judul)}`)}
-        className={`bg-primary w-full text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal`}
+        className={`bg-primary w-full text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal transition-all duration-300
+        hover:font-bold hover:shadow-sm hover:transition-all hover:duration-300`}
       >
         Lihat Detail
       </button>
