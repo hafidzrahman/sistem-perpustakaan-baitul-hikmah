@@ -10,13 +10,26 @@ export function toSlug(text: string): string {
 }
 
 export function fromSlug(slug: string): string {
+  const exceptions = [
+    "and",
+    "or",
+    "the",
+    "in",
+    "on",
+    "at",
+    "to",
+    "for",
+    "of",
+    "with",
+  ];
+
   return slug
     .split("-") // Pisahkan string berdasarkan dash
-    .map((word) =>
-      // Capitalize setiap kata, kecuali kata-kata tertentu
-      ["and", "or", "in", "on", "at", "to", "for", "of", "with"].includes(word)
-        ? word
-        : word.charAt(0).toUpperCase() + word.slice(1)
+    .map((word, index) =>
+      // Kata pertama selalu capitalize, kata lainnya sesuai aturan pengecualian
+      index === 0 || !exceptions.includes(word)
+        ? word.charAt(0).toUpperCase() + word.slice(1)
+        : word
     )
     .join(" "); // Gabungkan kembali dengan spasi
 }
