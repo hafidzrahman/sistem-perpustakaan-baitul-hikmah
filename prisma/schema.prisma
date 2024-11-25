@@ -20,4 +20,5 @@ model Buku {
   genre      String[]
   isbn       String
   linkGambar String   @map("link_gambar")
+  sinopsis   String?
 }
