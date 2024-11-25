@@ -15,9 +15,9 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { judul, penulis, genre, isbn, linkGambar } = body;
+    const { judul, penulis, genre, isbn, linkGambar, sinopsis } = body;
 
-    if (!judul || !penulis || !genre || !isbn || !linkGambar) {
+    if (!judul || !penulis || !genre || !isbn || !linkGambar || !sinopsis) {
       return NextResponse.json({
         error: "Harus mengisi semua input",
         status: 500,
@@ -31,6 +31,7 @@ export async function POST(req: Request) {
         genre,
         isbn,
         linkGambar,
+        sinopsis,
       },
     });
 
