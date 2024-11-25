@@ -1,11 +1,11 @@
 import BtnPrimary from "@/app/components/BtnPrimary";
 import Image from "next/image";
 
-interface PageProps {}
+interface LoginPageProps {}
 
-const Page = ({}: PageProps) => {
+const LoginPage = ({}: LoginPageProps) => {
   return (
-    <div className="flex overflow-hidden items-center justify-center flex-col gap-8 h-screen relative bg-green-background bg-noise bg-repeat bg-center">
+    <div className="flex overflow-hidden items-center justify-center flex-col gap-8 h-screen relative bg-noise bg-repeat bg-center">
       <Image
         src={"/img/lib-2.png"}
         alt="lib-photo"
@@ -94,4 +94,4 @@ const Page = ({}: PageProps) => {
   );
 };
 
-export default Page;
+export default LoginPage;
