@@ -2,15 +2,15 @@
 
 import BtnSecondary from "@/app/components/BtnSecondary";
 import CardBuku from "@/app/components/CardBuku";
-import CardKelolaBuku from "@/app/components/CardTambahBuku";
 import { useEffect, useState, useRef } from "react";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 import TableBuku from "@/app/components/TableBuku";
+import CardTambahBuku from "@/app/components/CardTambahBuku";
 
 interface BukuPageProps {}
 
 const BukuPage = ({}: BukuPageProps) => {
-  const [addPopUp, setAddPopUp] = useState(false);
+  const [tambahBuku, setTambahBuku] = useState(false);
   const [buku, setBuku] = useState([]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null); // Referensi ke elemen scrollable
@@ -49,10 +49,10 @@ const BukuPage = ({}: BukuPageProps) => {
     return () => window.removeEventListener("mouseup", handleMouseUpGlobal);
   }, []);
 
-  const handleAddPopUp = () => {
-    setAddPopUp(!addPopUp);
+  const handleTambahBuku = () => {
+    setTambahBuku(!tambahBuku);
   };
-  console.log(addPopUp);
+
   useEffect(() => {
     const fetchBuku = async () => {
       const response = await fetch("/api/buku");
@@ -61,13 +61,13 @@ const BukuPage = ({}: BukuPageProps) => {
       setBuku(data);
     };
     fetchBuku();
-  }, [addPopUp]);
+  }, [tambahBuku]);
 
   console.log(buku);
 
   return (
     <>
-      <CardKelolaBuku status={addPopUp} handle={handleAddPopUp} />
+      <CardTambahBuku status={tambahBuku} handle={handleTambahBuku} />
       <div className="mb-4">
         <h2 className="font-semibold text-gray-text font-source-sans">
           Disini Anda, bisa melihat daftar buku, menambahkan, menghapus, dan
@@ -115,7 +115,7 @@ const BukuPage = ({}: BukuPageProps) => {
             </h1>
             <BtnSecondary
               label="Tambah Buku"
-              onClick={handleAddPopUp}
+              onClick={handleTambahBuku}
               icon={AddCircleHalfDotIcon}
             />
           </div>
