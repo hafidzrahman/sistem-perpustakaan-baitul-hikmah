@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 
-interface CardKelolaBukuProps {
+interface CardTambahBukuProps {
   status: boolean;
   handle: () => void;
 }
 
-const CardKelolaBuku = ({ status, handle }: CardKelolaBukuProps) => {
+const CardTambahBuku = ({ status, handle }: CardTambahBukuProps) => {
   const [judul, setJudul] = useState("");
   const [penulis, setPenulis] = useState("");
   const [isbn, setISBN] = useState("");
@@ -29,14 +29,7 @@ const CardKelolaBuku = ({ status, handle }: CardKelolaBukuProps) => {
     "border-pastel-blue",
   ];
 
-  const genres = [
-    "Fiksi",
-    "Non-Fiksi",
-    "Romantis",
-    "Petualangan",
-    "Horror",
-    "Sci-Fi",
-  ];
+  const genres = ["Komik", "Pelajaran", "Islami", "Novel", "Light Novel"];
 
   const handleGenreSelect = (genre: string) => {
     if (!selectedGenres.includes(genre)) {
@@ -162,7 +155,6 @@ const CardKelolaBuku = ({ status, handle }: CardKelolaBukuProps) => {
                       </option>
                     ))}
                   </select>
-                  {/* Ikon kustom */}
                   <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
                     ▼
                   </span>
@@ -255,4 +247,4 @@ const CardKelolaBuku = ({ status, handle }: CardKelolaBukuProps) => {
   );
 };
 
-export default CardKelolaBuku;
+export default CardTambahBuku;
