@@ -13,12 +13,137 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model PetugasPerpustakaan {
+  id      String    @id
+  nama    String
+  laporan Laporan[]
+}
+
 model Buku {
-  id         Int      @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   judul      String
   penulis    String[]
   genre      String[]
-  isbn       String
-  linkGambar String   @map("link_gambar")
+  isbn       String       @unique
+  penerbit   String?
+  halaman    String?
+  linkGambar String       @map("link_gambar")
   sinopsis   String?
+  stok       Int?
+  posisi     Posisi?
+  Peminjaman Peminjaman[]
+}
+
+model Murid {
+  nis          String       @id
+  nama         String
+  jenisKelamin String
+  kontakOrtu   String       @map("kontak_ortu")
+  alamat       String
+  idKelas      Int          @map("id_kelas")
+  FormBukti    FormBukti[]
+  Peminjaman   Peminjaman[]
+
+  kelas Kelas @relation(fields: [idKelas], references: [id])
+}
+
+model Guru {
+  nip          String       @id
+  nama         String
+  jenisKelamin JenisKelamin
+  kontak       String
+  alamat       String
+  peminjaman   Peminjaman[]
+}
+
+model Kelas {
+  id      Int     @id @default(autoincrement())
+  tingkat Int
+  nama    String
+  murid   Murid[]
+}
+
+model FormBukti {
+  id       Int    @id @default(autoincrement())
+  muridNIS String
+  murid    Murid  @relation(fields: [muridNIS], references: [nis])
+}
+
+model Peminjaman {
+  id                  Int      @id @default(autoincrement())
+  bukuISBN            String   @map("buku_isbn")
+  muridNIS            String   @map("murid_nis")
+  guruNIP             String   @map("guru_nip")
+  tanggalPinjam       DateTime
+  tanggalPengembalian DateTime
+  keterangan          String?
+  idDenda             Int
+
+  buku  Buku   @relation(fields: [bukuISBN], references: [isbn])
+  nis   Murid  @relation(fields: [muridNIS], references: [nis])
+  guru  Guru   @relation(fields: [guruNIP], references: [nip])
+  denda Denda? @relation(fields: [idDenda], references: [id])
+}
+
+model Denda {
+  id         Int          @id @default(autoincrement())
+  ket        KetDenda
+  status     StatDenda
+  jumlah     Jumlah
+  Peminjaman Peminjaman[]
+}
+
+model Laporan {
+  id                   Int    @id @default(autoincrement())
+  idPetugas            String
+  jumlahPeminjaman     Int    @map("jumlah_peminjaman")
+  jumlahKunjunganMurid Int    @map("jumlah_kunjungan_murid")
+
+  petugas PetugasPerpustakaan @relation(fields: [idPetugas], references: [id])
+}
+
+enum JenisKelamin {
+  LAKI
+  PEREMPUAN
+}
+
+enum Genre {
+  FANTASY
+  SCIFI
+  MYSTERY
+  BIOGRAPHY
+  HISTORY
+  ROMANCE
+}
+
+enum Posisi {
+  A1
+  B1
+}
+
+enum StatBuku {
+  TERSEDIA
+  HABIS
+}
+
+enum KetBuku {
+  SUMBANGAN
+  DENDA
+}
+
+enum StatDenda {
+  TERLAMBAT
+  HILANG
+  RUSAK
+}
+
+enum KetDenda {
+  DIBAYAR
+  BELUM
+}
+
+enum Jumlah {
+  RP500
+  RP110000
+  DUA_BUKU
 }
