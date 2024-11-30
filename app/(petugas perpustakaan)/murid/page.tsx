@@ -2,6 +2,8 @@
 
 import BtnSecondary from "@/app/components/BtnSecondary";
 import CardData from "@/app/components/CardData";
+import CardTambahKelas from "@/app/components/CardTambahKelas";
+import CardTambahMurid from "@/app/components/CardTambahMurid";
 import TableMurid from "@/app/components/TableMurid";
 import {
   Mortarboard01Icon,
@@ -10,6 +12,7 @@ import {
   Agreement02Icon,
   AddCircleHalfDotIcon,
 } from "hugeicons-react";
+import { useEffect, useState } from "react";
 
 interface MuridPageProps {
   onclick: () => void;
@@ -26,8 +29,41 @@ const MuridPage = ({}: MuridPageProps) => {
     "Kelas 6": 126,
   };
 
+  const [murid, setMurid] = useState();
+  const [tambahKelas, setTambahKelas] = useState(false);
+  const [tambahMurid, setTambahMurid] = useState(false);
+
+  const handleTambahKelas = () => {
+    setTambahKelas(!tambahKelas);
+  };
+  const handleTambahMurid = () => {
+    setTambahMurid(!tambahMurid);
+  };
+
+  useEffect(() => {
+    const fetchMurid = async () => {
+      const respon = await fetch("/api/murid");
+      const data = await respon.json();
+      setMurid(data);
+    };
+    fetchMurid();
+  }, [tambahMurid]);
+
+  useEffect(() => {
+    const fecthKelas = async () => {
+      const respon = await fetch("/api/murid");
+      const data = await respon.json();
+      setMurid(data);
+    };
+    fecthKelas();
+  }, [tambahKelas]);
+
+  console.log(murid);
+
   return (
     <>
+      <CardTambahKelas status={tambahKelas} handle={handleTambahKelas} />
+      <CardTambahMurid status={tambahMurid} handle={handleTambahMurid} />
       <div className="mb-4">
         <h2 className="font-semibold font-source-sans text-[#465b65]">
           Assalamu'alaikum wr wb., Ustadzah Fulanah, S. Pd., M. Pd.,
@@ -70,10 +106,21 @@ const MuridPage = ({}: MuridPageProps) => {
             <h1 className="font-source-sans text-2xl text-primary font-bold">
               Daftar Murid
             </h1>
-            <BtnSecondary label="Tambah Murid" icon={AddCircleHalfDotIcon} />
+            <div className="flex gap-2">
+              <BtnSecondary
+                label="Tambah Kelas"
+                icon={AddCircleHalfDotIcon}
+                onClick={handleTambahKelas}
+              />
+              <BtnSecondary
+                label="Tambah Murid"
+                icon={AddCircleHalfDotIcon}
+                onClick={handleTambahMurid}
+              />
+            </div>
           </div>
           <div className="rounded-lg overflow-hidden border-black-custom border">
-            <TableMurid />
+            <TableMurid data={murid} />
           </div>
         </div>
       </div>
