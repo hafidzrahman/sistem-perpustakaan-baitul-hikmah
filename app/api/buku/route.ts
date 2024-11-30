@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const buku = await prisma.buku.findMany({});
-    return NextResponse.json(buku, { status: 201, statusText: "Success" });
+    return NextResponse.json(buku);
   } catch (error) {
     return NextResponse.json({ error });
   }
@@ -35,11 +35,14 @@ export async function POST(req: Request) {
       },
     });
 
+    console.log(buku);
     return NextResponse.json({
       message: "Data berhasil ditambahkan",
       id: buku.id,
     });
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json({ error });
   }
 }
