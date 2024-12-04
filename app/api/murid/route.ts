@@ -1,22 +1,15 @@
-import { PrismaClient } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
+import { murid } from "@/lib";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const murid = await prisma.murid.findMany({
-      include: {
-        kelas: true,
-      },
-    });
+    const dataMurid = await murid.cariAnggota();
 
-    return NextResponse.json(murid, { status: 200 });
+    return NextResponse.json(dataMurid, { status: 200 });
   } catch (error) {
-    console.error("Error fetching data:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: "Gagal mendapatkan data murid" },
+      { status: 503 }
     );
   }
 }
@@ -24,22 +17,11 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { nis, nama, jenisKelamin, kontakOrtu, alamat, idKelas } = body;
 
-    const murid = await prisma.murid.create({
-      data: {
-        nis,
-        nama,
-        jenisKelamin,
-        kontakOrtu,
-        alamat,
-        idKelas,
-      },
-    });
-
+    await murid.tambahAnggota(body);
+    
     return NextResponse.json({
-      message: "Data berhasil ditambahkan",
-      id: murid.nis,
+      message: "Data berhasil ditambahkan"
     });
   } catch (error) {
     console.error(error);

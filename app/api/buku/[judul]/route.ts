@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   console.log(fromSlug(judul!));
 
   if (!judul) {
-    return NextResponse.json({ message: "Judul tidak ditemukan", status: 400 });
+    return NextResponse.json({ message: "Judul tidak ditemukan", status: 502 });
   }
 
   const buku = await prisma.buku.findFirst({

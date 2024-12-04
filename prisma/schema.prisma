@@ -4,6 +4,8 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// Buat class Login, table userAccount & userPreference
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,37 +16,42 @@ datasource db {
 }
 
 model PetugasPerpustakaan {
-  id      String    @id
-  nama    String
-  laporan Laporan[]
+  id   String @id
+  nama String
 }
 
 model Buku {
-  id         Int          @id @default(autoincrement())
-  judul      String
-  penulis    String[]
-  genre      String[]
-  isbn       String       @unique
-  penerbit   String?
-  halaman    String?
-  linkGambar String       @map("link_gambar")
-  sinopsis   String?
-  stok       Int?
-  posisi     Posisi?
-  Peminjaman Peminjaman[]
+  id            Int       @default(autoincrement())
+  isbn          String
+  judul         String
+  penulis       String[]
+  genre         Genre[]
+  penerbit      String?
+  halaman       Int?
+  linkGambar    String?   @map("link_gambar")
+  sinopsis      String?
+  posisi        String?
+  tanggalRusak  DateTime? @map("tanggal_rusak")
+  tanggalHilang DateTime? @map("tanggal_hilang")
+
+  bukuPinjaman  BukuPinjaman[]
+  formBukti     FormBukti[]
+  sumbanganBuku SumbanganBuku[]
+
+  @@id([isbn, id])
 }
 
 model Murid {
   nis          String       @id
   nama         String
-  jenisKelamin String
-  kontakOrtu   String       @map("kontak_ortu")
-  alamat       String
-  idKelas      Int          @map("id_kelas")
+  jenisKelamin JenisKelamin @map("jenis_kelamin")
+  kontak       String
+  alamat       String?
+
   FormBukti    FormBukti[]
   Peminjaman   Peminjaman[]
-
-  kelas Kelas @relation(fields: [idKelas], references: [id])
+  riwayatKelas RiwayatKelas[]
+  sumbangan    Sumbangan[]
 }
 
 model Guru {
@@ -52,54 +59,160 @@ model Guru {
   nama         String
   jenisKelamin JenisKelamin
   kontak       String
-  alamat       String
+  alamat       String?
+  sumbangan    Sumbangan[]
   peminjaman   Peminjaman[]
 }
 
+model RiwayatKelas {
+  tahunAjaran String
+
+  muridNIS String
+  murid    Murid  @relation(fields: [muridNIS], references: [nis])
+
+  idKelas String
+  kelas   Kelas  @relation(fields: [idKelas], references: [id])
+
+  @@id([muridNIS, idKelas])
+}
+
 model Kelas {
-  id      Int     @id @default(autoincrement())
-  tingkat Int
+  id      String @id @default(uuid())
   nama    String
-  murid   Murid[]
+  tingkat Int
+
+  RiwayatKelas RiwayatKelas[]
 }
 
 model FormBukti {
-  id       Int    @id @default(autoincrement())
+  id           String   @id @default(uuid())
+  tanggal      DateTime @default(now())
+  halamanAwal  Int
+  halamanAkhir Int
+  intisari     String
+  status       Boolean
+
   muridNIS String
   murid    Murid  @relation(fields: [muridNIS], references: [nis])
+
+  bukuId   Int
+  bukuISBN String
+  Buku     Buku   @relation(fields: [bukuISBN, bukuId], references: [isbn, id])
 }
 
 model Peminjaman {
-  id                  Int      @id @default(autoincrement())
-  bukuISBN            String   @map("buku_isbn")
-  muridNIS            String   @map("murid_nis")
-  guruNIP             String   @map("guru_nip")
-  tanggalPinjam       DateTime
-  tanggalPengembalian DateTime
-  keterangan          String?
-  idDenda             Int
+  id            String   @id @default(uuid())
+  tanggalPinjam DateTime @default(now())
+  keterangan    String?
 
-  buku  Buku   @relation(fields: [bukuISBN], references: [isbn])
-  nis   Murid  @relation(fields: [muridNIS], references: [nis])
-  guru  Guru   @relation(fields: [guruNIP], references: [nip])
-  denda Denda? @relation(fields: [idDenda], references: [id])
+  bukuPinjaman BukuPinjaman[]
+
+  nis   String? @map("murid_nis")
+  murid Murid?  @relation(fields: [nis], references: [nis])
+
+  nip  String? @map("guru_nip")
+  guru Guru?   @relation(fields: [nip], references: [nip])
+}
+
+model BukuPinjaman {
+  tanggalKembali DateTime?
+  tenggatWaktu   DateTime
+
+  denda Denda[]
+
+  idPeminjaman String
+  peminjaman   Peminjaman @relation(fields: [idPeminjaman], references: [id])
+
+  bukuISBN String
+  bukuId   Int
+  buku     Buku   @relation(fields: [bukuISBN, bukuId], references: [isbn, id])
+
+  @@id([idPeminjaman, bukuISBN, bukuId])
+}
+
+model Keterangan {
+  id             String      @id @default(uuid())
+  keterangan     String
+  jumlahBuku     Int?
+  totalNominal   Int?
+  nominalPerHari Int?
+  sumbangan      Sumbangan[]
 }
 
 model Denda {
-  id         Int          @id @default(autoincrement())
-  ket        KetDenda
-  status     StatDenda
-  jumlah     Jumlah
-  Peminjaman Peminjaman[]
+  id      String   @id @default(uuid())
+  tanggal DateTime @default(now())
+
+  bukuId       Int?
+  bukuISBN     String?
+  idPeminjaman String?
+  bukuPinjaman BukuPinjaman? @relation(fields: [idPeminjaman, bukuISBN, bukuId], references: [idPeminjaman, bukuISBN, bukuId])
+
+  idSumbangan String    @unique
+  sumbangan   Sumbangan @relation(fields: [idSumbangan], references: [id])
+
+  @@unique([idPeminjaman, bukuISBN, bukuId])
 }
 
-model Laporan {
-  id                   Int    @id @default(autoincrement())
-  idPetugas            String
-  jumlahPeminjaman     Int    @map("jumlah_peminjaman")
-  jumlahKunjunganMurid Int    @map("jumlah_kunjungan_murid")
+model Sumbangan {
+  id             String    @id @default(uuid())
+  tanggalSelesai DateTime?
+  berlebih       Boolean
 
-  petugas PetugasPerpustakaan @relation(fields: [idPetugas], references: [id])
+  pembayaranTunai      PembayaranTunai[]
+  riwayatBantuan       RiwayatBantuan[]
+  sumbanganBuku        SumbanganBuku[]   @relation("sumbangan")
+  sumbanganBukuBantuan SumbanganBuku[]   @relation("sumbanganBantuan")
+
+  denda Denda?
+
+  idKeterangan String
+  keterangan   Keterangan @relation(fields: [idKeterangan], references: [id])
+
+  nis   String?
+  murid Murid?  @relation(fields: [nis], references: [nis])
+
+  nip  String?
+  guru Guru?   @relation(fields: [nip], references: [nip])
+}
+
+model SumbanganBuku {
+  tanggal DateTime @default(now())
+
+  idSumbangan String
+  sumbangan   Sumbangan @relation("sumbangan", fields: [idSumbangan], references: [id])
+
+  idSumbanganBantuan String?
+  sumbanganBantuan   Sumbangan? @relation("sumbanganBantuan", fields: [idSumbanganBantuan], references: [id])
+
+  bukuId   Int
+  bukuISBN String
+  buku     Buku   @relation(fields: [bukuISBN, bukuId], references: [isbn, id])
+
+  @@id([idSumbangan, bukuISBN, bukuId])
+}
+
+model PembayaranTunai {
+  id      String   @id @default(uuid())
+  tanggal DateTime @default(now())
+  jumlah  Int
+
+  riwayatBantuan RiwayatBantuan[]
+
+  idSumbangan String
+  sumbangan   Sumbangan @relation(fields: [idSumbangan], references: [id])
+}
+
+model RiwayatBantuan {
+  jumlah Int
+
+  idPembayaranTunai String
+  pembayaranTunai   PembayaranTunai @relation(fields: [idPembayaranTunai], references: [id])
+
+  idSumbangan String
+  sumbangan   Sumbangan @relation(fields: [idSumbangan], references: [id])
+
+  @@id([idPembayaranTunai, idSumbangan])
 }
 
 enum JenisKelamin {
