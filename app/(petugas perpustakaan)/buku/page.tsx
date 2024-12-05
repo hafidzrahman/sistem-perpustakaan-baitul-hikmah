@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 import TableBuku from "@/app/components/TableBuku";
 import CardTambahBuku from "@/app/components/CardTambahBuku";
+import BookChart from "@/app/components/BookChart";
 
 interface BukuPageProps {}
 
@@ -34,7 +35,10 @@ const BukuPage = ({}: BukuPageProps) => {
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft; // Posisi mouse saat ini
     const walk = x - startX; // Perbedaan posisi awal dan saat ini
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk; // Update posisi scroll container
+    // Gunakan requestAnimationFrame untuk memperbaiki performa
+    requestAnimationFrame(() => {
+      scrollContainerRef.current!.scrollLeft = scrollLeft - walk; // Update posisi scroll container
+    });
   };
 
   // Event handler saat mouse dilepas
