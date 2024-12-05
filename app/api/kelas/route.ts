@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { kelas } from "@/lib";
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const kelas = await prisma.kelas.findMany({});
-    return NextResponse.json(kelas);
+    const dataKelas = await kelas.cariKelas();
+    return NextResponse.json(dataKelas, {status : 200});
   } catch (error) {
     return NextResponse.json({ error });
   }
@@ -15,30 +13,11 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { nama, tingkat } = body;
-
-    if (!nama || !tingkat) {
-      return NextResponse.json({
-        error: "Harus mengisi semua input",
-        status: 500,
-      });
-    }
-
-    const kelas = await prisma.kelas.create({
-      data: {
-        nama,
-        tingkat,
-      },
-    });
-
-    console.log(kelas);
+    await kelas.tambahKelas(body); 
+    
     return NextResponse.json({
-      message: "Data berhasil ditambahkan",
-      id: kelas.id,
-    });
+      message: "Data berhasil ditambahkan"}, {status : 200});
   } catch (error) {
-    console.log(error);
-
     return NextResponse.json({ error });
   }
 }
