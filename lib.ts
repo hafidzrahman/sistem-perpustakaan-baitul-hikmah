@@ -16,7 +16,7 @@ export type guruType = {
 
 export type muridType = {
     nis : string,
-    idKelas : number,
+    idKelas? : number,
     nama : string,
     jenisKelamin : JenisKelamin,
     kontak : string,
@@ -228,6 +228,18 @@ export class Murid implements Anggota<muridType>{
             murid = await prisma.murid.findUnique({
                 where : {
                     nis
+                }, 
+                include : {
+                    riwayatKelas : {
+                        select : {
+                            kelas : true,
+                        }, orderBy : {
+                            kelas : {
+                                tingkat : 'desc'
+                            }
+                        }, 
+                        take : 1
+                    }
                 }
             }) as muridType;
     
@@ -238,7 +250,20 @@ export class Murid implements Anggota<muridType>{
             return murid;
     } 
 
-        murid = await prisma.murid.findMany({}) as muridType[];
+        murid = await prisma.murid.findMany({
+            include : {
+                riwayatKelas : {
+                    select : {
+                        kelas : true,
+                    }, orderBy : {
+                        kelas : {
+                            tingkat : 'desc'
+                        }
+                    }, 
+                    take : 1
+                }
+            }
+        }) as muridType[];
 
         return murid;
 
@@ -710,8 +735,6 @@ export class Buku{
         const arrayPenulisBuku :  Prisma.PenulisBukuCreateManyInput[] = []
 
         const data  = await Promise.all(dataBuku.map(isbnCounter))
-
-        console.log(data);
 
         const arrayBuku = (await prisma.buku.createManyAndReturn({
             data : data

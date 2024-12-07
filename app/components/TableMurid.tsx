@@ -41,13 +41,13 @@ const TableMurid = ({ data }: TableMuridProps) => {
                 nis: string;
                 nama: string;
                 jenisKelamin: string;
-                kelas: any;
+                riwayatKelas: {kelas : {id : number, nama : string, tingkat : number}}[];
                 alamat: string;
               },
               index: number
             ) => {
-              const kelas = item.kelas
-                ? `${item.kelas.tingkat} ${item.kelas.nama}`
+              const kelas = item.riwayatKelas[0].kelas.tingkat
+                ? `${item.riwayatKelas[0].kelas.tingkat} ${item.riwayatKelas[0].kelas.nama}`
                 : "Tidak Diketahui";
               return (
                 <tr
