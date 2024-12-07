@@ -20,11 +20,28 @@ const Page = ({}: PageProps) => {
           Assalamu'alaikum wr wb., Ustadzah Fulanah, S. Pd., M. Pd. ,
         </h2>
       </div>
-      <div className="flex justify-between gap-4 mb-4">
-        <CardData number="791" label="Murid" icon={Mortarboard01Icon} />
-        <CardData number="048" label="Guru" icon={TeacherIcon} />
-        <CardData number="794" label="Buku" icon={BookOpen02Icon} />
-        <CardData number="303" label="Peminjaman" icon={Agreement02Icon} />
+      <div className="flex gap-4 mb-4">
+        <div className="border-jewel-blue flex items-center w-full px-8 py-6 border-2 justify-between bg-pastel-blue rounded-lg">
+          <div className="flex flex-col">
+            <h2 className="font-medium -mb-2">Murid</h2>
+            <h1 className="font-black font-source-serif text-5xl">338</h1>
+          </div>
+          <Mortarboard01Icon className="text-jewel-blue w-16 h-16" />
+        </div>
+        <div className="border-jewel-red flex items-center w-full px-8 py-6 border-2 justify-between bg-pastel-red rounded-lg">
+          <div className="flex flex-col">
+            <h2 className="font-medium -mb-2">Guru</h2>
+            <h1 className="font-black font-source-serif text-5xl">048</h1>
+          </div>
+          <TeacherIcon className="text-jewel-red w-16 h-16" />
+        </div>
+        <div className="border-jewel-purple flex items-center w-full px-8 py-6 border-2 justify-between bg-pastel-purple rounded-lg">
+          <div className="flex flex-col">
+            <h2 className="font-medium -mb-2">Buku</h2>
+            <h1 className="font-black font-source-serif text-5xl">794</h1>
+          </div>
+          <BookOpen02Icon className="text-jewel-purple w-16 h-16" />
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[minmax(180px,_auto)] gap-5">
         <div className="order-1 col-span-1 p-6 bg-white-custom  rounded-lg border-2 border-dark-gray lg:order-none lg:row-span-2 dark-gray sm:col-span-2 lg:col-span-3">
