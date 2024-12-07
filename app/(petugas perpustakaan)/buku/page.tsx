@@ -96,13 +96,13 @@ const BukuPage = ({}: BukuPageProps) => {
         {buku.length ? (
           buku.map(
             (
-              item: { judul: string; penulis: string[]; linkGambar: string },
+              item: { judul: string; penulisBuku: {penulis : {nama : string}}[]; linkGambar: string },
               index
             ) => (
               <CardBuku
                 key={index}
                 judul={item.judul}
-                penulis={item.penulis.join(", ")}
+                penulis={item.penulisBuku.map(d => d.penulis.nama).join(", ")}
                 link={item.linkGambar}
               />
             )

@@ -706,12 +706,24 @@ export class Buku{
 
     async tambahBanyakBuku(dataBuku : Omit<bukuType, 'id'>[]) {
         const map : Hash = {}
+        const arrayIdPenulis : number[][] = [];
+        const arrayPenulisBuku :  Prisma.PenulisBukuCreateManyInput[] = []
 
         const data  = await Promise.all(dataBuku.map(isbnCounter))
 
-        await prisma.buku.createMany({
+        console.log(data);
+
+        const arrayBuku = (await prisma.buku.createManyAndReturn({
             data : data
-        })
+        }))
+
+        for (const b of arrayBuku) for (const idPenulis of arrayIdPenulis) for (const p of idPenulis) arrayPenulisBuku.push({idPenulis : p, bukuISBN : b.isbn, bukuId : b.id})
+
+
+
+        await prisma.penulisBuku.createMany({
+            data : arrayPenulisBuku
+          })
 
         // Hitung jumlah ISBN yang sama, id buku baru = jumlah ISBN yang sama + 1 
         async function isbnCounter(data : Omit<bukuType, 'id'>) : Promise<Prisma.BukuCreateManyInput> {
@@ -741,7 +753,9 @@ export class Buku{
                     }
                 }
             });
-        }
+        }   
+
+            arrayIdPenulis.push(penulis as number[]);
 
             map[isbn] = Math.max(map[isbn] || 0, result);
             ++map[isbn];
@@ -773,6 +787,9 @@ export class Buku{
                         isbn,
                         id
                     }
+                },
+                include : {
+                    penulisBuku: true
                 }
             }) as bukuType
 
@@ -781,10 +798,22 @@ export class Buku{
             }
             return buku;
     } 
-        buku = await prisma.buku.findMany({}) as bukuType[]
+        buku = await prisma.buku.findMany({
+            include : {
+                penulisBuku: {
+                    select : {
+                        penulis : {
+                            select : {
+                                nama : true
+                            }
+                        }
+                    }
+                }
+            }
+        }) as bukuType[]
 
         return buku;
-
+        
 }
 
     async perbaruiBuku(isbn : string, id : number, dataBuku : perbaruiBukuType) :Promise<void> {
@@ -796,7 +825,6 @@ export class Buku{
         if (!buku?.id) {
             throw new Error("Data buku tidak ditemukan");
         }
-
         if (penulis && typeof penulis[0] !== "number") {
             penulis = (await konversiDataKeId(penulis as string[])) as number[];
         }
