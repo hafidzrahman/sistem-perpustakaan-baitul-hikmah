@@ -32,7 +32,12 @@ Kesimpulan :
 1. Jika nilai tunai yang berlebih lebih kecil dari nilai tunai tertinggi yang disumbangkan, maka ambil nilai tunai tertinggi saja dan kalkulasi ulang
 2. Jika nilai tunai yang berlebih lebih besar dari nilai tunai tertinggi yang disumbangkan, 
    maka lakukan looping untuk menghapus rows pada table riwayat bantuan 
-   sampai nilai tunai sama dengan nilai totalNominal di table keterangan
+   sampai nilai tunai sama dengan nilai totalNominal di table keterangan,
+   jika ketika dihapus ternyata kurang, maka pembayaran tunai yang terakhir di hapus tadi dikalkulasi ulang 
+   (misalnya Rp60.000 didapat dari nyicil Rp3000 20x, ketika Rp3000 yang kedua dihapus, maka sisanya Rp54.000, 
+   sehingga harus dikalkulasi ulang uang Rp3000 kedua yang dihapus tadi. 
+   Dan uang teman yang nyumbang Rp3000 kedua tadi, attribute "berlebih" jadi true 
+   kalau ketika menyumbangkan Rp3000 tadi sumbangannya sudah pas) (skenario kalau uangnya udh Rp60.000 kemudian masuk 1 buku ketika sumbangan tamat SMP)
 
 Pada setiap keterangan sumbangan, petugas memasukkan jumlah buku atau total nominal sebagai target supaya bisa lunas, dan nominal per buku
 Jika pada table sumbangan target buku tercapai (prioritas), maka langsung lunas
@@ -115,23 +120,23 @@ export const seeds = {
             }
     ],
     kelas : [
-        {id : "59797c5e-9692-415b-94a7-32ac0e940479", nama : "Al Fatih", tingkat : 1},
-        {nama : "Al Muttaqin", tingkat : 2},
-        {nama : "Al Falah", tingkat : 3}
+        {id : 1, nama : "Al Fatih", tingkat : 1},
+        {id : 2, nama : "Al Muttaqin", tingkat : 2},
+        {id : 3, nama : "Al Falah", tingkat : 3}
     ],
     murid : [
         {
             nis : "12412423", 
             nama : "Olav Thomas", 
             jenisKelamin : JenisKelamin.LAKI, 
-            idKelas : "59797c5e-9692-415b-94a7-32ac0e940479", 
+            idKelas : 1, 
             kontak : "0831242152", 
             alamat : "Jalan Kebun Kopi"},
             {
                 nis : "12412421", 
                 nama : "Olav Thomas", 
                 jenisKelamin : JenisKelamin.LAKI, 
-                idKelas : "59797c5e-9692-415b-94a7-32ac0e940479", 
+                idKelas : 1, 
                 kontak : "0831242152", 
                 alamat : "Jalan Kebun Kopi"
             },
@@ -139,7 +144,7 @@ export const seeds = {
                 nis : "12412422", 
                 nama : "Olav Thomas", 
                 jenisKelamin : JenisKelamin.LAKI, 
-                idKelas : "59797c5e-9692-415b-94a7-32ac0e940479", 
+                idKelas : 1, 
                 kontak : "0831242152", 
                 alamat : "Jalan Kebun Kopi"
             }      
@@ -167,25 +172,27 @@ export const seeds = {
             }      
     ], 
     keterangan : [
-        {   
+        {   id : 1,
             keterangan : "Keterlambatan Pengembalian Buku",
             jumlahBuku : 5,
             totalNominal : 110000,
             nominalPerHari : 1000
         },
         {
+            id : 2,
             keterangan : "Keterlambatan Pengembalian Buku",
             jumlahBuku : 2,
             totalNominal : 550000,
             nominalPerHari : 1000
         },
         {
+            id : 3,
             keterangan : "Keterlambatan Pengembalian Buku",
             jumlahBuku : 3,
             totalNominal : 300000,
             nominalPerHari : 1000
         }, {
-            id : "K1",
+            id : 4,
             keterangan : "Keterlambatan Pengembalian Buku",
             jumlahBuku : 3,
             totalNominal : 300000,

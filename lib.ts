@@ -1,4 +1,4 @@
-import {PrismaClient} from '@prisma/client';
+import {Prisma, PrismaClient} from '@prisma/client';
 import { JenisKelamin, Genre } from "@prisma/client";
 import { NextResponse } from 'next/server';
 
@@ -16,7 +16,7 @@ export type guruType = {
 
 export type muridType = {
     nis : string,
-    idKelas : string,
+    idKelas : number,
     nama : string,
     jenisKelamin : JenisKelamin,
     kontak : string,
@@ -28,7 +28,7 @@ export type perbaruiAnggotaType = {
     jenisKelamin? : JenisKelamin,
     kontak? : string,
     alamat? : string,
-    idKelas : string
+    idKelas : number
 }
 
 export type perbaruiKelasType = {
@@ -37,7 +37,7 @@ export type perbaruiKelasType = {
 }
 
 export type kelasType = {
-    id : string,
+    id : number,
     nama : string,
     tingkat : number
 }
@@ -46,26 +46,31 @@ export type kelasType = {
 export type bukuType = {
     id : number,
     judul : string,
-    penulis : string[],
+    penulis? : string[] | number[],
     genre : Genre[],
     isbn : string,
     linkGambar? : string,
     sinopsis? : string,
-    penerbit? : string, 
+    penerbit? : string | number, 
     halaman? : number, 
     tanggalRusak?: Date, 
     tanggalHilang? : Date, 
     posisi? : string 
 }
 
+export type penulisType = {
+    id : number,
+    nama : string
+}
+
 export type perbaruiBukuType = {
     judul? : string,
-    penulis? : string[],
+    penulis? : string[] | number[],
     genre? : Genre[],
     isbn? : string,
     linkGambar? : string,
     sinopsis? : string,
-    penerbit? : string, 
+    penerbit? : string | number, 
     halaman? : number, 
     tanggalRusak?: Date, 
     tanggalHilang? : Date, 
@@ -73,7 +78,7 @@ export type perbaruiBukuType = {
 }
 
 export type keteranganType = {
-    id : string,
+    id : number,
     keterangan : string,
     jumlahBuku? : number,
     totalNominal? : number,
@@ -88,7 +93,7 @@ export type perbaruiKeteranganType = {
 }
 
 export type peminjamanType = {
-    id : string,
+    id : number,
     nis? : string,
     nip? : string,
     tanggalPinjam : Date,
@@ -98,7 +103,8 @@ export type peminjamanType = {
 export type peminjamType = {
     nis? : string,
     nip? : string,
-    keterangan? : string
+    keterangan? : string,
+    tenggatWaktu? : Date
 }
 
 interface Anggota<T,> {
@@ -120,31 +126,27 @@ const prisma = new PrismaClient();
 export class Murid implements Anggota<muridType>{
     nis? : string;
     nama? : string;
-    idKelas? : string;
+    idKelas? : number;
     jenisKelamin? : JenisKelamin;
     kontak? : string;
     alamat? : string;
 
-    constructor(
-        nis? : string,
-        nama? : string,
-        jenisKelamin? : JenisKelamin,
-        idKelas? : string,
-        kontak? : string,
-        alamat? : string) 
+    constructor(req? : Request) 
         {
-        this.nis = nis;
-        this.nama = nama;
-        this.jenisKelamin = jenisKelamin;
-        this.idKelas = idKelas;
-        this.kontak = kontak;
-        this.alamat = alamat;
+        req?.json().then((data : muridType) => {
+        this.nis = data.nis;
+        this.nama = data.nama;
+        this.jenisKelamin = data.jenisKelamin;
+        this.idKelas = data.idKelas;
+        this.kontak = data.kontak;
+        this.alamat = data.alamat;
+        })
     }
 
     async tambahAnggota(dataMurid : muridType) : Promise<void> {
         const {nis, nama, jenisKelamin, idKelas, kontak, alamat} = dataMurid;
 
-        if (!nis || !nama || jenisKelamin || idKelas || kontak) {
+        if (!nis || !nama || !jenisKelamin || !idKelas || !kontak) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
@@ -227,7 +229,7 @@ export class Murid implements Anggota<muridType>{
                 where : {
                     nis
                 }
-            }) as muridType
+            }) as muridType;
     
             if (!murid?.nis) {
                 throw new Error("Data murid tidak ditemukan")
@@ -236,7 +238,7 @@ export class Murid implements Anggota<muridType>{
             return murid;
     } 
 
-        murid = await prisma.murid.findMany({}) as muridType[]
+        murid = await prisma.murid.findMany({}) as muridType[];
 
         return murid;
 
@@ -245,11 +247,7 @@ export class Murid implements Anggota<muridType>{
     async perbaruiAnggota(nis : string, data : perbaruiAnggotaType) :Promise<void> {
         const {nama, jenisKelamin, kontak, alamat, idKelas} = data;
 
-        let murid = await prisma.murid.findUnique({
-            where : {
-                nis
-            }
-        })
+        let murid = await this.cariAnggota(nis) as muridType
 
         if (!murid?.nis) {
             throw ({message : "Data kelas tidak ditemukan"})
@@ -265,7 +263,7 @@ export class Murid implements Anggota<muridType>{
             where : {
                 nis
             }
-        })
+        }) as muridType
 
         const date = new Date();
         const month = date.getMonth();
@@ -287,7 +285,7 @@ export class Murid implements Anggota<muridType>{
             where : {
                 nis
             }
-        })
+        }) as muridType;
 
         if (!murid?.nis) {
             throw NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
@@ -302,24 +300,21 @@ export class Murid implements Anggota<muridType>{
 }
 
 export class Guru implements Anggota<guruType>{
-    nis? : string;
+    nip? : string;
     nama? : string;
     jenisKelamin? : JenisKelamin;
     kontak? : string;
     alamat? : string;
 
-    constructor(
-        nis? : string,
-        nama? : string,
-        jenisKelamin? : JenisKelamin,
-        kontak? : string,
-        alamat? : string) 
+    constructor(req? : Request) 
         {
-        this.nis = nis;
-        this.nama = nama;
-        this.jenisKelamin = jenisKelamin;
-        this.kontak = kontak;
-        this.alamat = alamat;
+        req?.json().then((data : guruType) => {
+            this.nip = data.nip;
+            this.nama = data.nama;
+            this.jenisKelamin = data.jenisKelamin;
+            this.kontak = data.kontak;
+            this.alamat = data.alamat;
+        })
     }
 
     async tambahAnggota(dataGuru : guruType) : Promise<void> {
@@ -375,11 +370,7 @@ export class Guru implements Anggota<guruType>{
     async perbaruiAnggota(nip : string, data : perbaruiAnggotaType) :Promise<void> {
         const {nama, jenisKelamin, kontak, alamat} = data;
 
-        let guru = await prisma.guru.findUnique({
-            where : {
-                nip
-            }
-        })
+        let guru = await this.cariAnggota(nip) as guruType;
 
         if (!guru?.nip) {
             throw ({message : "Data kelas tidak ditemukan"})
@@ -420,15 +411,14 @@ export class Guru implements Anggota<guruType>{
 
 export class Kelas{
     nama? : string;
-    tingkat? : string;
+    tingkat? : number;
 
-    constructor(
-        nama? : string,
-        tingkat? : string
-    ) 
+    constructor(req? : Request) 
         {
-        this.nama = nama;
-        this.tingkat = tingkat;
+        req?.json().then((data : kelasType) => {
+            this.nama = data.nama;
+            this.tingkat = data.tingkat;
+        })
     }
 
     async tambahKelas(dataKelas : Omit<kelasType, 'id'>) : Promise<void> {
@@ -452,7 +442,7 @@ export class Kelas{
         })
     }
 
-    async cariKelas (id? : string) : Promise<kelasType | kelasType[]> {
+    async cariKelas (id? : number) : Promise<kelasType | kelasType[]> {
         let kelas : kelasType | kelasType[] = []; 
 
         if (id) {    
@@ -475,14 +465,10 @@ export class Kelas{
 
 }
 
-    async perbaruiKelas(id : string, data : perbaruiKelasType) :Promise<void> {
+    async perbaruiKelas(id : number, data : perbaruiKelasType) :Promise<void> {
         const {nama, tingkat} = data;
 
-        let kelas = await prisma.kelas.findUnique({
-            where : {
-                id
-            }
-        })
+        let kelas = await this.cariKelas(id) as kelasType;
 
         if (!kelas?.id) {
             throw ({message : "Data kelas tidak ditemukan"})
@@ -501,7 +487,7 @@ export class Kelas{
 
     }
 
-    async hapusKelas(id : string) : Promise<void> {
+    async hapusKelas(id : number) : Promise<void> {
         const kelas = await prisma.kelas.delete({
             where : {
                 id
@@ -521,22 +507,23 @@ export class Kelas{
 }
 
 export class Keterangan{
+    id? : number;
     keterangan? : string;
     jumlahBuku? : number;
     totalNominal? : number;
     nominalPerHari? : number
 
-    constructor(
-        keterangan? : string,
-        jumlahBuku? : number,
-        totalNominal? : number,
-        nominalPerHari? : number
-    ) 
-        {
-        this.keterangan = keterangan;
-        this.jumlahBuku  = jumlahBuku;
-        this.totalNominal =  totalNominal;
-        this.nominalPerHari = nominalPerHari;
+    constructor(req? : Request) {
+        req?.json().then(({id, keterangan, jumlahBuku, totalNominal, nominalPerHari} : keteranganType) => 
+            {
+            this.id = id;
+            this.keterangan = keterangan;
+            this.jumlahBuku = jumlahBuku;
+            this.totalNominal = totalNominal;
+            this.nominalPerHari = nominalPerHari;
+        }).catch(() => {
+            throw new Error("Gagal mendapatkan data")
+        })
     }
 
     async tambahKeterangan(dataKeterangan : Omit<keteranganType, 'id'>) : Promise<void> {
@@ -563,7 +550,7 @@ export class Keterangan{
         })
     }
 
-    async cariKeterangan (id? : string) : Promise<keteranganType | keteranganType[]> {
+    async cariKeterangan (id? : number) : Promise<keteranganType | keteranganType[]> {
         let keterangan : keteranganType | keteranganType[] = []; 
 
         if (id) {    
@@ -586,14 +573,14 @@ export class Keterangan{
 
 }
 
-    async perbaruiKeterangan(id : string, dataKeterangan : Omit<keteranganType, 'id'>) :Promise<void> {
+    async perbaruiKeterangan(id : number, dataKeterangan : Omit<keteranganType, 'id'>) :Promise<void> {
         const {keterangan : deskripsi, jumlahBuku, totalNominal, nominalPerHari} = dataKeterangan;
 
-        if (!deskripsi) {
-            throw new Error("Harus mengisi field yang wajib")
-        }
-
         const keterangan = await this.cariKeterangan(id) as keteranganType;
+
+        if (!keterangan?.id) {
+            throw new Error("Data keterangan tidak ditemukan")
+        }
 
         await prisma.keterangan.update({
             data : {
@@ -610,7 +597,7 @@ export class Keterangan{
 
     }
 
-    async hapusKeterangan(id : string) : Promise<void> {
+    async hapusKeterangan(id : number) : Promise<void> {
         const keterangan = await prisma.keterangan.delete({
             where : {
                 id
@@ -629,25 +616,58 @@ export class Keterangan{
 }
 
 export class Buku{
-    nama? : string;
-    tingkat? : string;
+    id? : number;
+    judul? : string;
+    penulis? : string[] | number[];
+    genre? : Genre[];
+    isbn? : string;
+    linkGambar? : string;
+    sinopsis? : string;
+    penerbit? : string | number; 
+    halaman? : number; 
+    tanggalRusak?: Date; 
+    tanggalHilang? : Date; 
+    posisi? : string;
 
-    constructor(
-        nama? : string,
-        tingkat? : string
-    ) 
-        {
-        this.nama = nama;
-        this.tingkat = tingkat;
+    constructor(req? : Request) {
+        req?.json().then((data : bukuType) => {
+            this.id = data.id;
+            this.judul = data.judul;
+            this.penulis = data.penulis;
+            this.genre = data.genre;
+            this.isbn = data.isbn;
+            this.linkGambar = data.linkGambar;
+            this.sinopsis = data.sinopsis;
+            this.penerbit = data.penerbit; 
+            this.halaman = data.halaman; 
+            this.tanggalRusak =  data.tanggalRusak; 
+            this.tanggalHilang =  data.tanggalHilang; 
+            this.posisi =  data.posisi;
+        })
     }
 
     async tambahBuku(dataBuku : Omit<bukuType, 'id'>) : Promise<void> {
-        const { judul, penulis, genre, isbn, linkGambar, sinopsis, penerbit, halaman, tanggalRusak, tanggalHilang, posisi } = dataBuku;
+        const { judul, genre, isbn, linkGambar, sinopsis, halaman, tanggalRusak, tanggalHilang, posisi } = dataBuku;
+        let {penulis, penerbit} = dataBuku;
         
-        if (!isbn || !judul || penulis || genre || penerbit ) {
+        if (!isbn || !judul || !penulis || !genre || !penerbit ) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
+        // jika data penulis yang dimasukkan adalah array string, pasti data belum ada di drop down menu
+        // jika data penulis yang dimasukkan adalah array number, pasti data sudah ada di drop down menu,
+        if (typeof penulis[0] !== "number") {
+            penulis = (await konversiDataKeId(penulis as string[])) as number[];
+        }
+
+
+        // jika data penerbit yang dimasukkan adalah string, pasti data belum ada di drop down menu
+        // jika data penerbit yang dimasukkan adalah number, pasti data sudah ada di drop down menu,
+        if (typeof penerbit !== "number") {
+            penerbit = (await konversiDataKeId(penerbit as string)) as number;
+        }
+
+        // Hitung jumlah ISBN yang sama, id buku baru = jumlah ISBN yang sama + 1 
         const count = await prisma.buku.count({
             where : {
                 isbn : {
@@ -656,14 +676,13 @@ export class Buku{
             },
         })
         
-        await prisma.buku.create({
+        const dataBukuBaru = await prisma.buku.create({
             data: {
               id : count + 1,
               isbn,
-              judul, 
-              penulis,
+              idPenerbit : penerbit as number,
+              judul,
               genre,
-              penerbit,
               halaman,
               sinopsis,
               tanggalHilang,
@@ -672,6 +691,15 @@ export class Buku{
               posisi
             },
           });
+
+          // array number yang berisi id penulis diolah dengan "map" agar array berisi objek "Penulis Buku"
+          await prisma.penulisBuku.createMany({
+            data : (penulis as number[]).map((id) => ({
+                idPenulis : id,
+                bukuISBN : dataBukuBaru.isbn,
+                bukuId : dataBukuBaru.id
+            }))
+          })
       
         
     }
@@ -679,31 +707,60 @@ export class Buku{
     async tambahBanyakBuku(dataBuku : Omit<bukuType, 'id'>[]) {
         const map : Hash = {}
 
-        // Hitung jumlah ISBN yang sama, id buku baru = jumlah ISBN yang sama + 1 
-        async function isbnCounter(data : Omit<bukuType, 'id'>) {
-            const result = await prisma.buku.count({
-                where : {
-                    isbn : {
-                        equals : data.isbn
-                    }
-                }
-            });
-
-            map[data.isbn] = Math.max(map[data.isbn] || 0, result);
-            ++map[data.isbn];
-
-            return {
-                id : map[data.isbn],
-                ...data
-            }
-        }
-
-        const data : bukuType[] = await Promise.all(dataBuku.map(isbnCounter))
-
+        const data  = await Promise.all(dataBuku.map(isbnCounter))
 
         await prisma.buku.createMany({
             data : data
         })
+
+        // Hitung jumlah ISBN yang sama, id buku baru = jumlah ISBN yang sama + 1 
+        async function isbnCounter(data : Omit<bukuType, 'id'>) : Promise<Prisma.BukuCreateManyInput> {
+            const { judul, genre, isbn, linkGambar, sinopsis, halaman, tanggalRusak, tanggalHilang, posisi } = data;
+            let {penulis, penerbit} = data;
+
+            if (!isbn || !judul || !penulis || !genre || !penerbit ) {
+                throw new Error("Harus mengisi field yang wajib")
+            }
+
+
+            if (typeof penulis[0] !== "number") {
+                penulis = (await konversiDataKeId(penulis as string[])) as number[];
+            }
+
+            if (typeof penerbit !== "number") {
+                penerbit = (await konversiDataKeId(penerbit as string)) as number;
+            }
+
+            let result = 0;
+            
+            if (!map[isbn]) {
+            result = await prisma.buku.count({
+                where : {
+                    isbn : {
+                        equals : isbn
+                    }
+                }
+            });
+        }
+
+            map[isbn] = Math.max(map[isbn] || 0, result);
+            ++map[isbn];
+
+            return {
+                id : map[isbn],
+                isbn,
+                judul,
+                linkGambar,
+                idPenerbit : penerbit as number,
+                sinopsis,
+                genre,
+                halaman,
+                tanggalRusak,
+                tanggalHilang,
+                posisi
+            }
+        }
+
     }
 
     async cariBuku (isbn? : string, id? : number) : Promise<bukuType | bukuType[]> {
@@ -718,14 +775,12 @@ export class Buku{
                     }
                 }
             }) as bukuType
-    
+
             if (!buku?.isbn || !buku?.id) {
                 throw ({message : "Data buku tidak ditemukan"})
             }
-
             return buku;
     } 
-
         buku = await prisma.buku.findMany({}) as bukuType[]
 
         return buku;
@@ -733,31 +788,33 @@ export class Buku{
 }
 
     async perbaruiBuku(isbn : string, id : number, dataBuku : perbaruiBukuType) :Promise<void> {
-        const { judul, penulis, genre, isbn : bukuISBN, linkGambar, sinopsis, penerbit, halaman, tanggalRusak, tanggalHilang, posisi } = dataBuku;
-        
+        const { judul, genre, isbn : bukuISBN, linkGambar, sinopsis, halaman, tanggalRusak, tanggalHilang, posisi } = dataBuku;
+        let {penulis, penerbit} = dataBuku;
 
-        let buku = await prisma.buku.findUnique({
-            where : {
-                isbn_id : {
-                    isbn,
-                    id
-                }
-            }
-        })
+        let buku = await this.cariBuku(isbn, id) as Prisma.BukuCreateManyInput;
 
-        if (!buku?.isbn || !buku?.id) {
-            throw ({message : "Data buku tidak ditemukan"})
+        if (!buku?.id) {
+            throw new Error("Data buku tidak ditemukan");
         }
+
+        if (penulis && typeof penulis[0] !== "number") {
+            penulis = (await konversiDataKeId(penulis as string[])) as number[];
+        }
+
+        if (penerbit && typeof penerbit !== "number") {
+            penerbit = (await konversiDataKeId(penerbit as string)) as number;
+        }
+
+
 
         await prisma.buku.update({
             data : {
                 judul : judul || buku.judul, 
-                penulis : penulis || buku.penulis, 
                 genre : genre || buku.genre, 
                 isbn : bukuISBN || buku.isbn, 
                 linkGambar : linkGambar || buku.linkGambar, 
                 sinopsis : sinopsis || buku.sinopsis, 
-                penerbit : penerbit || buku.penerbit, 
+                idPenerbit : penerbit as number || buku.idPenerbit, 
                 halaman : halaman || buku.halaman, 
                 tanggalRusak : tanggalRusak || buku.tanggalRusak, 
                 tanggalHilang : tanggalHilang || buku.tanggalHilang, 
@@ -795,31 +852,28 @@ export class Buku{
     
 }
 
+
 export class Peminjaman {
-    id? : string;
+    id? : number;
     nis? : string;
     nip? : string;
     tanggalPinjam? : Date;
     keterangan? : string;
 
-    constructor(
-        id? : string,
-        nis? : string,
-        nip? : string,
-        tanggalPinjam? : Date,
-        keterangan? : string
-    ) {
-        this.id = id;
-        this.nis = nis;
-        this.nip = nip;
-        this.tanggalPinjam = tanggalPinjam;
-        this.keterangan = keterangan;
+    constructor(req? : Request) {
+        req?.json().then((data : peminjamanType) => {
+            this.id = data.id;
+            this.nis = data.nis;
+            this.nip = data.nip;
+            this.tanggalPinjam = data.tanggalPinjam;
+            this.keterangan = data.keterangan;
+        })
     }
 
 
     async tambahPeminjaman(dataPeminjam : peminjamType, idBuku : {isbn : string, id : number}) : Promise<void> {
         const buku = new Buku();
-        const {nis, nip, keterangan} = dataPeminjam;
+        const {nis, nip, keterangan, tenggatWaktu} = dataPeminjam;
 
         if (!nis || !nip) {
             throw new Error("Harus mengisi field yang wajib")
@@ -841,16 +895,18 @@ export class Peminjaman {
 
         // default peminjaman seminggu, bisa diatur sesuai dengan keinginan petugas perpustakaan
         const date = new Date();
-        const deadLine = new Date(date.getTime() + 8 * 24 * 60 * 60 * 1000);
+        const deadline = tenggatWaktu || new Date(date.getTime() + 8 * 24 * 60 * 60 * 1000);
 
         const dataBukuPinjaman = await prisma.bukuPinjaman.create({
             data : {
                 idPeminjaman : peminjaman.id,
                 bukuISBN : dataBuku.isbn,
                 bukuId : dataBuku.id,
-                tenggatWaktu : deadLine
+                tenggatWaktu : deadline
             }
         })
+
+        setTimeout(setDenda, deadline.getTime())
 
 
         async function setDenda() {
@@ -868,7 +924,7 @@ export class Peminjaman {
 
             const dataSumbangan = await prisma.sumbangan.create({
                 data : {
-                    idKeterangan : "K1",
+                    idKeterangan : 1,
                     nis,
                     nip,
                     berlebih : false
@@ -885,13 +941,9 @@ export class Peminjaman {
         }
         }
 
-
-    
-        setTimeout(setDenda, deadLine.getTime() / 1000)
     }
 
-
-    async konfirmasiPengembalian(idPeminjaman : string, idBuku : {isbn : string, id : number}) {
+    async konfirmasiPengembalian(idPeminjaman : number, idBuku : {isbn : string, id : number}) {
         const buku = new Buku();
         const dataBuku = await buku.cariBuku(idBuku.isbn, idBuku.id) as bukuType;
 
@@ -929,7 +981,7 @@ export class Peminjaman {
         })
     }
 
-    async cariPeminjaman (id? : string) : Promise<peminjamanType | peminjamanType[]> {
+    async cariPeminjaman (id? : number) : Promise<peminjamanType | peminjamanType[]> {
         let peminjaman : peminjamanType | peminjamanType[] = []; 
 
         if (id) {    
@@ -952,16 +1004,12 @@ export class Peminjaman {
 
 }
 
-    async perbaruiPeminjaman(id : string, dataPeminjaman : Omit<peminjamanType, 'id' | 'tanggalPinjam'>) :Promise<void> {
+    async perbaruiPeminjaman(id : number, dataPeminjaman : Omit<peminjamanType, 'id' | 'tanggalPinjam'>) :Promise<void> {
 
         // tanggal pinjam boleh diperbarui?
         const {nis, nip, keterangan} = dataPeminjaman;
 
-        let peminjaman = await prisma.peminjaman.findUnique({
-            where : {
-                id
-            }
-        })
+        let peminjaman = await this.cariPeminjaman(id) as peminjamanType;
 
         if (!peminjaman?.id) {
             throw ({message : "Data peminjaman tidak ditemukan"})
@@ -982,7 +1030,21 @@ export class Peminjaman {
 
     }
 
-    async hapusPeminjaman(id : string) : Promise<void> {
+    async perbaruiTenggatWaktuPeminjaman(idPeminjaman : number, idBuku : {isbn : string, id : number}, tenggatWaktu : Date) {
+        await prisma.bukuPinjaman.update({
+            data : {
+               tenggatWaktu 
+            }, where : {
+                idPeminjaman_bukuISBN_bukuId : {
+                    idPeminjaman,
+                    bukuISBN : idBuku.isbn,
+                    bukuId : idBuku.id
+                }
+            }
+        })
+    }
+
+    async hapusPeminjaman(id : number) : Promise<void> {
         const peminjaman = await prisma.peminjaman.delete({
             where : {
                 id
@@ -998,6 +1060,23 @@ export class Peminjaman {
         await prisma.peminjaman.deleteMany({}) 
     }
 
+}
+
+async function konversiDataKeId(data : string | string[]) : Promise<number | number[]> {
+
+    // jika data penulis yang dimasukkan adalah array string, pasti data belum ada di drop down menu
+    if ((typeof (data as string[])) === "object") {
+        return (await prisma.penulis.createManyAndReturn({
+            data : (data as string[]).map((nama) => ({nama}))
+        })).map(({id}) => id) as number[];
+} 
+
+    // jika data penerbit yang dimasukkan adalah string, pasti data belum ada di drop down menu
+    return (await prisma.penerbit.create({
+        data : {
+            nama : (data as string)
+        }
+    })).id
 }
 
 export const buku = new Buku()
