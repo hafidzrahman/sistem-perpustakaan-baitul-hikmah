@@ -20,13 +20,16 @@ export async function GET() {
     const guru = new Guru();
     const keterangan = new Keterangan();
     const peminjaman = new Peminjaman();
-    
-    await buku.hapusSemuaBuku();
+
     await prisma.riwayatKelas.deleteMany({})
+    await prisma.penulisBuku.deleteMany({})
+    await buku.hapusSemuaBuku();
     await kelas.hapusSemuaKelas();
     await murid.hapusSemuaAnggota();
     await guru.hapusSemuaAnggota();
     await keterangan.hapusSemuaKeterangan();
+    await prisma.penulis.deleteMany({})
+    await prisma.penerbit.deleteMany({})
 
     await buku.tambahBanyakBuku(dataBuku);
     await kelas.tambahBanyakKelas(dataKelas);
@@ -42,7 +45,8 @@ export async function GET() {
     let arrayKeterangan : keteranganType[] = (await keterangan.cariKeterangan()) as keteranganType[];
     let arrayGuru : guruType[] = (await guru.cariAnggota()) as guruType[];
     let arrayPeminjaman : peminjamanType[] = (await peminjaman.cariPeminjaman()) as peminjamanType[]
+    let arrayPenulis = await prisma.penerbit.findMany({})
 
-    return NextResponse.json({arrayBuku, arrayKelas, arrayMurid, arrayKeterangan, arrayGuru, arrayPeminjaman})
+    return NextResponse.json({arrayPenulis, arrayBuku, arrayKelas, arrayMurid, arrayKeterangan, arrayGuru, arrayPeminjaman})
 }
 
