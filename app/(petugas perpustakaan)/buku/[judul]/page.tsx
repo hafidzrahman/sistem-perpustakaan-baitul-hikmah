@@ -116,14 +116,15 @@ const Page = ({ params }: { params: Promise<{ judul: string }> }) => {
             </h2>
             <div className="w-full flex items-center gap-2">
               {detailBuku &&
-                detailBuku.genre.map((item: string[], index: number) => (
+                detailBuku.genre.map((item: string[], index: number) => {
+                  console.log(detailBuku.genre);
                   <div
                     key={index}
                     className={`${bg[index]} ${border[index]} font-bold mt-4 flex justify-center text-white-custom items-center gap-2 border-2 font-source-sans leading-none text-xs rounded-full py-2 px-4`}
                   >
                     {item}
-                  </div>
-                ))}
+                  </div>;
+                })}
             </div>
           </div>
           <div className="pr-12 flex flex-col gap-2">

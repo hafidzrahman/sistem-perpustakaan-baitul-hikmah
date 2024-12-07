@@ -6,8 +6,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function GET() {
-    const {buku : dataBuku, kelas : dataKelas, murid : dataMurid, guru : dataGuru, keterangan : dataKeterangan, peminjaman : dataPeminjaman} = seeds;
-
+  const {
+    buku: dataBuku,
+    kelas: dataKelas,
+    murid: dataMurid,
+    guru: dataGuru,
+    keterangan: dataKeterangan,
+    peminjaman: dataPeminjaman,
+  } = seeds;
     const buku = new Buku();
     const kelas = new Kelas();
     const murid = new Murid();
@@ -39,3 +45,4 @@ export async function GET() {
 
     return NextResponse.json({arrayBuku, arrayKelas, arrayMurid, arrayKeterangan, arrayGuru, arrayPeminjaman})
 }
+
