@@ -1,4 +1,9 @@
-import { MuslimIcon, HijabIcon } from "hugeicons-react";
+import {
+  MuslimIcon,
+  HijabIcon,
+  Delete02Icon,
+  PencilEdit01Icon,
+} from "hugeicons-react";
 
 interface TableMuridProps {
   data: any;
@@ -91,7 +96,12 @@ const TableMurid = ({ data }: TableMuridProps) => {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-2 text-center">Aksi</td>
+                  <td className="px-4 py-2 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <Delete02Icon className="w-5 h-5 text-jewel-red" />
+                      <PencilEdit01Icon className="w-5 h-5 text-jewel-blue " />
+                    </div>
+                  </td>
                   <td className="px-4 py-2 ">
                     <button
                       type="submit"
