@@ -6,8 +6,12 @@ import { useEffect, useState, useRef } from "react";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 import TableBuku from "@/app/components/TableBuku";
 import CardTambahBuku from "@/app/components/CardTambahBuku";
+<<<<<<< HEAD
 import BookChart from "@/app/components/BookChart";
 import { bukuType, cariBukuType } from "@/lib";
+=======
+import BookChart from "@/app/components/MuridBarChart";
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
 
 interface BukuPageProps {}
 
@@ -95,6 +99,7 @@ const BukuPage = ({}: BukuPageProps) => {
         }}
       >
         {buku.length ? (
+<<<<<<< HEAD
           buku.map(
             (
               item: cariBukuType,
@@ -108,6 +113,9 @@ const BukuPage = ({}: BukuPageProps) => {
               />
             )
           )
+=======
+          buku.map((item, index) => <CardBuku key={index} data={item} />)
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
         ) : (
           <div>Bentar</div>
         )}

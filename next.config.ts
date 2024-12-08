@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       "s3-ap-southeast-1.amazonaws.com",
       "image.gramedia.net",
       "example.com",
+      "images-na.ssl-images-amazon.com",
     ],
   },
 };

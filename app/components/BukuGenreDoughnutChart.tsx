@@ -9,7 +9,7 @@ import {
   TooltipProps,
 } from "recharts";
 
-const BookCategoryDonutChart = () => {
+const BukuGenreDoughnutChart = () => {
   // Data kategori buku
   const bookData = [
     {
@@ -97,4 +97,4 @@ const BookCategoryDonutChart = () => {
   );
 };
 
-export default BookCategoryDonutChart;
+export default BukuGenreDoughnutChart;

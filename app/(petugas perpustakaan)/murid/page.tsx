@@ -4,6 +4,8 @@ import BtnSecondary from "@/app/components/BtnSecondary";
 import CardData from "@/app/components/CardData";
 import CardTambahKelas from "@/app/components/CardTambahKelas";
 import CardTambahMurid from "@/app/components/CardTambahMurid";
+import MuridBarChart from "@/app/components/MuridBarChart";
+import PeminjamanCalendar from "@/app/components/PeminjamanCalendar";
 import TableMurid from "@/app/components/TableMurid";
 import {
   Mortarboard01Icon,
@@ -44,7 +46,7 @@ const MuridPage = ({}: MuridPageProps) => {
     const fetchMurid = async () => {
       const respon = await fetch("/api/murid");
       const data = await respon.json();
-      console.log(data)
+      console.log(data);
       setMurid(data);
     };
     fetchMurid();
@@ -83,22 +85,14 @@ const MuridPage = ({}: MuridPageProps) => {
           <h1 className="font-source-sans text-2xl text-primary font-bold">
             Jumlah Murid per Kelas
           </h1>
-          <ul className="mt-4 text-sm font-source-sans text-dark">
-            {Object.entries(jumlahMuridPerKelas).map(([kelas, jumlah]) => (
-              <li key={kelas} className="mb-2">
-                <span className="font-bold">{kelas}:</span> {jumlah} murid
-              </li>
-            ))}
-          </ul>
+          <MuridBarChart />
         </div>
 
         <div className="relative order-4 col-span-1 p-6 bg-white border-2 rounded-lg border-dark-gray sm:col-span-2 lg:row-span-2 lg:order-none lg:col-span-1">
           <h1 className="font-source-sans text-2xl text-center text-primary font-bold">
             Statistik Murid
           </h1>
-          <p className="mt-4 text-center text-sm font-source-sans text-dark">
-            Total Murid: <span className="font-bold">{totalMurid}</span>
-          </p>
+          <PeminjamanCalendar />
         </div>
         <div className="flex flex-col gap-4 order-last col-span-1 row-span-2 p-6 bg-white  rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-4 lg:row-span-2 dark-gray">
           <div className="w-full flex px-2 justify-between items-center">

@@ -1,5 +1,13 @@
 import BtnSecondary from "./BtnSecondary";
+<<<<<<< HEAD
 import { cariBukuType } from "@/lib";
+=======
+import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
+
+interface TableBukuProps {
+  data: any;
+}
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
 
 const bg = [
   "bg-jewel-purple",
@@ -16,39 +24,62 @@ const border = [
   "border-pastel-blue",
 ];
 
+<<<<<<< HEAD
 const TableBuku = (data : cariBukuType[]) => {
+=======
+const TableBuku = ({ data }: TableBukuProps) => {
+  console.log(data);
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
   return (
     <div className="max-h-80 overflow-y-auto border border-gray-300 rounded-lg shadow-md">
       <table className="min-w-full bg-white">
         <thead>
           <tr className="bg-light-primary text-white sticky top-0 z-10">
-            <th className="px-4 py-2 text-left w-2">ID</th>
-            <th className="px-4 py-2 text-left w-2/12">Judul</th>
+            <th className="px-4 py-2 text-left w-2/12">ISBN</th>
+            <th className="px-4 py-2 text-left w-3/12">Judul</th>
             <th className="px-4 py-2 text-left w-2/12">Penulis</th>
-            <th className="px-4 py-2 text-center w-4/12">Genre</th>
+            <th className="px-4 py-2 text-center w-2/12">Genre</th>
             <th className="px-4 py-2 text-center w-1/12">Status</th>
-            <th className="px-4 py-2 text-center w-2/12">Aksi</th>
+            <th className="px-4 py-2 text-center w-1/12">Aksi</th>
             <th className="px-4 py-2 text-center w-1/12">Detail</th>
           </tr>
         </thead>
         <tbody>
           {data?.map(
             (
+<<<<<<< HEAD
               item: cariBukuType,
+=======
+              item: {
+                isbn: string;
+                judul: string;
+                penulisBuku: { penulis: { nama: string } }[];
+                genre: string[];
+                linkGambar: string;
+              },
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
               index: number
             ) => (
               <tr
                 key={index}
                 className="group border-b-2 border-dashed hover:bg-dark-gray transition-all duration-100 hover:text-white-custom hover:transition-all hover:duration-100"
               >
+<<<<<<< HEAD
                 <td className="px-4 py-2 font-source-sans font-bold text-sm">
+=======
+                <td className="px-4 py-2 font-source-sans font-semibold text-sm">
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
                   {item.isbn}
                 </td>
                 <td className="px-4 py-2 font-source-serif font-semibold text-sm">
                   {item.judul}
                 </td>
                 <td className="px-4 py-2 font-source-sans text-sm">
+<<<<<<< HEAD
                   {item.penulis.map(p => p.nama).join(', ')}
+=======
+                  {item.penulisBuku.map((d) => d.penulis.nama).join(", ")}
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex justify-center items-center flex-row flex-wrap gap-0.5">
@@ -72,7 +103,12 @@ const TableBuku = (data : cariBukuType[]) => {
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-2 text-center">Hapus/Edit</td>
+                <td className="px-4 py-2 ">
+                  <div className="flex items-center justify-center gap-2">
+                    <Delete02Icon className="w-5 h-5 text-jewel-red" />
+                    <PencilEdit01Icon className="w-5 h-5 text-jewel-blue " />
+                  </div>
+                </td>
                 <td className="px-4 py-2 ">
                   <button
                     type="submit"
