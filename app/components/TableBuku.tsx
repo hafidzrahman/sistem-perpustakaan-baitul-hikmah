@@ -1,5 +1,7 @@
 import BtnSecondary from "./BtnSecondary";
 import { cariBukuType } from "@/lib";
+import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
+
 
 const bg = [
   "bg-jewel-purple",
@@ -16,18 +18,20 @@ const border = [
   "border-pastel-blue",
 ];
 
+
 const TableBuku = (data : cariBukuType[]) => {
+
   return (
     <div className="max-h-80 overflow-y-auto border border-gray-300 rounded-lg shadow-md">
       <table className="min-w-full bg-white">
         <thead>
           <tr className="bg-light-primary text-white sticky top-0 z-10">
-            <th className="px-4 py-2 text-left w-2">ID</th>
-            <th className="px-4 py-2 text-left w-2/12">Judul</th>
+            <th className="px-4 py-2 text-left w-2/12">ISBN</th>
+            <th className="px-4 py-2 text-left w-3/12">Judul</th>
             <th className="px-4 py-2 text-left w-2/12">Penulis</th>
-            <th className="px-4 py-2 text-center w-4/12">Genre</th>
+            <th className="px-4 py-2 text-center w-2/12">Genre</th>
             <th className="px-4 py-2 text-center w-1/12">Status</th>
-            <th className="px-4 py-2 text-center w-2/12">Aksi</th>
+            <th className="px-4 py-2 text-center w-1/12">Aksi</th>
             <th className="px-4 py-2 text-center w-1/12">Detail</th>
           </tr>
         </thead>
@@ -41,7 +45,7 @@ const TableBuku = (data : cariBukuType[]) => {
                 key={index}
                 className="group border-b-2 border-dashed hover:bg-dark-gray transition-all duration-100 hover:text-white-custom hover:transition-all hover:duration-100"
               >
-                <td className="px-4 py-2 font-source-sans font-bold text-sm">
+                <td className="px-4 py-2 font-source-sans font-semibold text-sm">
                   {item.isbn}
                 </td>
                 <td className="px-4 py-2 font-source-serif font-semibold text-sm">
@@ -72,7 +76,12 @@ const TableBuku = (data : cariBukuType[]) => {
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-2 text-center">Hapus/Edit</td>
+                <td className="px-4 py-2 ">
+                  <div className="flex items-center justify-center gap-2">
+                    <Delete02Icon className="w-5 h-5 text-jewel-red" />
+                    <PencilEdit01Icon className="w-5 h-5 text-jewel-blue " />
+                  </div>
+                </td>
                 <td className="px-4 py-2 ">
                   <button
                     type="submit"
