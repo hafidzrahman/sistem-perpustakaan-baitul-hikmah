@@ -46,11 +46,15 @@ const TableMurid = ({ data }: TableMuridProps) => {
                 nis: string;
                 nama: string;
                 jenisKelamin: string;
-                riwayatKelas: {kelas : {id : number, nama : string, tingkat : number}}[];
+                riwayatKelas: {
+                  kelas: { id: number; nama: string; tingkat: number };
+                }[];
                 alamat: string;
               },
               index: number
             ) => {
+              console.log(data);
+
               const kelas = item.riwayatKelas[0].kelas.tingkat
                 ? `${item.riwayatKelas[0].kelas.tingkat} ${item.riwayatKelas[0].kelas.nama}`
                 : "Tidak Diketahui";
@@ -81,7 +85,7 @@ const TableMurid = ({ data }: TableMuridProps) => {
                   <td className="px-4 py-2 ">{item.alamat}</td>
                   <td className="px-4 py-2 text-center">
                     <div className="flex items-center justify-center">
-                      {item.jenisKelamin === "Perempuan" ? (
+                      {item.jenisKelamin === "PEREMPUAN" ? (
                         <HijabIcon
                           className="text-black-custom group-hover:text-white-custom"
                           width={24}
