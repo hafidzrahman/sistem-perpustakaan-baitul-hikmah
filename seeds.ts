@@ -87,9 +87,6 @@ export const seeds = {
             penulis : ["Orang Tamvan", "Orang-orang"], 
             halaman : 200, 
             sinopsis : "Pada suatu hari ada seseorang", 
-            tanggalRusak : new Date(),
-            tanggalHilang : new Date(),
-            posisi : "A1",
             linkGambar : "https://example.com"
             },
             {
@@ -100,9 +97,6 @@ export const seeds = {
             penulis : ["Orang Tamvan", "Orang-orang"], 
             halaman : 200, 
             sinopsis : "Pada suatu hari ada seseorang", 
-            tanggalRusak : new Date(),
-            tanggalHilang : new Date(),
-            posisi : "A1",
             linkGambar : "https://example.com"
             },
             {
@@ -113,9 +107,6 @@ export const seeds = {
                 penulis : ["Orang Tamvan", "Orang-orang"], 
                 halaman : 200, 
                 sinopsis : "Pada suatu hari ada seseorang", 
-                tanggalRusak : new Date(),
-                tanggalHilang : new Date(),
-                posisi : "A1",
                 linkGambar : "https://example.com"
             }
     ],

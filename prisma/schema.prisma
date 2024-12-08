@@ -7,6 +7,8 @@
 // Buat class Login, table userAccount & userPreference
 // perlu buat table author & penerbit?
 
+// no presensi
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,46 +24,46 @@ model PetugasPerpustakaan {
 }
 
 model Buku {
-  id            Int       @default(autoincrement())
-  isbn          String
-  judul         String
-  genre         Genre[]
-  halaman       Int?
-  linkGambar    String?   @map("link_gambar")
-  sinopsis      String?
-  posisi        String?
-  tanggalRusak  DateTime? @map("tanggal_rusak")
-  tanggalHilang DateTime? @map("tanggal_hilang")
+  isbn       String  @id
+  judul      String
+  genre      Genre[]
+  halaman    Int?
+  linkGambar String? @map("link_gambar")
+  sinopsis   String?
 
   idPenerbit Int
   penerbit   Penerbit @relation(fields: [idPenerbit], references: [id])
 
-  bukuPinjaman  BukuPinjaman[]
   formBukti     FormBukti[]
-  sumbanganBuku SumbanganBuku[]
-  penulisBuku   PenulisBuku[]
+  // sumbanganBuku SumbanganBuku[]
+  eksemplarBuku EksemplarBuku[]
+  penulis       Penulis[]
 
-  @@id([isbn, id])
-  @@index([isbn, id])
+  @@index([isbn])
 }
 
-model PenulisBuku {
+model EksemplarBuku {
+  id            Int       @default(autoincrement())
+  tanggalRusak  DateTime?
+  tanggalHilang DateTime?
+  posisi        String?
+
   bukuISBN String
-  bukuId   Int
-  buku     Buku   @relation(fields: [bukuISBN, bukuId], references: [isbn, id])
+  buku     Buku   @relation(fields: [bukuISBN], references: [isbn])
 
-  idPenulis Int
-  penulis   Penulis @relation(fields: [idPenulis], references: [id])
+  sumbanganBuku SumbanganBuku?
 
-  @@id([idPenulis, bukuISBN, bukuId])
-  @@index([bukuISBN, bukuId, idPenulis])
+  bukuPinjaman BukuPinjaman[]
+
+  @@id([bukuISBN, id])
+  @@index([bukuISBN, id])
 }
 
 model Penulis {
   id   Int    @id @default(autoincrement())
   nama String
 
-  penulisBuku PenulisBuku[]
+  Buku Buku[]
 
   @@index([id])
 }
@@ -103,7 +105,8 @@ model Guru {
 }
 
 model RiwayatKelas {
-  tahunAjaran String
+  tahunAjaran   String
+  nomorPresensi Int    @default(autoincrement())
 
   muridNIS String
   murid    Murid  @relation(fields: [muridNIS], references: [nis])
@@ -136,9 +139,8 @@ model FormBukti {
   muridNIS String
   murid    Murid  @relation(fields: [muridNIS], references: [nis])
 
-  bukuId   Int
   bukuISBN String
-  Buku     Buku   @relation(fields: [bukuISBN, bukuId], references: [isbn, id])
+  Buku     Buku   @relation(fields: [bukuISBN], references: [isbn])
 
   @@index([id])
 }
@@ -170,7 +172,7 @@ model BukuPinjaman {
 
   bukuISBN String
   bukuId   Int
-  buku     Buku   @relation(fields: [bukuISBN, bukuId], references: [isbn, id])
+  buku     EksemplarBuku @relation(fields: [bukuISBN, bukuId], references: [bukuISBN, id])
 
   @@id([idPeminjaman, bukuISBN, bukuId])
   @@index([idPeminjaman, bukuISBN, bukuId])
@@ -238,9 +240,10 @@ model SumbanganBuku {
 
   bukuId   Int
   bukuISBN String
-  buku     Buku   @relation(fields: [bukuISBN, bukuId], references: [isbn, id])
+  buku     EksemplarBuku @relation(fields: [bukuISBN, bukuId], references: [bukuISBN, id])
 
   @@id([idSumbangan, bukuISBN, bukuId])
+  @@unique([bukuISBN, bukuId])
   @@index([idSumbangan, bukuISBN, bukuId])
 }
 

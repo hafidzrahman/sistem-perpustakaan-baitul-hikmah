@@ -1,4 +1,4 @@
-import { murid } from "@/lib";
+import { murid } from "@/app/class/murid";
 import { NextResponse } from "next/server";
 
 export async function GET() {

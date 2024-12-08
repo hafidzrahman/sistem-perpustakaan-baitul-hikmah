@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
-import {Buku, bukuType, Guru, guruType, Kelas, kelasType, Keterangan, keteranganType, Murid, muridType, Peminjaman, peminjamanType} from "@/lib";
-import {seeds} from "@/seeds";
-import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+import {bukuType, kelasType, keteranganType, guruType, muridType, peminjamanType} from '@/lib'
+
+import {Buku} from '@/app/class/buku';
+import {Keterangan} from '@/app/class/keterangan';
+import {Kelas} from '@/app/class/kelas';
+import {Guru} from '@/app/class/guru';
+import {Murid} from '@/app/class/murid';
+import {Peminjaman} from '@/app/class/peminjaman';
+import {seeds} from "@/seeds";
+import { prisma } from "@/lib";
 
 export async function GET() {
   const {
@@ -22,7 +28,6 @@ export async function GET() {
     const peminjaman = new Peminjaman();
 
     await prisma.riwayatKelas.deleteMany({})
-    await prisma.penulisBuku.deleteMany({})
     await buku.hapusSemuaBuku();
     await kelas.hapusSemuaKelas();
     await murid.hapusSemuaAnggota();
@@ -30,6 +35,7 @@ export async function GET() {
     await keterangan.hapusSemuaKeterangan();
     await prisma.penulis.deleteMany({})
     await prisma.penerbit.deleteMany({})
+    await prisma.peminjaman.deleteMany({})
 
     await buku.tambahBanyakBuku(dataBuku);
     await kelas.tambahBanyakKelas(dataKelas);
@@ -45,8 +51,9 @@ export async function GET() {
     let arrayKeterangan : keteranganType[] = (await keterangan.cariKeterangan()) as keteranganType[];
     let arrayGuru : guruType[] = (await guru.cariAnggota()) as guruType[];
     let arrayPeminjaman : peminjamanType[] = (await peminjaman.cariPeminjaman()) as peminjamanType[]
-    let arrayPenulis = await prisma.penerbit.findMany({})
+    let arrayPenulis = await prisma.penulis.findFirst({})
+    let arrayPenerbit = await prisma.penerbit.findMany({})
 
-    return NextResponse.json({arrayPenulis, arrayBuku, arrayKelas, arrayMurid, arrayKeterangan, arrayGuru, arrayPeminjaman})
+    return NextResponse.json({arrayPenerbit, arrayPenulis, arrayBuku, arrayKelas, arrayMurid, arrayKeterangan, arrayGuru, arrayPeminjaman})
 }
 

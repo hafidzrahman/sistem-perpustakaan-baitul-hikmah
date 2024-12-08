@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { guru } from "@/lib";
+import { guru } from "@/app/class/guru";
 
 export async function GET() {
     try {

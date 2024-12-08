@@ -1,4 +1,5 @@
-import {murid, muridType} from '@/lib';
+import {murid} from '@/app/class/murid';
+import {muridType} from '@/lib';
 import { NextResponse } from 'next/server';
 
 type paramsType = {

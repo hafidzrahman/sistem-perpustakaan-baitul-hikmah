@@ -7,6 +7,7 @@ import { AddCircleHalfDotIcon } from "hugeicons-react";
 import TableBuku from "@/app/components/TableBuku";
 import CardTambahBuku from "@/app/components/CardTambahBuku";
 import BookChart from "@/app/components/BookChart";
+import { bukuType, cariBukuType } from "@/lib";
 
 interface BukuPageProps {}
 
@@ -96,14 +97,14 @@ const BukuPage = ({}: BukuPageProps) => {
         {buku.length ? (
           buku.map(
             (
-              item: { judul: string; penulisBuku: {penulis : {nama : string}}[]; linkGambar: string },
+              item: cariBukuType,
               index
             ) => (
               <CardBuku
                 key={index}
                 judul={item.judul}
-                penulis={item.penulisBuku.map(d => d.penulis.nama).join(", ")}
-                link={item.linkGambar}
+                penulis={item.penulis.map(d => d.nama).join(", ")}
+                link={item.linkGambar || "https://example.com"}
               />
             )
           )
@@ -124,7 +125,7 @@ const BukuPage = ({}: BukuPageProps) => {
             />
           </div>
           <div className="rounded-lg overflow-hidden border-black-custom border">
-            <TableBuku data={buku} />
+            {buku.length && <TableBuku />}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import {keterangan} from "@/lib";
+import {keterangan} from "@/app/class/keterangan";
 import {NextResponse} from "next/server"
 
 

@@ -1,8 +1,5 @@
 import BtnSecondary from "./BtnSecondary";
-
-interface TableBukuProps {
-  data: any;
-}
+import { cariBukuType } from "@/lib";
 
 const bg = [
   "bg-jewel-purple",
@@ -19,7 +16,7 @@ const border = [
   "border-pastel-blue",
 ];
 
-const TableBuku = ({ data }: TableBukuProps) => {
+const TableBuku = (data : cariBukuType[]) => {
   return (
     <div className="max-h-80 overflow-y-auto border border-gray-300 rounded-lg shadow-md">
       <table className="min-w-full bg-white">
@@ -37,13 +34,7 @@ const TableBuku = ({ data }: TableBukuProps) => {
         <tbody>
           {data?.map(
             (
-              item: {
-                id: number;
-                judul: string;
-                penulis: string[];
-                genre: string[];
-                linkGambar: string;
-              },
+              item: cariBukuType,
               index: number
             ) => (
               <tr
@@ -51,13 +42,13 @@ const TableBuku = ({ data }: TableBukuProps) => {
                 className="group border-b-2 border-dashed hover:bg-dark-gray transition-all duration-100 hover:text-white-custom hover:transition-all hover:duration-100"
               >
                 <td className="px-4 py-2 font-source-sans font-bold text-sm">
-                  {item.id}
+                  {item.isbn}
                 </td>
                 <td className="px-4 py-2 font-source-serif font-semibold text-sm">
                   {item.judul}
                 </td>
                 <td className="px-4 py-2 font-source-sans text-sm">
-                  {item.penulis}
+                  {item.penulis.map(p => p.nama).join(', ')}
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex justify-center items-center flex-row flex-wrap gap-0.5">
