@@ -94,19 +94,7 @@ const BukuPage = ({}: BukuPageProps) => {
         }}
       >
         {buku.length ? (
-          buku.map(
-            (
-              item: { judul: string; penulisBuku: {penulis : {nama : string}}[]; linkGambar: string },
-              index
-            ) => (
-              <CardBuku
-                key={index}
-                judul={item.judul}
-                penulis={item.penulisBuku.map(d => d.penulis.nama).join(", ")}
-                link={item.linkGambar}
-              />
-            )
-          )
+          buku.map((item, index) => <CardBuku key={index} data={item} />)
         ) : (
           <div>Bentar</div>
         )}
