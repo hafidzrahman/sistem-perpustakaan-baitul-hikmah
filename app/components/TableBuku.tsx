@@ -21,6 +21,7 @@ const border = [
 ];
 
 const TableBuku = ({ data }: TableBukuProps) => {
+  console.log(data);
   return (
     <div className="max-h-80 overflow-y-auto border border-gray-300 rounded-lg shadow-md">
       <table className="min-w-full bg-white">
@@ -41,7 +42,7 @@ const TableBuku = ({ data }: TableBukuProps) => {
               item: {
                 isbn: string;
                 judul: string;
-                penulis: string[];
+                penulisBuku: { penulis: { nama: string } }[];
                 genre: string[];
                 linkGambar: string;
               },
@@ -58,7 +59,7 @@ const TableBuku = ({ data }: TableBukuProps) => {
                   {item.judul}
                 </td>
                 <td className="px-4 py-2 font-source-sans text-sm">
-                  {item.penulis}
+                  {item.penulisBuku.map((d) => d.penulis.nama).join(", ")}
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex justify-center items-center flex-row flex-wrap gap-0.5">
