@@ -1,14 +1,11 @@
 "use client";
-
-import CardData from "@/app/components/CardData";
-import BookCategoryDonutChart from "@/app/components/DoughnutChart";
 import PeminjamanLineChart from "@/app/components/PeminjamanLineChart";
 import {
   Mortarboard01Icon,
   TeacherIcon,
   BookOpen02Icon,
-  Agreement02Icon,
 } from "hugeicons-react";
+import BukuGenreDoughnutChart from "@/app/components/BukuGenreDoughnutChart";
 
 interface PageProps {}
 
@@ -52,7 +49,7 @@ const Page = ({}: PageProps) => {
           <h1 className="font-source-sans text-2xl text-center text-primary font-bold">
             Status Buku
           </h1>
-          <BookCategoryDonutChart />
+          <BukuGenreDoughnutChart />
         </div>
         <div className="flex flex-col max-h-[380px] order-last col-span-1 row-span-2 p-6 overflow-y-auto bg-white  rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-4 lg:row-span-2 dark-gray">
           <h1 className="font-source-sans text-2xl text-primary font-bold">

@@ -6,7 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 import TableBuku from "@/app/components/TableBuku";
 import CardTambahBuku from "@/app/components/CardTambahBuku";
-import BookChart from "@/app/components/BookChart";
+import BookChart from "@/app/components/MuridBarChart";
 
 interface BukuPageProps {}
 
