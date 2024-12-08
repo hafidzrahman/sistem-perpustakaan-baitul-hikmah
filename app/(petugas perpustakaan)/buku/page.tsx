@@ -6,7 +6,12 @@ import { useEffect, useState, useRef } from "react";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 import TableBuku from "@/app/components/TableBuku";
 import CardTambahBuku from "@/app/components/CardTambahBuku";
+<<<<<<< HEAD
+import BookChart from "@/app/components/BookChart";
+import { bukuType, cariBukuType } from "@/lib";
+=======
 import BookChart from "@/app/components/MuridBarChart";
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
 
 interface BukuPageProps {}
 
@@ -94,7 +99,23 @@ const BukuPage = ({}: BukuPageProps) => {
         }}
       >
         {buku.length ? (
+<<<<<<< HEAD
+          buku.map(
+            (
+              item: cariBukuType,
+              index
+            ) => (
+              <CardBuku
+                key={index}
+                judul={item.judul}
+                penulis={item.penulis.map(d => d.nama).join(", ")}
+                link={item.linkGambar || "https://example.com"}
+              />
+            )
+          )
+=======
           buku.map((item, index) => <CardBuku key={index} data={item} />)
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc
         ) : (
           <div>Bentar</div>
         )}
@@ -112,7 +133,7 @@ const BukuPage = ({}: BukuPageProps) => {
             />
           </div>
           <div className="rounded-lg overflow-hidden border-black-custom border">
-            <TableBuku data={buku} />
+            {buku.length && <TableBuku />}
           </div>
         </div>
       </div>

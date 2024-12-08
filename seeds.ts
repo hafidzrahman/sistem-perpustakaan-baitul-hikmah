@@ -65,6 +65,139 @@ Table sumbangan buku terdapat dua id table sumbangan
 import { Genre, JenisKelamin } from "@prisma/client";
 
 export const seeds = {
+<<<<<<< HEAD
+    buku : [
+        {
+            isbn : "978-602-8519-93-9", 
+            judul : "Killing Commandantore", 
+            genre : [Genre.FANTASY, Genre.SCIFI], 
+            penerbit : "Orang Ganteng", 
+            penulis : ["Orang Tamvan", "Orang-orang"], 
+            halaman : 200, 
+            sinopsis : "Pada suatu hari ada seseorang", 
+            tanggalRusak : new Date(),
+            tanggalHilang : new Date(),
+            posisi : "A1",
+            linkGambar : "https://example.com"
+            },
+            {
+            isbn : "978-602-8519-93-9", 
+            judul : "Killing Commandantore", 
+            genre : [Genre.FANTASY, Genre.SCIFI], 
+            penerbit : "Orang Ganteng", 
+            penulis : ["Orang Tamvan", "Orang-orang"], 
+            halaman : 200, 
+            sinopsis : "Pada suatu hari ada seseorang", 
+            linkGambar : "https://example.com"
+            },
+            {
+            isbn : "978-602-8519-93-9", 
+            judul : "Killing Commandantore", 
+            genre : [Genre.FANTASY, Genre.SCIFI], 
+            penerbit : "Orang Ganteng", 
+            penulis : ["Orang Tamvan", "Orang-orang"], 
+            halaman : 200, 
+            sinopsis : "Pada suatu hari ada seseorang", 
+            linkGambar : "https://example.com"
+            },
+            {
+                isbn : "978-602-8519-94-8", 
+                judul : "Killing Commandantore 2", 
+                genre : [Genre.FANTASY, Genre.SCIFI], 
+                penerbit : "Orang Ganteng", 
+                penulis : ["Orang Tamvan", "Orang-orang"], 
+                halaman : 200, 
+                sinopsis : "Pada suatu hari ada seseorang", 
+                linkGambar : "https://example.com"
+            }
+    ],
+    kelas : [
+        {id : 1, nama : "Al Fatih", tingkat : 1},
+        {id : 2, nama : "Al Muttaqin", tingkat : 2},
+        {id : 3, nama : "Al Falah", tingkat : 3}
+    ],
+    murid : [
+        {
+            nis : "12412423", 
+            nama : "Olav Thomas", 
+            jenisKelamin : JenisKelamin.LAKI, 
+            idKelas : 1, 
+            kontak : "0831242152", 
+            alamat : "Jalan Kebun Kopi"},
+            {
+                nis : "12412421", 
+                nama : "Olav Thomas", 
+                jenisKelamin : JenisKelamin.LAKI, 
+                idKelas : 1, 
+                kontak : "0831242152", 
+                alamat : "Jalan Kebun Kopi"
+            },
+            {
+                nis : "12412422", 
+                nama : "Olav Thomas", 
+                jenisKelamin : JenisKelamin.LAKI, 
+                idKelas : 1, 
+                kontak : "0831242152", 
+                alamat : "Jalan Kebun Kopi"
+            }      
+    ],
+    guru : [
+        {
+            nip : "12412423", 
+            nama : "Olav Thomas", 
+            jenisKelamin : JenisKelamin.LAKI, 
+            kontak : "0831242152", 
+            alamat : "Jalan Kebun Kopi"},
+            {
+                nip : "12412421", 
+                nama : "Olav Thomas", 
+                jenisKelamin : JenisKelamin.LAKI, 
+                kontak : "0831242152", 
+                alamat : "Jalan Kebun Kopi"
+            },
+            {
+                nip : "12412422", 
+                nama : "Olav Thomas", 
+                jenisKelamin : JenisKelamin.LAKI, 
+                kontak : "0831242152", 
+                alamat : "Jalan Kebun Kopi"
+            }      
+    ], 
+    keterangan : [
+        {   id : 1,
+            keterangan : "Keterlambatan Pengembalian Buku",
+            jumlahBuku : 5,
+            totalNominal : 110000,
+            nominalPerHari : 1000
+        },
+        {
+            id : 2,
+            keterangan : "Keterlambatan Pengembalian Buku",
+            jumlahBuku : 2,
+            totalNominal : 550000,
+            nominalPerHari : 1000
+        },
+        {
+            id : 3,
+            keterangan : "Keterlambatan Pengembalian Buku",
+            jumlahBuku : 3,
+            totalNominal : 300000,
+            nominalPerHari : 1000
+        }, {
+            id : 4,
+            keterangan : "Keterlambatan Pengembalian Buku",
+            jumlahBuku : 3,
+            totalNominal : 300000,
+            nominalPerHari : 1000
+        }
+    ],
+    peminjaman : [
+        {nis : "12412421", tanggalPinjam : new Date(), keterangan : "WOW"},
+        {nip : "12412422", tanggalPinjam : new Date(), keterangan : "WOW"},
+        {nip : "12412423", tanggalPinjam : new Date(), keterangan : "WOW"}
+    ]
+}
+=======
   buku: [
     {
       isbn: "978-602-06-5192-7",
@@ -186,3 +319,4 @@ export const seeds = {
     { nip: "12412423", tanggalPinjam: new Date(), keterangan: "WOW" },
   ],
 };
+>>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc

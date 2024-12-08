@@ -1,4 +1,5 @@
-import { guru, guruType } from '@/lib';
+import { guru } from '@/app/class/guru';
+import {guruType} from '@/lib';
 import { NextResponse } from 'next/server';
 
 type paramsType = {

@@ -1,9 +1,7 @@
 import BtnSecondary from "./BtnSecondary";
+import { cariBukuType } from "@/lib";
 import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
 
-interface TableBukuProps {
-  data: any;
-}
 
 const bg = [
   "bg-jewel-purple",
@@ -20,8 +18,9 @@ const border = [
   "border-pastel-blue",
 ];
 
-const TableBuku = ({ data }: TableBukuProps) => {
-  console.log(data);
+
+const TableBuku = (data : cariBukuType[]) => {
+
   return (
     <div className="max-h-80 overflow-y-auto border border-gray-300 rounded-lg shadow-md">
       <table className="min-w-full bg-white">
@@ -39,13 +38,7 @@ const TableBuku = ({ data }: TableBukuProps) => {
         <tbody>
           {data?.map(
             (
-              item: {
-                isbn: string;
-                judul: string;
-                penulisBuku: { penulis: { nama: string } }[];
-                genre: string[];
-                linkGambar: string;
-              },
+              item: cariBukuType,
               index: number
             ) => (
               <tr
@@ -59,7 +52,7 @@ const TableBuku = ({ data }: TableBukuProps) => {
                   {item.judul}
                 </td>
                 <td className="px-4 py-2 font-source-sans text-sm">
-                  {item.penulisBuku.map((d) => d.penulis.nama).join(", ")}
+                  {item.penulis.map(p => p.nama).join(', ')}
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex justify-center items-center flex-row flex-wrap gap-0.5">

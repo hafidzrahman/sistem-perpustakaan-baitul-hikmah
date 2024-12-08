@@ -1,4 +1,5 @@
-import {kelas, kelasType} from '@/lib';
+import {kelas} from '@/app/class/kelas';
+import {kelasType} from '@/lib';
 import { NextResponse } from 'next/server';
 
 type paramsType = {
@@ -9,7 +10,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
         
-        const dataKelas = await kelas.cariKelas(id) as kelasType;
+        const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
 
         if (!dataKelas?.id) {
             return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
@@ -26,13 +27,13 @@ export async function PUT(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
         const body = await req.json();
-        const dataKelas = await kelas.cariKelas(id) as kelasType;
+        const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
 
         if (!dataKelas?.id) {
             return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
         }
 
-        kelas.perbaruiKelas(id, body);
+        kelas.perbaruiKelas(Number(id), body);
 
         return NextResponse.json({kelas}, {status : 200})
 
@@ -46,13 +47,13 @@ export async function DELETE(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
         
-        const dataKelas = await kelas.cariKelas(id) as kelasType;
+        const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
 
         if (!dataKelas?.id) {
             return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
         }
 
-        kelas.hapusKelas(id);
+        kelas.hapusKelas(Number(id));
 
         return NextResponse.json({message : "Berhasil menghapus data kelas"}, {status : 200})
 

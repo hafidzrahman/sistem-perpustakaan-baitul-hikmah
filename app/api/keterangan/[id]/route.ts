@@ -1,4 +1,5 @@
-import {keterangan, keteranganType} from '@/lib';
+import {keterangan} from '@/app/class/keterangan';
+import {keteranganType} from '@/lib'
 import { NextResponse } from 'next/server';
 
 type paramsType = {
@@ -10,7 +11,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
         
-        const dataKeterangan = await keterangan.cariKeterangan(id) as keteranganType;
+        const dataKeterangan = await keterangan.cariKeterangan(Number(id)) as keteranganType;
 
         if (!dataKeterangan?.id) {
             return NextResponse.json({message : "Data keterangan tidak ditemukan"}, {status : 502})
@@ -28,7 +29,7 @@ export async function PUT(req : Request, {params} : paramsType) {
         const {id} = await params;
         const body = await req.json();
 
-        await keterangan.perbaruiKeterangan(id, body);
+        await keterangan.perbaruiKeterangan(Number(id), body);
 
         return NextResponse.json({keterangan}, {status : 200})
 
@@ -42,7 +43,7 @@ export async function DELETE(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
         
-        await keterangan.hapusKeterangan(id);
+        await keterangan.hapusKeterangan(Number(id));
 
         return NextResponse.json({message : "Berhasil menghapus data keterangan"}, {status : 200})
 

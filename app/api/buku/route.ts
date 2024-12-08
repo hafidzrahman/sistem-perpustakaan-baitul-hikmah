@@ -1,4 +1,4 @@
-import { buku } from "@/lib";
+import { buku } from "@/app/class/buku";
 import { NextResponse } from "next/server";
 
 

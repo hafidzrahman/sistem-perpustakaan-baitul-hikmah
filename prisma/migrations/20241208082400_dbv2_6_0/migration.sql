@@ -32,25 +32,47 @@ CREATE TABLE "PetugasPerpustakaan" (
 
 -- CreateTable
 CREATE TABLE "Buku" (
-    "id" SERIAL NOT NULL,
     "isbn" TEXT NOT NULL,
     "judul" TEXT NOT NULL,
-    "penulis" TEXT[],
     "genre" "Genre"[],
-    "penerbit" TEXT,
     "halaman" INTEGER,
     "link_gambar" TEXT,
     "sinopsis" TEXT,
-    "posisi" TEXT,
-    "tanggal_rusak" TIMESTAMP(3),
-    "tanggal_hilang" TIMESTAMP(3),
+    "idPenerbit" INTEGER NOT NULL,
 
-    CONSTRAINT "Buku_pkey" PRIMARY KEY ("isbn","id")
+    CONSTRAINT "Buku_pkey" PRIMARY KEY ("isbn")
+);
+
+-- CreateTable
+CREATE TABLE "EksamplerBuku" (
+    "id" SERIAL NOT NULL,
+    "tanggalRusak" TIMESTAMP(3),
+    "tanggalHilang" TIMESTAMP(3),
+    "posisi" TEXT,
+    "bukuISBN" TEXT NOT NULL,
+
+    CONSTRAINT "EksamplerBuku_pkey" PRIMARY KEY ("bukuISBN","id")
+);
+
+-- CreateTable
+CREATE TABLE "Penulis" (
+    "id" SERIAL NOT NULL,
+    "nama" TEXT NOT NULL,
+
+    CONSTRAINT "Penulis_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Penerbit" (
+    "id" SERIAL NOT NULL,
+    "nama" TEXT NOT NULL,
+
+    CONSTRAINT "Penerbit_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Murid" (
-    "nis" BIGINT NOT NULL,
+    "nis" TEXT NOT NULL,
     "nama" TEXT NOT NULL,
     "jenis_kelamin" "JenisKelamin" NOT NULL,
     "kontak" TEXT NOT NULL,
@@ -61,7 +83,7 @@ CREATE TABLE "Murid" (
 
 -- CreateTable
 CREATE TABLE "Guru" (
-    "nip" BIGINT NOT NULL,
+    "nip" TEXT NOT NULL,
     "nama" TEXT NOT NULL,
     "jenisKelamin" "JenisKelamin" NOT NULL,
     "kontak" TEXT NOT NULL,
@@ -73,7 +95,8 @@ CREATE TABLE "Guru" (
 -- CreateTable
 CREATE TABLE "RiwayatKelas" (
     "tahunAjaran" TEXT NOT NULL,
-    "muridNIS" BIGINT NOT NULL,
+    "nomorPresensi" SERIAL NOT NULL,
+    "muridNIS" TEXT NOT NULL,
     "idKelas" INTEGER NOT NULL,
 
     CONSTRAINT "RiwayatKelas_pkey" PRIMARY KEY ("muridNIS","idKelas")
@@ -96,8 +119,7 @@ CREATE TABLE "FormBukti" (
     "halamanAkhir" INTEGER NOT NULL,
     "intisari" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL,
-    "muridNIS" BIGINT NOT NULL,
-    "bukuId" INTEGER NOT NULL,
+    "muridNIS" TEXT NOT NULL,
     "bukuISBN" TEXT NOT NULL,
 
     CONSTRAINT "FormBukti_pkey" PRIMARY KEY ("id")
@@ -108,8 +130,8 @@ CREATE TABLE "Peminjaman" (
     "id" SERIAL NOT NULL,
     "tanggalPinjam" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "keterangan" TEXT,
-    "murid_nis" BIGINT,
-    "guru_nip" BIGINT,
+    "murid_nis" TEXT,
+    "guru_nip" TEXT,
 
     CONSTRAINT "Peminjaman_pkey" PRIMARY KEY ("id")
 );
@@ -154,8 +176,8 @@ CREATE TABLE "Sumbangan" (
     "tanggalSelesai" TIMESTAMP(3),
     "berlebih" BOOLEAN NOT NULL,
     "idKeterangan" INTEGER NOT NULL,
-    "nis" BIGINT,
-    "nip" BIGINT,
+    "nis" TEXT,
+    "nip" TEXT,
 
     CONSTRAINT "Sumbangan_pkey" PRIMARY KEY ("id")
 );
@@ -190,11 +212,82 @@ CREATE TABLE "RiwayatBantuan" (
     CONSTRAINT "RiwayatBantuan_pkey" PRIMARY KEY ("idPembayaranTunai","idSumbangan")
 );
 
+-- CreateTable
+CREATE TABLE "_BukuToPenulis" (
+    "A" TEXT NOT NULL,
+    "B" INTEGER NOT NULL,
+
+    CONSTRAINT "_BukuToPenulis_AB_pkey" PRIMARY KEY ("A","B")
+);
+
+-- CreateIndex
+CREATE INDEX "Buku_isbn_idx" ON "Buku"("isbn");
+
+-- CreateIndex
+CREATE INDEX "EksamplerBuku_bukuISBN_id_idx" ON "EksamplerBuku"("bukuISBN", "id");
+
+-- CreateIndex
+CREATE INDEX "Penulis_id_idx" ON "Penulis"("id");
+
+-- CreateIndex
+CREATE INDEX "Penerbit_id_idx" ON "Penerbit"("id");
+
+-- CreateIndex
+CREATE INDEX "Murid_nis_idx" ON "Murid"("nis");
+
+-- CreateIndex
+CREATE INDEX "Guru_nip_idx" ON "Guru"("nip");
+
+-- CreateIndex
+CREATE INDEX "RiwayatKelas_muridNIS_idKelas_idx" ON "RiwayatKelas"("muridNIS", "idKelas");
+
+-- CreateIndex
+CREATE INDEX "Kelas_id_idx" ON "Kelas"("id");
+
+-- CreateIndex
+CREATE INDEX "FormBukti_id_idx" ON "FormBukti"("id");
+
+-- CreateIndex
+CREATE INDEX "Peminjaman_id_idx" ON "Peminjaman"("id");
+
+-- CreateIndex
+CREATE INDEX "BukuPinjaman_idPeminjaman_bukuISBN_bukuId_idx" ON "BukuPinjaman"("idPeminjaman", "bukuISBN", "bukuId");
+
+-- CreateIndex
+CREATE INDEX "Keterangan_id_idx" ON "Keterangan"("id");
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Denda_idSumbangan_key" ON "Denda"("idSumbangan");
 
 -- CreateIndex
+CREATE INDEX "Denda_idPeminjaman_bukuISBN_bukuId_idx" ON "Denda"("idPeminjaman", "bukuISBN", "bukuId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Denda_idPeminjaman_bukuISBN_bukuId_key" ON "Denda"("idPeminjaman", "bukuISBN", "bukuId");
+
+-- CreateIndex
+CREATE INDEX "Sumbangan_id_idx" ON "Sumbangan"("id");
+
+-- CreateIndex
+CREATE INDEX "SumbanganBuku_idSumbangan_bukuISBN_bukuId_idx" ON "SumbanganBuku"("idSumbangan", "bukuISBN", "bukuId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SumbanganBuku_bukuISBN_bukuId_key" ON "SumbanganBuku"("bukuISBN", "bukuId");
+
+-- CreateIndex
+CREATE INDEX "PembayaranTunai_id_idx" ON "PembayaranTunai"("id");
+
+-- CreateIndex
+CREATE INDEX "RiwayatBantuan_idPembayaranTunai_idSumbangan_idx" ON "RiwayatBantuan"("idPembayaranTunai", "idSumbangan");
+
+-- CreateIndex
+CREATE INDEX "_BukuToPenulis_B_index" ON "_BukuToPenulis"("B");
+
+-- AddForeignKey
+ALTER TABLE "Buku" ADD CONSTRAINT "Buku_idPenerbit_fkey" FOREIGN KEY ("idPenerbit") REFERENCES "Penerbit"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "EksamplerBuku" ADD CONSTRAINT "EksamplerBuku_bukuISBN_fkey" FOREIGN KEY ("bukuISBN") REFERENCES "Buku"("isbn") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RiwayatKelas" ADD CONSTRAINT "RiwayatKelas_muridNIS_fkey" FOREIGN KEY ("muridNIS") REFERENCES "Murid"("nis") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -206,7 +299,7 @@ ALTER TABLE "RiwayatKelas" ADD CONSTRAINT "RiwayatKelas_idKelas_fkey" FOREIGN KE
 ALTER TABLE "FormBukti" ADD CONSTRAINT "FormBukti_muridNIS_fkey" FOREIGN KEY ("muridNIS") REFERENCES "Murid"("nis") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "FormBukti" ADD CONSTRAINT "FormBukti_bukuISBN_bukuId_fkey" FOREIGN KEY ("bukuISBN", "bukuId") REFERENCES "Buku"("isbn", "id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "FormBukti" ADD CONSTRAINT "FormBukti_bukuISBN_fkey" FOREIGN KEY ("bukuISBN") REFERENCES "Buku"("isbn") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Peminjaman" ADD CONSTRAINT "Peminjaman_murid_nis_fkey" FOREIGN KEY ("murid_nis") REFERENCES "Murid"("nis") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -218,7 +311,7 @@ ALTER TABLE "Peminjaman" ADD CONSTRAINT "Peminjaman_guru_nip_fkey" FOREIGN KEY (
 ALTER TABLE "BukuPinjaman" ADD CONSTRAINT "BukuPinjaman_idPeminjaman_fkey" FOREIGN KEY ("idPeminjaman") REFERENCES "Peminjaman"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BukuPinjaman" ADD CONSTRAINT "BukuPinjaman_bukuISBN_bukuId_fkey" FOREIGN KEY ("bukuISBN", "bukuId") REFERENCES "Buku"("isbn", "id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "BukuPinjaman" ADD CONSTRAINT "BukuPinjaman_bukuISBN_bukuId_fkey" FOREIGN KEY ("bukuISBN", "bukuId") REFERENCES "EksamplerBuku"("bukuISBN", "id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Denda" ADD CONSTRAINT "Denda_idPeminjaman_bukuISBN_bukuId_fkey" FOREIGN KEY ("idPeminjaman", "bukuISBN", "bukuId") REFERENCES "BukuPinjaman"("idPeminjaman", "bukuISBN", "bukuId") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -242,7 +335,7 @@ ALTER TABLE "SumbanganBuku" ADD CONSTRAINT "SumbanganBuku_idSumbangan_fkey" FORE
 ALTER TABLE "SumbanganBuku" ADD CONSTRAINT "SumbanganBuku_idSumbanganBantuan_fkey" FOREIGN KEY ("idSumbanganBantuan") REFERENCES "Sumbangan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SumbanganBuku" ADD CONSTRAINT "SumbanganBuku_bukuISBN_bukuId_fkey" FOREIGN KEY ("bukuISBN", "bukuId") REFERENCES "Buku"("isbn", "id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "SumbanganBuku" ADD CONSTRAINT "SumbanganBuku_bukuISBN_bukuId_fkey" FOREIGN KEY ("bukuISBN", "bukuId") REFERENCES "EksamplerBuku"("bukuISBN", "id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PembayaranTunai" ADD CONSTRAINT "PembayaranTunai_idSumbangan_fkey" FOREIGN KEY ("idSumbangan") REFERENCES "Sumbangan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -252,3 +345,9 @@ ALTER TABLE "RiwayatBantuan" ADD CONSTRAINT "RiwayatBantuan_idPembayaranTunai_fk
 
 -- AddForeignKey
 ALTER TABLE "RiwayatBantuan" ADD CONSTRAINT "RiwayatBantuan_idSumbangan_fkey" FOREIGN KEY ("idSumbangan") REFERENCES "Sumbangan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_BukuToPenulis" ADD CONSTRAINT "_BukuToPenulis_A_fkey" FOREIGN KEY ("A") REFERENCES "Buku"("isbn") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_BukuToPenulis" ADD CONSTRAINT "_BukuToPenulis_B_fkey" FOREIGN KEY ("B") REFERENCES "Penulis"("id") ON DELETE CASCADE ON UPDATE CASCADE;

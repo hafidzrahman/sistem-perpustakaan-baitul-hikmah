@@ -1,4 +1,4 @@
-import { kelas } from "@/lib";
+import { kelas } from "@/app/class/kelas";
 import { NextResponse } from "next/server";
 
 export async function GET() {
