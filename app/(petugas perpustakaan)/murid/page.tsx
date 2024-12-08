@@ -44,21 +44,20 @@ const MuridPage = ({}: MuridPageProps) => {
     const fetchMurid = async () => {
       const respon = await fetch("/api/murid");
       const data = await respon.json();
+      console.log(data)
       setMurid(data);
     };
     fetchMurid();
   }, [tambahMurid]);
 
   useEffect(() => {
-    const fecthKelas = async () => {
+    const fetchKelas = async () => {
       const respon = await fetch("/api/murid");
       const data = await respon.json();
       setMurid(data);
     };
-    fecthKelas();
+    fetchKelas();
   }, [tambahKelas]);
-
-  console.log(murid);
 
   return (
     <>
