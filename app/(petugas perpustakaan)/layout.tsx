@@ -1,5 +1,7 @@
 "use client";
 
+//  ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
+
 import React, { useState } from "react";
 import {
   UserCircleIcon,

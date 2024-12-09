@@ -65,139 +65,6 @@ Table sumbangan buku terdapat dua id table sumbangan
 import { Genre, JenisKelamin } from "@prisma/client";
 
 export const seeds = {
-<<<<<<< HEAD
-    buku : [
-        {
-            isbn : "978-602-8519-93-9", 
-            judul : "Killing Commandantore", 
-            genre : [Genre.FANTASY, Genre.SCIFI], 
-            penerbit : "Orang Ganteng", 
-            penulis : ["Orang Tamvan", "Orang-orang"], 
-            halaman : 200, 
-            sinopsis : "Pada suatu hari ada seseorang", 
-            tanggalRusak : new Date(),
-            tanggalHilang : new Date(),
-            posisi : "A1",
-            linkGambar : "https://example.com"
-            },
-            {
-            isbn : "978-602-8519-93-9", 
-            judul : "Killing Commandantore", 
-            genre : [Genre.FANTASY, Genre.SCIFI], 
-            penerbit : "Orang Ganteng", 
-            penulis : ["Orang Tamvan", "Orang-orang"], 
-            halaman : 200, 
-            sinopsis : "Pada suatu hari ada seseorang", 
-            linkGambar : "https://example.com"
-            },
-            {
-            isbn : "978-602-8519-93-9", 
-            judul : "Killing Commandantore", 
-            genre : [Genre.FANTASY, Genre.SCIFI], 
-            penerbit : "Orang Ganteng", 
-            penulis : ["Orang Tamvan", "Orang-orang"], 
-            halaman : 200, 
-            sinopsis : "Pada suatu hari ada seseorang", 
-            linkGambar : "https://example.com"
-            },
-            {
-                isbn : "978-602-8519-94-8", 
-                judul : "Killing Commandantore 2", 
-                genre : [Genre.FANTASY, Genre.SCIFI], 
-                penerbit : "Orang Ganteng", 
-                penulis : ["Orang Tamvan", "Orang-orang"], 
-                halaman : 200, 
-                sinopsis : "Pada suatu hari ada seseorang", 
-                linkGambar : "https://example.com"
-            }
-    ],
-    kelas : [
-        {id : 1, nama : "Al Fatih", tingkat : 1},
-        {id : 2, nama : "Al Muttaqin", tingkat : 2},
-        {id : 3, nama : "Al Falah", tingkat : 3}
-    ],
-    murid : [
-        {
-            nis : "12412423", 
-            nama : "Olav Thomas", 
-            jenisKelamin : JenisKelamin.LAKI, 
-            idKelas : 1, 
-            kontak : "0831242152", 
-            alamat : "Jalan Kebun Kopi"},
-            {
-                nis : "12412421", 
-                nama : "Olav Thomas", 
-                jenisKelamin : JenisKelamin.LAKI, 
-                idKelas : 1, 
-                kontak : "0831242152", 
-                alamat : "Jalan Kebun Kopi"
-            },
-            {
-                nis : "12412422", 
-                nama : "Olav Thomas", 
-                jenisKelamin : JenisKelamin.LAKI, 
-                idKelas : 1, 
-                kontak : "0831242152", 
-                alamat : "Jalan Kebun Kopi"
-            }      
-    ],
-    guru : [
-        {
-            nip : "12412423", 
-            nama : "Olav Thomas", 
-            jenisKelamin : JenisKelamin.LAKI, 
-            kontak : "0831242152", 
-            alamat : "Jalan Kebun Kopi"},
-            {
-                nip : "12412421", 
-                nama : "Olav Thomas", 
-                jenisKelamin : JenisKelamin.LAKI, 
-                kontak : "0831242152", 
-                alamat : "Jalan Kebun Kopi"
-            },
-            {
-                nip : "12412422", 
-                nama : "Olav Thomas", 
-                jenisKelamin : JenisKelamin.LAKI, 
-                kontak : "0831242152", 
-                alamat : "Jalan Kebun Kopi"
-            }      
-    ], 
-    keterangan : [
-        {   id : 1,
-            keterangan : "Keterlambatan Pengembalian Buku",
-            jumlahBuku : 5,
-            totalNominal : 110000,
-            nominalPerHari : 1000
-        },
-        {
-            id : 2,
-            keterangan : "Keterlambatan Pengembalian Buku",
-            jumlahBuku : 2,
-            totalNominal : 550000,
-            nominalPerHari : 1000
-        },
-        {
-            id : 3,
-            keterangan : "Keterlambatan Pengembalian Buku",
-            jumlahBuku : 3,
-            totalNominal : 300000,
-            nominalPerHari : 1000
-        }, {
-            id : 4,
-            keterangan : "Keterlambatan Pengembalian Buku",
-            jumlahBuku : 3,
-            totalNominal : 300000,
-            nominalPerHari : 1000
-        }
-    ],
-    peminjaman : [
-        {nis : "12412421", tanggalPinjam : new Date(), keterangan : "WOW"},
-        {nip : "12412422", tanggalPinjam : new Date(), keterangan : "WOW"},
-        {nip : "12412423", tanggalPinjam : new Date(), keterangan : "WOW"}
-    ]
-}
-=======
   buku: [
     {
       isbn: "978-602-06-5192-7",
@@ -227,6 +94,20 @@ export const seeds = {
       linkGambar:
         "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1527854255i/38820047.jpg",
     },
+    {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FANTASY],
+      penerbit: "Gramedia Pustaka Utama",
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A1",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    }
   ],
   kelas: [
     { id: 1, nama: "Al Fatih", tingkat: 7 },
@@ -319,4 +200,3 @@ export const seeds = {
     { nip: "12412423", tanggalPinjam: new Date(), keterangan: "WOW" },
   ],
 };
->>>>>>> 276990aa5fb4930c75589e3819b27fce9cd4d6cc

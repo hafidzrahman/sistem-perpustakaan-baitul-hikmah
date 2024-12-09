@@ -32,7 +32,7 @@ export class Buku{
         })
     }
 
-    async tambahBuku(dataBuku : bukuType) : Promise<void> {
+    async tambahBuku(dataBuku : bukuType & eksemplarBukuType) : Promise<void> {
         const { judul, genre, isbn, linkGambar, sinopsis, halaman, tanggalRusak, tanggalHilang, posisi } = dataBuku;
         let {penulis, penerbit} = dataBuku;
         
@@ -81,6 +81,9 @@ export class Buku{
           await prisma.eksemplarBuku.create({
             data : {
                 id : count + 1,
+                tanggalRusak,
+                tanggalHilang,
+                posisi,
                 bukuISBN : isbn
             }
           })
@@ -88,8 +91,8 @@ export class Buku{
         
     }
 
-    async tambahBanyakBuku(dataBuku : bukuType[]) {
-        const map : Hash = {}
+    async tambahBanyakBuku(dataBuku : (bukuType & eksemplarBukuType)[]) {
+        const map : Hash<number> = {}
 
         // await Promise.all(dataBuku.map(isbnCounter))
 
@@ -100,7 +103,7 @@ export class Buku{
         // Hitung jumlah ISBN yang sama
         // id buku baru = jumlah ISBN yang sama + 1 
         async function isbnCounter(data : bukuType) : Promise<void> {
-            const { judul, genre, isbn, linkGambar, sinopsis, halaman } = data;
+            const { judul, genre, isbn, linkGambar, sinopsis, halaman, tanggalRusak, tanggalHilang, posisi } = data;
             let {penulis, penerbit} = data;
 
             if (!isbn || !judul || !genre ) {
@@ -148,6 +151,9 @@ export class Buku{
             await prisma.eksemplarBuku.create({
                 data : {
                     id : map[isbn],
+                    tanggalRusak,
+                    tanggalHilang,
+                    posisi,
                     buku : {
                         connect :  {
                             isbn : isbn

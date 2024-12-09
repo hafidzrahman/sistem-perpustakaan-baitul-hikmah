@@ -2,8 +2,8 @@ import {PrismaClient} from '@prisma/client';
 import { JenisKelamin, Genre } from "@prisma/client";
 import { NextResponse } from 'next/server';
 
-export interface Hash {
-    [indexer : string] : number
+export interface Hash<T,> {
+    [indexer : string] : T
 }
 
 export type guruType = {
@@ -42,12 +42,14 @@ export type kelasType = {
     tingkat : number
 }
 
+// id dan bukuISBN jadi opsional
+
 export type eksemplarBukuType = {
-    id: number;
+    id?: number;
     tanggalRusak: Date | null;
     tanggalHilang: Date | null;
     posisi: string | null;
-    bukuISBN: string;
+    bukuISBN?: string;
 } | null
 
 
@@ -64,6 +66,7 @@ export type bukuType = {
     tanggalHilang? : Date, 
     posisi? : string 
 }
+
 
 export type cariBukuType = (
     { 
@@ -147,41 +150,44 @@ export async function konversiDataKeId(data : string | string[]) : Promise<numbe
 
     // jika data penulis yang dimasukkan adalah array string, pasti data belum ada di drop down menu
     if ((typeof (data as string[])) === "object") {
-        const arrayData : {nama : string}[] = [];
-        const arrayId : {id : number, nama : string}[] = [];
+        const arrayId : number[] = [];
 
-        // (data as string[]).forEach(async nama => {
-        //     const dataPenulis = await prisma.penulis.findFirst({
-        //         where : {
-        //             nama
-        //         }
-        //     })
-        //     console.log(dataPenulis)
-        //     if (!dataPenulis) arrayData.push({nama})
-        //     else arrayId.push(dataPenulis)
-        // })
-        
-        // return (await prisma.penulis.createManyAndReturn({
-        //     data : arrayData
-        // })).concat(arrayId).map(({id}) => id) as number[];
+        for await (const d of data as string[]) {
+            await createIfNotExist(d)
+        }
 
-        return (await prisma.penulis.createManyAndReturn({
-            data : (data as string[]).map(nama => ({nama}))
-        })).map(({id}) => id) as number[];
+        return arrayId;
+
+        async function createIfNotExist(nama : string) {
+            let dataPenulis = await prisma.penulis.findFirst({
+                where : {
+                    nama
+                }
+            })
+            if (!dataPenulis) {
+                dataPenulis = await prisma.penulis.create({
+                    data : {
+                        nama
+                    }
+                })
+            }
+            arrayId.push(dataPenulis.id)
+
+        }
 }  
 
-    // const dataPenerbit = await prisma.penerbit.findFirst({
-    //     where : {
-    //         nama : "Orang Ganteng"
-    //     }
-    // })
-
-    // if (dataPenerbit) return dataPenerbit.id
-
-    // jika data penerbit yang dimasukkan adalah string, pasti data belum ada di drop down menu
-    return (await prisma.penerbit.create({
-        data : {
-            nama : (data as string)
+    let dataPenerbit = await prisma.penerbit.findFirst({
+        where : {
+            nama : data as string
         }
-    })).id
+    })
+    if (!dataPenerbit) {
+        dataPenerbit = await prisma.penerbit.create({
+            data : {
+                nama : data as string
+            }
+        })
+    }
+    
+    return dataPenerbit.id;
 }
