@@ -5,7 +5,7 @@ import CardData from "@/app/components/CardData";
 import CardTambahKelas from "@/app/components/CardTambahKelas";
 import CardTambahMurid from "@/app/components/CardTambahMurid";
 import MuridBarChart from "@/app/components/MuridBarChart";
-import PeminjamanCalendar from "@/app/components/PeminjamanCalendar";
+import PapanPeringkat from "@/app/components/PapanPeringkat";
 import TableMurid from "@/app/components/TableMurid";
 import {
   Mortarboard01Icon,
@@ -22,14 +22,6 @@ interface MuridPageProps {
 
 const MuridPage = ({}: MuridPageProps) => {
   const totalMurid = 791;
-  const jumlahMuridPerKelas = {
-    "Kelas 1": 100,
-    "Kelas 2": 110,
-    "Kelas 3": 105,
-    "Kelas 4": 120,
-    "Kelas 5": 130,
-    "Kelas 6": 126,
-  };
 
   const [murid, setMurid] = useState();
   const [tambahKelas, setTambahKelas] = useState(false);
@@ -83,16 +75,16 @@ const MuridPage = ({}: MuridPageProps) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[minmax(180px,_auto)] gap-5">
         <div className="order-1 col-span-1 p-6 bg-white-custom rounded-lg border-2 border-dark-gray lg:order-none lg:row-span-2 sm:col-span-2 lg:col-span-3">
           <h1 className="font-source-sans text-2xl text-primary font-bold">
-            Jumlah Murid per Kelas
+            Statistik Kelas
           </h1>
           <MuridBarChart />
         </div>
 
         <div className="relative order-4 col-span-1 p-6 bg-white border-2 rounded-lg border-dark-gray sm:col-span-2 lg:row-span-2 lg:order-none lg:col-span-1">
           <h1 className="font-source-sans text-2xl text-center text-primary font-bold">
-            Statistik Murid
+            Papan Peringkat
           </h1>
-          <PeminjamanCalendar />
+          <PapanPeringkat />
         </div>
         <div className="flex flex-col gap-4 order-last col-span-1 row-span-2 p-6 bg-white  rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-4 lg:row-span-2 dark-gray">
           <div className="w-full flex px-2 justify-between items-center">
