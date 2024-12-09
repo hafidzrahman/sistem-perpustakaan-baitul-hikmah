@@ -19,7 +19,7 @@ const border = [
 ];
 
 
-const TableBuku = (data : cariBukuType[]) => {
+const TableBuku = ({data} : {data : cariBukuType[]}) => {
 
   return (
     <div className="max-h-80 overflow-y-auto border border-gray-300 rounded-lg shadow-md">

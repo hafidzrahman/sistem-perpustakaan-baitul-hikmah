@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import withRouter from "next/router"
 import { toSlug } from "../utils/slug";
+import { cariBukuType } from "@/lib";
 
 interface Buku {
   id: number;
@@ -12,17 +14,17 @@ interface Buku {
   linkGambar: string;
 }
 
-interface CardBukuProps {
-  data: Buku;
-}
+// interface CardBukuProps {
+//   data: Buku;
+// }
 
-const CardBuku = ({ data }: CardBukuProps) => {
+const CardBuku = ( {data} :  {data : cariBukuType}) => {
   const router = useRouter();
   return (
     <div className="py-4 flex flex-col items-center max-w-36 justify-between rounded-lg gap-2 flex-shrink-0">
       <div>
         <Image
-          src={data.linkGambar}
+          src={data.linkGambar || "https://example.com"}
           alt="buku"
           width={132}
           height={0}
@@ -34,11 +36,11 @@ const CardBuku = ({ data }: CardBukuProps) => {
           {data.judul}
         </h1>
         <h2 className="font-source-sans text-gray-text text-xs">
-          {data.penulisBuku.map((d) => d.penulis.nama).join(", ")}
+          {data.penulis.map((d) => d.nama).join(", ")}
         </h2>
       </div>
       <button
-        onClick={() => router.push(`/buku/${toSlug(data.judul)}`)}
+        onClick={() => withRouter.push({pathname: "http://localhost:3000/buku/123", query : {orang : "test"}})}
         className={`bg-primary w-full text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal transition-all duration-300
         hover:font-bold hover:shadow-sm hover:transition-all hover:duration-300`}
       >
