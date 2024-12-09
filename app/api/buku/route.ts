@@ -21,7 +21,6 @@ export async function POST(req: Request) {
       message: "Data berhasil ditambahkan",
     });
   } catch (error) {
-    console.log(error);
 
     return NextResponse.json({ error });
   }
