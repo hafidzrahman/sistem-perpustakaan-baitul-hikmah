@@ -24,7 +24,6 @@ export async function POST(req: Request) {
       message: "Data berhasil ditambahkan"
     });
   } catch (error) {
-    console.error(error);
     return NextResponse.json(
       {
         error: "Gagal menambahkan murid",

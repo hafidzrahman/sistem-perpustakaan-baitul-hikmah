@@ -1,6 +1,5 @@
 import {PrismaClient} from '@prisma/client';
-import { JenisKelamin, Genre } from "@prisma/client";
-import { NextResponse } from 'next/server';
+import { JenisKelamin } from "@prisma/client";
 
 export interface Hash<T,> {
     [indexer : string] : T
@@ -42,43 +41,62 @@ export type kelasType = {
     tingkat : number
 }
 
-// id dan bukuISBN jadi opsional
+// id dan bukuISBN jadi opsional (!)
+// sumbangan belum ditambahkan
 
 export type eksemplarBukuType = {
+    bukuISBN?: string;
     id?: number;
+    tanggalMasuk : Date | null;
     tanggalRusak: Date | null;
     tanggalHilang: Date | null;
     posisi: string | null;
-    bukuISBN?: string;
 } | null
 
 
 export type bukuType = {
     judul : string,
-    penulis? : string[] | number[],
-    genre : Genre[],
+    penulis? : string[] | number[] | penulisType[],
+    genre : string[] | number[] | genreType[],
     isbn : string,
     linkGambar? : string,
     sinopsis? : string,
-    penerbit? : string | number, 
+    penerbit? : string | number,
+    penerbitDetails? : penerbitType 
     halaman? : number, 
+    tanggalMasuk? : Date,
     tanggalRusak?: Date, 
     tanggalHilang? : Date, 
     posisi? : string 
 }
 
+export type penerbitType = {
+    id: number;
+    nama: string;
+} | null
 
-export type cariBukuType = (
-    { 
-        penulis: { id: number; nama: string; }[]; 
-        _count: { eksemplarBuku: number; }; } & 
-        ({  isbn: string; 
-            judul: string; 
-            genre: Genre[];
-            halaman: number | null; 
-            linkGambar: string | null; 
-            sinopsis: string | null; 
-            idPenerbit: number; } | bukuType))
+export type genreType = {
+    id : number,
+    nama : string
+}
+
+
+export type cariBukuType = ({
+    genre: genreType[];
+    _count: {
+        eksemplarBuku: number;
+    };
+} & {
+    penulis : penulisType[]
+} & {
+    isbn: string;
+    judul: string;
+    halaman: number | null;
+    linkGambar: string | null;
+    sinopsis: string | null;
+    penerbit: number | penerbitType | null;
+    penerbitDetails? : penerbitType
+}) | null
 
 
 export type penulisType = {
@@ -88,13 +106,15 @@ export type penulisType = {
 
 export type perbaruiBukuType = {
     judul? : string,
-    penulis? : string[] | number[],
-    genre? : Genre[],
-    isbn? : string,
+    penulis? : string[] | number[] | penulisType[],
+    genre? : string[] | number[],
+    isbn? : string, // berisiko jika diperbarui?
     linkGambar? : string,
     sinopsis? : string,
-    penerbit? : string | number, 
+    penerbit? : string | number,
+    penerbitDetails? : penerbitType, 
     halaman? : number, 
+    tanggalMasuk? : Date,
     tanggalRusak?: Date, 
     tanggalHilang? : Date, 
     posisi? : string 
@@ -144,26 +164,34 @@ export interface Anggota<T,> {
     hapusSemuaAnggota : () => Promise<void>
 }
 
+export enum Genre {
+  FANTASY = "FANTASY",
+  SCIFI = "SCI-FI",
+  MYSTERY = "MYSTERY",
+  BIOGRAPHY = "BIOGRAPHY",
+  HISTORY = "HISTORY",
+  ROMANCE = "ROMANCE",
+}
+
+export enum StatusCodes {
+    success = 200
+}
+
 export const prisma = new PrismaClient();
 
-export async function konversiDataKeId(data : string | string[]) : Promise<number | number[]> {
-
-    // jika data penulis yang dimasukkan adalah array string, pasti data belum ada di drop down menu
-    if ((typeof (data as string[])) === "object") {
+export async function konversiDataKeId(tableName : string, data : string | string[]) : Promise<number | number[]> {
+    
         const arrayId : number[] = [];
 
-        for await (const d of data as string[]) {
-            await createIfNotExist(d)
-        }
-
-        return arrayId;
-
-        async function createIfNotExist(nama : string) {
+        // jika data penulis atau genre yang dimasukkan adalah array string, pasti data belum ada di drop down menu
+        if (tableName === "penulis") {
+        for await (const nama of data as string[]) {
             let dataPenulis = await prisma.penulis.findFirst({
                 where : {
                     nama
                 }
             })
+
             if (!dataPenulis) {
                 dataPenulis = await prisma.penulis.create({
                     data : {
@@ -172,9 +200,28 @@ export async function konversiDataKeId(data : string | string[]) : Promise<numbe
                 })
             }
             arrayId.push(dataPenulis.id)
-
         }
+        return arrayId;
+    } else if (tableName === "genre") {
+        for await (const nama of data as string[]) {
+            let dataGenre = await prisma.genre.findFirst({
+                where : {
+                    nama
+                }
+            })
+
+            if (!dataGenre) {
+                dataGenre = await prisma.genre.create({
+                    data : {
+                        nama
+                    }
+                })
+            }
+            arrayId.push(dataGenre.id)
+        }
+        return arrayId;
 }  
+    
 
     let dataPenerbit = await prisma.penerbit.findFirst({
         where : {
@@ -189,5 +236,7 @@ export async function konversiDataKeId(data : string | string[]) : Promise<numbe
         })
     }
     
+    
     return dataPenerbit.id;
+
 }

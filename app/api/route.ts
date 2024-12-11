@@ -53,7 +53,8 @@ export async function GET() {
     let arrayPeminjaman : peminjamanType[] = (await peminjaman.cariPeminjaman()) as peminjamanType[]
     let arrayPenulis = await prisma.penulis.findMany({})
     let arrayPenerbit = await prisma.penerbit.findMany({})
+    let arrayBukuPinjaman = await prisma.bukuPinjaman.findMany({})
 
-    return NextResponse.json({arrayPenerbit, arrayPenulis, arrayBuku, arrayKelas, arrayMurid, arrayKeterangan, arrayGuru, arrayPeminjaman})
+    return NextResponse.json({arrayBukuPinjaman, arrayBuku, arrayKelas, arrayMurid, arrayKeterangan, arrayGuru, arrayPeminjaman})
 }
 

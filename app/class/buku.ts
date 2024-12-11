@@ -1,17 +1,17 @@
-import {bukuType, cariBukuType, Hash, eksemplarBukuType, perbaruiBukuType, prisma, konversiDataKeId, penulisType} from '@/lib'
-import { Genre, Prisma } from '@prisma/client';
+import {bukuType, cariBukuType, Hash, eksemplarBukuType, perbaruiBukuType, prisma, konversiDataKeId, penulisType, genreType, penerbitType} from '@/lib'
 import { NextResponse } from 'next/server';
 
 
 export class Buku{
     judul? : string;
-    penulis? : string[] | number[];
-    genre? : Genre[];
+    penulis? : string[] | number[] | penulisType[];
+    genre? : string[] | number[] | genreType[];
     isbn? : string;
     linkGambar? : string;
     sinopsis? : string;
-    penerbit? : string | number; 
-    halaman? : number; 
+    penerbit? : string | number | penerbitType; 
+    halaman? : number;
+    tanggalMasuk? : Date;
     tanggalRusak?: Date; 
     tanggalHilang? : Date; 
     posisi? : string;
@@ -26,6 +26,7 @@ export class Buku{
             this.sinopsis = data.sinopsis;
             this.penerbit = data.penerbit; 
             this.halaman = data.halaman; 
+            this.tanggalMasuk = data.tanggalMasuk;
             this.tanggalRusak =  data.tanggalRusak; 
             this.tanggalHilang =  data.tanggalHilang; 
             this.posisi =  data.posisi;
@@ -33,54 +34,58 @@ export class Buku{
     }
 
     async tambahBuku(dataBuku : bukuType & eksemplarBukuType) : Promise<void> {
-        const { judul, genre, isbn, linkGambar, sinopsis, halaman, tanggalRusak, tanggalHilang, posisi } = dataBuku;
-        let {penulis, penerbit} = dataBuku;
+        const { judul, isbn, linkGambar, sinopsis, halaman, tanggalMasuk, tanggalRusak, tanggalHilang, posisi } = dataBuku;
+        let {penulis, penerbit, genre} = dataBuku;
         
         if (!isbn || !judul  || !genre ) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        // jika data penulis yang dimasukkan adalah array string, pasti data belum ada di drop down menu
         // jika data penulis yang dimasukkan adalah array number, pasti data sudah ada di drop down menu,
         if (penulis && typeof penulis[0] !== "number") {
-            penulis = (await konversiDataKeId(penulis as string[])) as number[];
+            penulis = (await konversiDataKeId("penulis", penulis as string[])) as number[];
         }
 
-
-        // jika data penerbit yang dimasukkan adalah string, pasti data belum ada di drop down menu
         // jika data penerbit yang dimasukkan adalah number, pasti data sudah ada di drop down menu,
         if (penerbit && typeof penerbit !== "number") {
-            penerbit = (await konversiDataKeId(penerbit as string)) as number;
+            penerbit = (await konversiDataKeId("penerbit", penerbit as string)) as number;
+        }
+
+        if (genre && typeof genre[0] !== "number") {
+            genre = (await konversiDataKeId("genre", genre as string[])) as number[];
         }
 
         // Hitung jumlah ISBN yang sama, id buku baru = jumlah ISBN yang sama + 1 
-        const count = await prisma.buku.count({
+        const count = await prisma.eksemplarBuku.count({
             where : {
-                isbn : {
-                    equals : isbn,                
-                }
+                bukuISBN : isbn
+            }
             },
-        })
-        
+        )
+        if (count === 0) {
         await prisma.buku.create({
             data: {
               isbn,
-              idPenerbit : penerbit as number,
               judul,
-              genre,
               halaman,
               sinopsis,
               linkGambar,
+              penerbit : penerbit as number,
               penulis : {
-                connect : (penulis as number[]).map(id => ({id})) as {id : number}[]
+                connect : (penulis as number[]).map(id => ({id}))
+              },
+              genre : {
+                connect : (genre as number[]).map(id => ({id}))
               }
             },
 
           });
+        }
 
           await prisma.eksemplarBuku.create({
             data : {
                 id : count + 1,
+                tanggalMasuk,
                 tanggalRusak,
                 tanggalHilang,
                 posisi,
@@ -103,8 +108,8 @@ export class Buku{
         // Hitung jumlah ISBN yang sama
         // id buku baru = jumlah ISBN yang sama + 1 
         async function isbnCounter(data : bukuType) : Promise<void> {
-            const { judul, genre, isbn, linkGambar, sinopsis, halaman, tanggalRusak, tanggalHilang, posisi } = data;
-            let {penulis, penerbit} = data;
+            const { judul, isbn, linkGambar, sinopsis, halaman, tanggalMasuk, tanggalRusak, tanggalHilang, posisi } = data;
+            let {penulis, penerbit, genre} = data;
 
             if (!isbn || !judul || !genre ) {
                 throw new Error("Harus mengisi field yang wajib")
@@ -112,11 +117,15 @@ export class Buku{
 
 
             if (penulis && typeof penulis[0] !== "number") {
-                penulis = (await konversiDataKeId(penulis as string[])) as number[];
+                penulis = (await konversiDataKeId("penulis", penulis as string[])) as number[];
             }
 
             if (penerbit && typeof penerbit !== "number") {
-                penerbit = (await konversiDataKeId(penerbit as string)) as number;
+                penerbit = (await konversiDataKeId("penerbit", penerbit as string)) as number;
+            }
+
+            if (genre && typeof genre[0] !== "number") {
+                genre = (await konversiDataKeId("genre", genre as string[])) as number[];
             }
 
             let result = 0;
@@ -133,12 +142,14 @@ export class Buku{
                         isbn,
                         judul,
                         linkGambar,
-                        idPenerbit : penerbit as number,
                         sinopsis,
-                        genre,
                         halaman,
+                        penerbit : penerbit as number,
                         penulis : {
                             connect : (penulis as number[]).map(id => ({id}))
+                        },
+                        genre: {
+                            connect : (genre as number[]).map(id => ({id}))
                         }
                     }
                 })
@@ -151,6 +162,7 @@ export class Buku{
             await prisma.eksemplarBuku.create({
                 data : {
                     id : map[isbn],
+                    tanggalMasuk,
                     tanggalRusak,
                     tanggalHilang,
                     posisi,
@@ -168,9 +180,7 @@ export class Buku{
 
 }
 
-    async cariBuku (isbn? : string) : Promise<bukuType | bukuType[]> {
-        let buku : cariBukuType | cariBukuType[] = []; 
-
+    async cariBuku (isbn? : string) : Promise<bukuType  | bukuType[] | undefined> {
         if (isbn) {    
             const buku = await prisma.buku.findUnique({
                 where : {
@@ -185,17 +195,20 @@ export class Buku{
                                     }
                                 }
                             }
-                        }
+                        },
+                        penulis : true,
+                        genre : true,
+                        penerbitDetails : true
                     }
-            }) as bukuType
+            })
 
             if (!buku?.isbn) {
                 throw ({message : "Data buku tidak ditemukan"})
             }
-            return buku;
+            return buku as bukuType;
     } 
 
-        buku = await prisma.buku.findMany({
+        const buku = await prisma.buku.findMany({
             include : {
                 _count : {
                     select : {
@@ -204,7 +217,7 @@ export class Buku{
                                 bukuPinjaman : {
                                     every : {
                                         tanggalKembali : {
-                                            not : undefined
+                                            equals : undefined
                                         }
                                     }
                                     }
@@ -212,9 +225,11 @@ export class Buku{
                         }
                     }
                 },
-                penulis : true
+                penulis : true,
+                genre : true,
+                penerbitDetails : true
             }
-        }) as cariBukuType[]
+        })
 
         return buku as bukuType[];
         
@@ -228,6 +243,15 @@ export class Buku{
                     id : idBuku.id
                 }
             },
+            include : {
+                buku : {
+                    select : {
+                        genre : true,
+                        penulis : true,
+                        penerbitDetails : true
+                    }
+                }
+            }
         })
         if (!dataBuku?.bukuISBN) {
             throw new Error("Data buku tidak ditemukan")
@@ -236,21 +260,25 @@ export class Buku{
         return dataBuku;
     }
 
-    async perbaruiBuku(isbn : string, id : number, dataBuku : perbaruiBukuType) :Promise<void> {
-        const { judul, genre, isbn : bukuISBN, linkGambar, sinopsis, halaman, tanggalRusak, tanggalHilang, posisi } = dataBuku;
-        let {penulis, penerbit} = dataBuku;
+    async perbaruiBuku(isbn : string, dataBuku : perbaruiBukuType) :Promise<void> {
+        const { judul, isbn : bukuISBN, linkGambar, sinopsis, halaman } = dataBuku;
+        let {penulis, penerbit, genre} = dataBuku;
 
-        let buku = await this.cariBuku(isbn) as Prisma.BukuCreateManyInput;
+        let buku = await this.cariBuku(isbn) as bukuType;
 
         if (!buku?.isbn) {
             throw new Error("Data buku tidak ditemukan");
         }
         if (penulis && typeof penulis[0] !== "number") {
-            penulis = (await konversiDataKeId(penulis as string[])) as number[];
+            penulis = (await konversiDataKeId("penulis", penulis as string[])) as number[];
         }
 
         if (penerbit && typeof penerbit !== "number") {
-            penerbit = (await konversiDataKeId(penerbit as string)) as number;
+            penerbit = (await konversiDataKeId("penerbit", penerbit as string)) as number;
+        }
+
+        if (genre && typeof genre[0] !== "number") {
+            genre = (await konversiDataKeId("genre", genre as string[])) as number[];
         }
 
 
@@ -258,12 +286,14 @@ export class Buku{
         await prisma.buku.update({
             data : {
                 judul : judul || buku.judul, 
-                genre : genre || buku.genre, 
                 isbn : bukuISBN || buku.isbn, 
                 linkGambar : linkGambar || buku.linkGambar, 
                 sinopsis : sinopsis || buku.sinopsis, 
-                idPenerbit : penerbit as number || buku.idPenerbit, 
-                halaman : halaman || buku.halaman, 
+                penerbit : (penerbit || buku.penerbit) as number, 
+                halaman : halaman || buku.halaman,
+                genre : {
+                    connect : (genre?.map(id => ({id})) || buku.genre.map(id => ({id}))) as {id : number}[]
+                }
             },
             where : {
                 isbn
@@ -273,7 +303,7 @@ export class Buku{
 
     }
 
-    async hapusBuku(isbn : string, id : number) : Promise<void> {
+    async hapusBuku(isbn : string) : Promise<void> {
         const buku = await prisma.buku.delete({
             where : {
                 isbn
