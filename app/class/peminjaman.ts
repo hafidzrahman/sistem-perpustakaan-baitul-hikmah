@@ -30,7 +30,7 @@ export class Peminjaman {
 
         const dataBuku = await buku.cariEksemplarBuku(idBuku); 
 
-        if (!dataBuku?.bukuISBN) {
+        if (!dataBuku?.bukuISBN || !dataBuku?.id) {
             throw new Error("Gagal mendapatkan data buku")
         }
 
@@ -63,8 +63,8 @@ export class Peminjaman {
                 where : {
                     idPeminjaman_bukuISBN_bukuId : {
                         idPeminjaman : peminjaman.id,
-                        bukuISBN : dataBuku!.bukuISBN,
-                        bukuId : dataBuku!.id,
+                        bukuISBN : dataBuku?.bukuISBN!,
+                        bukuId : dataBuku?.id!,
                     }
                 }
             })
