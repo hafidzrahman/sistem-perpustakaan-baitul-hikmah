@@ -61,7 +61,7 @@ const TableMurid = ({ data }: TableMuridProps) => {
               return (
                 <tr
                   key={index}
-                  className="group hover:bg-dark-gray border-b-2 border-dashed transition-all duration-100 hover:text-white-custom hover:transition-all hover:duration-100"
+                  className="group relative border-dark-gray border-t-2 hover:border-y-2 hover:border-black-custom border-dashed transition-all duration-100"
                 >
                   <td className="px-4 py-2 font-source-sans font-semibold text-sm">
                     {item.nis}
@@ -87,13 +87,13 @@ const TableMurid = ({ data }: TableMuridProps) => {
                     <div className="flex items-center justify-center">
                       {item.jenisKelamin === "PEREMPUAN" ? (
                         <HijabIcon
-                          className="text-black-custom group-hover:text-white-custom"
+                          className="text-jewel-red"
                           width={24}
                           height={24}
                         />
                       ) : (
                         <MuslimIcon
-                          className="text-black-custom group-hover:text-white-custom"
+                          className="text-jewel-blue"
                           width={24}
                           height={24}
                         />

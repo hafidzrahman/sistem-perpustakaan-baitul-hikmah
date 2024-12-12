@@ -19,12 +19,12 @@ interface ClassData {
 
 // Data contoh untuk 9 kelas
 const classData: ClassData[] = [
-  { name: "7 Al-Fatih", male: 15, female: 18 },
-  { name: "7 Ibnu Abbas", male: 12, female: 16 },
+  { name: "7 Al-Fatih", male: 20, female: 18 },
+  { name: "7 Ibnu Abbas", male: 17, female: 16 },
   { name: "8 Geber", male: 17, female: 15 },
   { name: "8 Avicenna", male: 20, female: 22 },
-  { name: "9 Ibnu Umar", male: 16, female: 19 },
-  { name: "9 Syafii", male: 14, female: 17 },
+  { name: "9 Ibnu Umar", male: 20, female: 19 },
+  { name: "9 Syafii", male: 18, female: 17 },
 ];
 
 const MuridBarChart: React.FC = () => {
@@ -43,13 +43,19 @@ const MuridBarChart: React.FC = () => {
           dataKey="name"
           axisLine={true}
           tickLine={true}
-          fontSize={12}
+          fontSize={14}
           fontWeight="bold"
           interval={0}
-          angle={-45}
-          textAnchor="end"
+          // angle={-30}
+          textAnchor="middle"
         />
-        <YAxis axisLine={false} tickLine={false} fontSize={10} />
+        <YAxis
+          axisLine={true}
+          tickLine={true}
+          fontSize={14}
+          fontWeight="bold"
+          color="#101010"
+        />
         <Tooltip
           contentStyle={{
             backgroundColor: "#f9f9f9",
