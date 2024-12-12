@@ -2,6 +2,7 @@
 
 import BtnSecondary from "@/app/components/BtnSecondary";
 import CardData from "@/app/components/CardData";
+import CardLeaderboardMurid from "@/app/components/CardLeaderboardMurid";
 import CardTambahKelas from "@/app/components/CardTambahKelas";
 import CardTambahMurid from "@/app/components/CardTambahMurid";
 import MuridBarChart from "@/app/components/MuridBarChart";
@@ -84,7 +85,26 @@ const MuridPage = ({}: MuridPageProps) => {
           <h1 className="font-source-sans text-2xl text-center text-primary font-bold">
             Papan Peringkat
           </h1>
-          <PapanPeringkat />
+          <div className="flex flex-col my-4 gap-2">
+            <CardLeaderboardMurid
+              name="Muhammad Faruq"
+              kelas="7 Al-fatih"
+              booksRead={20}
+              totalBooksToRead={20}
+            />
+            <CardLeaderboardMurid
+              name="Muhammad Aditya Rinaldi"
+              kelas="8 Al-fatih"
+              booksRead={16}
+              totalBooksToRead={20}
+            />
+            <CardLeaderboardMurid
+              name="Hafidz Alhadid Rahman"
+              kelas="9 Al-fatih"
+              booksRead={12}
+              totalBooksToRead={20}
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-4 order-last col-span-1 row-span-2 p-6 bg-white  rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-4 lg:row-span-2 dark-gray">
           <div className="w-full flex px-2 justify-between items-center">
