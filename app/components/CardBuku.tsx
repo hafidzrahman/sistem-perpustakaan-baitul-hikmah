@@ -19,12 +19,16 @@ interface Buku {
 // }
 
 const CardBuku = ( {data} :  {data : cariBukuType}) => {
+  if (data === null) {
+    return <div>kosong</div>
+  }
   const router = useRouter();
+  const {linkGambar, judul, penulis, isbn} = data;
   return (
     <div className="py-4 flex flex-col items-center max-w-36 justify-between rounded-lg gap-2 flex-shrink-0">
       <div>
         <Image
-          src={data.linkGambar || "https://example.com"}
+          src={linkGambar || "https://example.com"}
           alt="buku"
           width={132}
           height={0}
@@ -33,14 +37,14 @@ const CardBuku = ( {data} :  {data : cariBukuType}) => {
       </div>
       <div className="flex flex-col px-0.5 w-full justify-center">
         <h1 className="font-source-serif text-sm font-bold truncate">
-          {data.judul}
+          {judul}
         </h1>
         <h2 className="font-source-sans text-gray-text text-xs">
-          {data.penulis.map((d) => d.nama).join(", ")}
+          {penulis.map((d) => d.nama).join(", ")}
         </h2>
       </div>
       <button
-        onClick={() => withRouter.push({pathname: "http://localhost:3000/buku/123", query : {orang : "test"}})}
+        onClick={() => router.push(`http://localhost:3000/buku/${isbn}`)}
         className={`bg-primary w-full text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal transition-all duration-300
         hover:font-bold hover:shadow-sm hover:transition-all hover:duration-300`}
       >
