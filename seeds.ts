@@ -62,19 +62,21 @@ Table sumbangan buku terdapat dua id table sumbangan
 // bagi setiap murid yang tidak mencapai target penulisan intisari ketika sudah memasuki semester baru
 // intisari ditotalkan dari bulan 1~6 atau 7~12
 
-import { Genre, JenisKelamin } from "@prisma/client";
+import { JenisKelamin } from "@prisma/client";
+import {Genre} from "@/lib";
 
 export const seeds = {
   buku: [
     {
       isbn: "978-602-06-5192-7",
       judul: "Funiculi Funicula",
-      genre: [Genre.FANTASY],
       penerbit: "Gramedia Pustaka Utama",
+      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
       penulis: ["Toshikazu Kawaguchi"],
       halaman: 224,
       sinopsis:
         "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk : new Date,
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
       posisi: "A1",
@@ -83,11 +85,12 @@ export const seeds = {
     {
       isbn: "978-602-8519-93-9",
       judul: "Killing Commandantore",
-      genre: [Genre.FANTASY, Genre.SCIFI],
+      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
       penerbit: "Orang Ganteng",
       penulis: ["Haruki Murakami"],
       halaman: 200,
       sinopsis: "Pada suatu hari ada seseorang",
+      tanggalMasuk : new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
       posisi: "A1",
@@ -97,12 +100,71 @@ export const seeds = {
     {
       isbn: "978-602-06-5192-9",
       judul: "Funiculi Funicula",
-      genre: [Genre.FANTASY],
+      penerbit: "Gramedia Pustaka Utama",
+      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk : new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A1",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    }, {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
       penerbit: "Gramedia Pustaka Utama",
       penulis: ["Toshikazu Kawaguchi"],
       halaman: 224,
       sinopsis:
         "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk : new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A1",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    },
+    {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      penerbit: "Gramedia Pustaka Utama",
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk : new Date(),  
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A1",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    },
+    {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      penerbit: "Gramedia Pustaka Utama",
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk : new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A1",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    },{
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      penerbit: "Gramedia Pustaka Utama",
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk : new Date(),    
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
       posisi: "A1",

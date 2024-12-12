@@ -26,24 +26,33 @@ model PetugasPerpustakaan {
 model Buku {
   isbn       String  @id
   judul      String
-  genre      Genre[]
   halaman    Int?
   linkGambar String? @map("link_gambar")
   sinopsis   String?
 
-  idPenerbit Int
-  penerbit   Penerbit @relation(fields: [idPenerbit], references: [id])
+  penerbit        Int?
+  penerbitDetails Penerbit? @relation(fields: [penerbit], references: [id])
 
   formBukti     FormBukti[]
-  // sumbanganBuku SumbanganBuku[]
+  genre         Genre[]
   eksemplarBuku EksemplarBuku[]
   penulis       Penulis[]
 
   @@index([isbn])
 }
 
+model Genre {
+  id   Int    @id @default(autoincrement())
+  nama String
+
+  buku Buku[]
+
+  @@index([id])
+}
+
 model EksemplarBuku {
   id            Int       @default(autoincrement())
+  tanggalMasuk  DateTime?
   tanggalRusak  DateTime?
   tanggalHilang DateTime?
   posisi        String?
@@ -51,7 +60,11 @@ model EksemplarBuku {
   bukuISBN String
   buku     Buku   @relation(fields: [bukuISBN], references: [isbn])
 
-  sumbanganBuku SumbanganBuku?
+  idSumbangan Int?
+  sumbangan   Sumbangan? @relation("sumbangan", fields: [idSumbangan], references: [id])
+
+  idSumbanganBantuan Int?
+  sumbanganBantuan   Sumbangan? @relation("sumbanganBantuan", fields: [idSumbanganBantuan], references: [id])
 
   bukuPinjaman BukuPinjaman[]
 
@@ -212,8 +225,8 @@ model Sumbangan {
 
   pembayaranTunai      PembayaranTunai[]
   riwayatBantuan       RiwayatBantuan[]
-  sumbanganBuku        SumbanganBuku[]   @relation("sumbangan")
-  sumbanganBukuBantuan SumbanganBuku[]   @relation("sumbanganBantuan")
+  sumbanganBuku        EksemplarBuku[]   @relation("sumbangan")
+  sumbanganBukuBantuan EksemplarBuku[]   @relation("sumbanganBantuan")
 
   denda Denda?
 
@@ -229,23 +242,23 @@ model Sumbangan {
   @@index([id])
 }
 
-model SumbanganBuku {
-  tanggal DateTime @default(now())
+// model SumbanganBuku {
+//   tanggal DateTime @default(now())
 
-  idSumbangan Int
-  sumbangan   Sumbangan @relation("sumbangan", fields: [idSumbangan], references: [id])
+//   idSumbangan Int
+//   sumbangan   Sumbangan @relation("sumbangan", fields: [idSumbangan], references: [id])
 
-  idSumbanganBantuan Int?
-  sumbanganBantuan   Sumbangan? @relation("sumbanganBantuan", fields: [idSumbanganBantuan], references: [id])
+//   idSumbanganBantuan Int?
+//   sumbanganBantuan   Sumbangan? @relation("sumbanganBantuan", fields: [idSumbanganBantuan], references: [id])
 
-  bukuId   Int
-  bukuISBN String
-  buku     EksemplarBuku @relation(fields: [bukuISBN, bukuId], references: [bukuISBN, id])
+//   bukuId   Int
+//   bukuISBN String
+//   buku     EksemplarBuku @relation(fields: [bukuISBN, bukuId], references: [bukuISBN, id])
 
-  @@id([idSumbangan, bukuISBN, bukuId])
-  @@unique([bukuISBN, bukuId])
-  @@index([idSumbangan, bukuISBN, bukuId])
-}
+//   @@id([idSumbangan, bukuISBN, bukuId])
+//   @@unique([bukuISBN, bukuId])
+//   @@index([idSumbangan, bukuISBN, bukuId])
+// }
 
 model PembayaranTunai {
   id      Int      @id @default(autoincrement())
@@ -278,14 +291,14 @@ enum JenisKelamin {
   PEREMPUAN
 }
 
-enum Genre {
-  FANTASY
-  SCIFI
-  MYSTERY
-  BIOGRAPHY
-  HISTORY
-  ROMANCE
-}
+// enum Genre {
+//   FANTASY
+//   SCIFI
+//   MYSTERY
+//   BIOGRAPHY
+//   HISTORY
+//   ROMANCE
+// }
 
 enum Posisi {
   A1

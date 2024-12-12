@@ -1,5 +1,5 @@
 import BtnSecondary from "./BtnSecondary";
-import { cariBukuType } from "@/lib";
+import { cariBukuType, Genre, genreType } from "@/lib";
 import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
 
 
@@ -46,24 +46,24 @@ const TableBuku = ({data} : {data : cariBukuType[]}) => {
                 className="group border-b-2 border-dashed hover:bg-dark-gray transition-all duration-100 hover:text-white-custom hover:transition-all hover:duration-100"
               >
                 <td className="px-4 py-2 font-source-sans font-semibold text-sm">
-                  {item.isbn}
+                  {item?.isbn}
                 </td>
                 <td className="px-4 py-2 font-source-serif font-semibold text-sm">
-                  {item.judul}
+                  {item?.judul}
                 </td>
                 <td className="px-4 py-2 font-source-sans text-sm">
-                  {item.penulis.map(p => p.nama).join(', ')}
+                  {item?.penulis.map(p => p.nama).join(', ')}
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex justify-center items-center flex-row flex-wrap gap-0.5">
-                    {item.genre.map((genre: string, genreIndex: number) => (
+                    {item?.genre.map((genre: genreType, genreIndex: number) => (
                       <div
                         key={genreIndex}
                         className={`${bg[genreIndex % bg.length]} ${
                           border[genreIndex % border.length]
                         } flex justify-center text-white-custom items-center gap-2 border-2 font-source-sans leading-none text-xs rounded-full py-2 px-3`}
                       >
-                        {genre}
+                        {genre.nama}
                       </div>
                     ))}
                   </div>

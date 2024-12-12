@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
+import {Genre} from '@/lib';
 
 interface CardTambahBukuProps {
   status: boolean;
@@ -29,8 +30,6 @@ const CardTambahBuku = ({ status, handle }: CardTambahBukuProps) => {
     "border-pastel-yellow",
     "border-pastel-blue",
   ];
-
-  const genres = ["Komik", "Pelajaran", "Islami", "Novel", "Light Novel"];
 
   // Generate shelf positions
   const shelfPositions = (() => {
@@ -167,7 +166,7 @@ const CardTambahBuku = ({ status, handle }: CardTambahBukuProps) => {
                     <option value="" disabled>
                       Pilih genre
                     </option>
-                    {genres.map((genre) => (
+                    {Object.values(Genre).map((genre) => (
                       <option key={genre} value={genre}>
                         {genre}
                       </option>
