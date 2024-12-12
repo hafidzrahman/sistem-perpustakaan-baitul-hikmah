@@ -1,67 +1,68 @@
 import React from "react";
-import { PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell, Label } from "recharts";
 
 interface CardLeaderboardMuridProps {
   name: string;
   kelas: string;
   booksRead: number;
-  totalBooksToRead?: number;
+  totalBooksToRead: number;
   className?: string;
 }
-
-const CardLeaderboardMurid: React.FC<CardLeaderboardMuridProps> = ({
+const CardLeaderboardMurid = ({
   name,
   kelas,
   booksRead,
-  totalBooksToRead = 20,
-  className = "",
-}) => {
-  // Prepare data for pie chart
-  const data = [
-    { name: "Buku Dibaca", value: booksRead },
-    { name: "Sisa Buku", value: Math.max(0, totalBooksToRead - booksRead) },
+  totalBooksToRead,
+}: CardLeaderboardMuridProps) => {
+  // Prepare data for donut chart
+  const chartData = [
+    { name: "Read", value: booksRead },
+    { name: "Unread", value: totalBooksToRead - booksRead },
   ];
 
-  // Colors for the chart
-  const COLORS = [
-    "rgba(54, 162, 235, 0.8)", // Blue for read books
-    "rgba(211, 211, 211, 0.3)", // Light gray for remaining books
-  ];
+  // Color scheme
+  const BG_COLORS = ["#055A39", "#064359", "#C50043"];
+  const GRADIENT = ["#adf7b6", "#a0ced9", "#ffc09f"];
+  const COLORS = ["#a0ced9", "#E5E7EB"];
 
   return (
     <div
-      className={`border-jewel-blue flex items-center w-full px-6 py-4 border justify-between bg-pastel-blue rounded-lg ${className}`}
+      className={`rounded-lg bg-gradient-to-r from-[#064359] to-[#055A39] border-jewel-green border-2 px-8 py-1 w-full gap-4 flex items-center`}
     >
-      <div className="flex flex-col">
-        <h2 className="font-base text-xs -mb-2">{kelas}</h2>
-        <h1 className="font-bold font-source-serif text-base">{name}</h1>
+      {/* Info Section */}
+      <div className="flex flex-col justify-center flex-grow ">
+        <p className="text-sm text-gray-600">{kelas}</p>
+        <h2 className="text-lg font-source-serif leading-none font-bold">
+          {name}
+        </h2>
       </div>
 
-      {/* Recharts Doughnut Progress Bar */}
-      <div className="relative flex items-center justify-center">
-        <PieChart width={56} height={56}>
+      {/* Chart Section */}
+      <div className="flex-shrink-0">
+        <PieChart width={88} height={88}>
           <Pie
-            data={data}
-            cx={24}
-            cy={24}
-            innerRadius={12}
-            outerRadius={48}
-            paddingAngle={0}
+            data={chartData}
+            cx={44}
+            cy={39}
+            innerRadius={20}
+            outerRadius={38}
+            cornerRadius={4}
             dataKey="value"
           >
-            {data.map((entry, index) => (
+            {chartData.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
-                stroke={COLORS[index % COLORS.length]}
-                strokeWidth={1}
               />
             ))}
+            <Label
+              value={`${booksRead}/${totalBooksToRead}`}
+              position="center"
+              className="text-xs font-bold text-black-custom"
+              fill="#101010"
+            />
           </Pie>
         </PieChart>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold">
-          {booksRead}/{totalBooksToRead}
-        </div>
       </div>
     </div>
   );
