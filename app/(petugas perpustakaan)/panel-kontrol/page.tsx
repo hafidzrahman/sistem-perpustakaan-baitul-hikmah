@@ -1,12 +1,11 @@
 "use client";
+import BukuGenreDoughnutChart from "@/app/components/BukuGenreDoughnutChart";
 import PeminjamanLineChart from "@/app/components/PeminjamanLineChart";
 import {
   Mortarboard01Icon,
   TeacherIcon,
   BookOpen02Icon,
 } from "hugeicons-react";
-import BukuGenreDoughnutChart from "@/app/components/BukuGenreDoughnutChart";
-
 interface PageProps {}
 
 const Page = ({}: PageProps) => {
