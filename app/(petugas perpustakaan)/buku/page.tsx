@@ -5,10 +5,10 @@ import CardBuku from "@/app/components/CardBuku";
 import { useEffect, useState, useRef } from "react";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 
-import CardTambahBuku from "@/app/components/CardTambahBuku";
 // import BookChart from "@/app/components/BookChart";
 import { cariBukuType } from "@/lib";
 import TableBuku from "@/app/components/TableBuku";
+import ModalTambahBuku from "@/app/components/modal/ModalTambahBuku";
 
 interface BukuPageProps {}
 
@@ -68,10 +68,9 @@ const BukuPage = ({}: BukuPageProps) => {
     fetchBuku();
   }, [tambahBuku]);
 
-
   return (
     <>
-      <CardTambahBuku status={tambahBuku} handle={handleTambahBuku} />
+      <ModalTambahBuku status={tambahBuku} handle={handleTambahBuku} />
       <div className="mb-4">
         <h2 className="font-semibold text-gray-text font-source-sans">
           Disini Anda, bisa melihat daftar buku, menambahkan, menghapus, dan
@@ -94,17 +93,9 @@ const BukuPage = ({}: BukuPageProps) => {
         }}
       >
         {buku.length ? (
-          buku.map(
-            (
-              item: cariBukuType,
-              index
-            ) => (
-              <CardBuku
-                data={item}
-                key={index}
-              />
-            )
-          )
+          buku.map((item: cariBukuType, index) => (
+            <CardBuku data={item} key={index} />
+          ))
         ) : (
           <div>Bentar</div>
         )}
@@ -122,7 +113,7 @@ const BukuPage = ({}: BukuPageProps) => {
             />
           </div>
           <div className="rounded-lg overflow-hidden border-black-custom border">
-            {buku.length && <TableBuku data={buku}/>}
+            {buku.length && <TableBuku data={buku} />}
           </div>
         </div>
       </div>
