@@ -27,7 +27,7 @@ const classData: ClassData[] = [
   { name: "9 Syafii", male: 18, female: 17 },
 ];
 
-const MuridBarChart: React.FC = () => {
+const BarChartMurid: React.FC = () => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
@@ -89,4 +89,4 @@ const MuridBarChart: React.FC = () => {
   );
 };
 
-export default MuridBarChart;
+export default BarChartMurid;

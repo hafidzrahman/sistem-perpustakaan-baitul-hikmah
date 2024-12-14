@@ -17,7 +17,7 @@ interface DataPeminjaman {
   lendingCount: number;
 }
 
-const PeminjamanLineChart: React.FC = () => {
+const LineChartPeminjaman: React.FC = () => {
   const [groupMode, setGroupMode] = useState<GroupMode>("weekly");
   const [data, setData] = useState<DataPeminjaman[]>([]);
 
@@ -105,4 +105,4 @@ const PeminjamanLineChart: React.FC = () => {
   );
 };
 
-export default PeminjamanLineChart;
+export default LineChartPeminjaman;

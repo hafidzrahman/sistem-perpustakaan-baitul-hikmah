@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
-import {Genre} from '@/lib';
+import { Genre } from "@/lib";
 
-interface CardTambahBukuProps {
+interface ModalTambahBukuProps {
   status: boolean;
   handle: () => void;
 }
 
-const CardTambahBuku = ({ status, handle }: CardTambahBukuProps) => {
+const ModalTambahBuku = ({ status, handle }: ModalTambahBukuProps) => {
   const [judul, setJudul] = useState("");
   const [penulis, setPenulis] = useState("");
   const [isbn, setISBN] = useState("");
@@ -303,4 +303,4 @@ const CardTambahBuku = ({ status, handle }: CardTambahBukuProps) => {
   );
 };
 
-export default CardTambahBuku;
+export default ModalTambahBuku;
