@@ -13,13 +13,13 @@ export async function GET(req : Request, {params} : paramsType) {
         const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
 
         if (!dataKelas?.id) {
-            return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
+            return new Error("Data kelas tidak ditemukan");
         }
 
-        return NextResponse.json({kelas}, {status : 200})
+        return NextResponse.json(dataKelas, {status : 200})
 
-    } catch (e) {
-        return NextResponse.json({message : "Gagal mendapatkan data kelas"}, {status : 501})
+    } catch (error) {
+        return NextResponse.json({message : "Gagal mendapatkan data kelas", details : error}, {status : 501})
     }
 }
 
@@ -27,19 +27,19 @@ export async function PUT(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
         const body = await req.json();
-        const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
+        // const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
 
-        if (!dataKelas?.id) {
-            return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
-        }
+        // if (!dataKelas?.id) {
+        //     return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
+        // }
 
-        kelas.perbaruiKelas(Number(id), body);
+        const dataKelas = await kelas.perbaruiKelas(Number(id), body);
 
-        return NextResponse.json({kelas}, {status : 200})
+        return NextResponse.json(dataKelas, {status : 200})
 
 
-    } catch (e) {
-        return NextResponse.json({message : "Gagal mendapatkan data kelas"}, {status : 501})
+    } catch (error) {
+        return NextResponse.json({message : "Gagal mendapatkan data kelas", details : error}, {status : 501})
     }
 }
 
@@ -47,17 +47,17 @@ export async function DELETE(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
         
-        const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
+        // const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
 
-        if (!dataKelas?.id) {
-            return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
-        }
+        // if (!dataKelas?.id) {
+        //     return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
+        // }
 
-        kelas.hapusKelas(Number(id));
+        await kelas.hapusKelas(Number(id));
 
         return NextResponse.json({message : "Berhasil menghapus data kelas"}, {status : 200})
 
-    } catch (e) { 
-        return NextResponse.json({message : "Gagal menghapus data kelas"}, {status : 501})
+    } catch (error) { 
+        return NextResponse.json({message : "Gagal menghapus data kelas", details : error}, {status : 501})
     }
 }

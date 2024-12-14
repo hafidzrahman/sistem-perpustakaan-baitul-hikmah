@@ -1,5 +1,4 @@
 import { kelasType, perbaruiKelasType, prisma } from "@/lib";
-import { NextResponse } from "next/server";
 
 export class Kelas{
     nama? : string;
@@ -13,25 +12,28 @@ export class Kelas{
         })
     }
 
-    async tambahKelas(dataKelas : Omit<kelasType, 'id'>) : Promise<void> {
+    async tambahKelas(dataKelas : Omit<kelasType, 'id'>) : Promise<kelasType> {
         const {nama, tingkat} = dataKelas;
 
         if (!nama || !tingkat) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        await prisma.kelas.create({
+        const result = await prisma.kelas.create({
             data: {
               nama,
               tingkat
             },
           });
+
+          return result;
     }
     
-    async tambahBanyakKelas(dataKelas : Omit<kelasType, 'id'>[]) {
-        await prisma.kelas.createMany({
+    async tambahBanyakKelas(dataKelas : Omit<kelasType, 'id'>[]) : Promise<kelasType[]> {
+        const result = await prisma.kelas.createManyAndReturn({
             data : dataKelas
         })
+        return result;
     }
 
     async cariKelas (id? : number) : Promise<kelasType | kelasType[]> {
@@ -57,7 +59,7 @@ export class Kelas{
 
 }
 
-    async perbaruiKelas(id : number, data : perbaruiKelasType) :Promise<void> {
+    async perbaruiKelas(id : number, data : perbaruiKelasType) :Promise<kelasType> {
         const {nama, tingkat} = data;
 
         let kelas = await this.cariKelas(id) as kelasType;
@@ -66,7 +68,7 @@ export class Kelas{
             throw ({message : "Data kelas tidak ditemukan"})
         }
 
-        await prisma.kelas.update({
+        const result = await prisma.kelas.update({
             data : {
                 nama : nama || kelas.nama,
                 tingkat : tingkat || kelas.tingkat,
@@ -76,10 +78,17 @@ export class Kelas{
             }
         })
 
+        return result;
+
 
     }
 
     async hapusKelas(id : number) : Promise<void> {
+        await prisma.riwayatKelas.deleteMany({
+            where : {
+                idKelas : id
+            }
+        })
         const kelas = await prisma.kelas.delete({
             where : {
                 id
@@ -87,7 +96,7 @@ export class Kelas{
         })
 
         if (!kelas?.id) {
-            throw NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
+            throw new Error("Data kelas tidak ditemukan")
         }
     }
 

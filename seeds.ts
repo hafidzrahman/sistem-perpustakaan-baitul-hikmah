@@ -56,6 +56,12 @@ Table sumbangan buku terdapat dua id table sumbangan
 1. Jika pada sumbangan buku terdapat dua id yang sama, berarti buku tersebut untuk dirinya sendiri
 2. Jika pada sumbangan buku terdapat dua id yang berbeda, berarti buku tersebut disumbangkan ke orang lain
 3. Jika pada sumbangan buku hanya terdapat satu id, berarti buku tersebut siap disumbangkan
+
+
+id tidak bisa di update karena jika kita pakai autoincrement pada table dan table tersebut sudah sampai 100 row,
+berarti nomor id 1-100 sudah ditempati, jika user ingin mengganti row id yang ke 34 menjadi 78 (user tidak tau mana nomor id mana yang masih kosong)
+maka akan error, karena id 78 sudah ditempati
+solusinya buat delete row yang ingin diganti id nya dan buat row baru, nanti id akan otomatis dibuatkan
 */
 
 // buat fitur pengenaan denda otomatis (pakai timer?)
@@ -260,6 +266,7 @@ export const seeds = {
   ],
   peminjaman: [
     { nis: "12250111791", tanggalPinjam: new Date(), keterangan: "WOW" },
+    { nip: "112233", tanggalPinjam: new Date(), keterangan: "WOW" },
     { nip: "122331", tanggalPinjam: new Date(), keterangan: "WOW" },
     { nip: "112233", tanggalPinjam: new Date(), keterangan: "WOW" },
   ],

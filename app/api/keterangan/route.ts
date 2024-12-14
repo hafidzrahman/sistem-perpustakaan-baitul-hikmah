@@ -8,8 +8,8 @@ export async function GET() {
 
         return NextResponse.json(dataKeterangan, {status:200})
     }
-    catch (e) {
-        return NextResponse.json({message : "Gagal mendapatkan data keterangan"}, {status : 506})
+    catch (error) {
+        return NextResponse.json({message : "Data keterangan tidak ditemukan", details : error}, {status : 506})
     }
 }
 
@@ -17,10 +17,10 @@ export async function POST(req : Request) {
     try {
         const body = await req.json();
 
-        await keterangan.tambahKeterangan(body);
+        const dataKeterangan = await keterangan.tambahKeterangan(body);
 
-        return NextResponse.json({message : "Data berhasil ditambahkan"}, {status : 200})
-    } catch (e) {
-        return NextResponse.json({message : "Gagal menambahkan data keterangan"}, {status : 502})
+        return NextResponse.json(dataKeterangan, {status : 200})
+    } catch (error) {
+        return NextResponse.json({message : "Gagal menambahkan data keterangan", details : error}, {status : 502})
     }
 }

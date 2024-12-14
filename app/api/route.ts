@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import {bukuType, kelasType, keteranganType, guruType, muridType, peminjamanType} from '@/lib'
+import {bukuType, kelasType, keteranganType, guruType, muridType, peminjamanType, perbaruiAnggotaType, perbaruiKelasType, Genre} from '@/lib'
 
 import {Buku} from '@/app/class/buku';
 import {Keterangan} from '@/app/class/keterangan';
@@ -10,6 +10,7 @@ import {Murid} from '@/app/class/murid';
 import {Peminjaman} from '@/app/class/peminjaman';
 import {seeds} from "@/seeds";
 import { prisma } from "@/lib";
+import { JenisKelamin } from "@prisma/client";
 
 export async function GET() {
   const {

@@ -10,7 +10,7 @@ export type guruType = {
     nama : string,
     jenisKelamin : JenisKelamin,
     kontak : string,
-    alamat? : string
+    alamat? : string | null
 }
 
 export type muridType = {
@@ -19,15 +19,15 @@ export type muridType = {
     nama : string,
     jenisKelamin : JenisKelamin,
     kontak : string,
-    alamat? : string,
+    alamat? : string | null,
 }
 
 export type perbaruiAnggotaType = {
     nama? : string,
     jenisKelamin? : JenisKelamin,
     kontak? : string,
-    alamat? : string,
-    idKelas : number
+    alamat? : string | null,
+    idKelas? : number
 }
 
 export type perbaruiKelasType = {
@@ -47,10 +47,12 @@ export type kelasType = {
 export type eksemplarBukuType = {
     bukuISBN?: string;
     id?: number;
-    tanggalMasuk : Date | null;
-    tanggalRusak: Date | null;
-    tanggalHilang: Date | null;
-    posisi: string | null;
+    tanggalMasuk? : Date | null;
+    tanggalRusak? : Date | null;
+    tanggalHilang? : Date | null;
+    posisi? : string | null;
+    idSumbangan? : number | null;
+    idSumbanganBantuan? : number | null;
 } | null
 
 
@@ -59,16 +61,20 @@ export type bukuType = {
     penulis? : string[] | number[] | penulisType[],
     genre : string[] | number[] | genreType[],
     isbn : string,
-    linkGambar? : string,
-    sinopsis? : string,
-    penerbit? : string | number,
-    penerbitDetails? : penerbitType 
-    halaman? : number, 
-    tanggalMasuk? : Date,
-    tanggalRusak?: Date, 
-    tanggalHilang? : Date, 
-    posisi? : string 
+    linkGambar? : string | null,
+    sinopsis? : string | null,
+    penerbit? : string | number | null,
+    penerbitDetails? : penerbitType | null, 
+    halaman? : number | null, 
+    tanggalMasuk? : Date | null,
+    tanggalRusak?: Date | null,  
+    tanggalHilang? : Date | null, 
+    posisi? : string  | null
 }
+
+export type tambahBukuType = bukuType & eksemplarBukuType
+
+export type eksemplarDenganBukuType = eksemplarBukuType & {buku : bukuType}
 
 export type penerbitType = {
     id: number;
@@ -108,7 +114,7 @@ export type perbaruiBukuType = {
     judul? : string,
     penulis? : string[] | number[] | penulisType[],
     genre? : string[] | number[],
-    isbn? : string, // berisiko jika diperbarui?
+    isbn? : string, // berisiko jika diperbarui? kalau bukan autoincrement() harusnya aman? setiap eksemplar buku yang terkait dengan isbn yang mau diubah pasti akan error
     linkGambar? : string,
     sinopsis? : string,
     penerbit? : string | number,
@@ -123,16 +129,16 @@ export type perbaruiBukuType = {
 export type keteranganType = {
     id : number,
     keterangan : string,
-    jumlahBuku? : number,
-    totalNominal? : number,
-    nominalPerHari? : number
+    jumlahBuku? : number | null,
+    totalNominal? : number | null,
+    nominalPerHari? : number | null
 }
 
 export type perbaruiKeteranganType = {
-    keterangan? : string,
-    jumlahBuku? : number,
-    totalNominal? : number,
-    nominalPerHari? : number
+    keterangan? : string | null,
+    jumlahBuku? : number | null,
+    totalNominal? : number | null,
+    nominalPerHari? : number | null
 }
 
 export type peminjamanType = {
@@ -154,12 +160,12 @@ export interface Anggota<T,> {
     nama? : string;
     jenisKelamin? : JenisKelamin;
     kontak? : string;
-    alamat? : string;
+    alamat? : string | null;
 
-    tambahAnggota : (data : T) => Promise<void>;
-    tambahBanyakAnggota : (data : T[]) => Promise<void>;
+    tambahAnggota : (data : T) => Promise<T>;
+    tambahBanyakAnggota : (data : T[]) => Promise<T[]>;
     cariAnggota : (id? : string) => Promise<T | T[]>;
-    perbaruiAnggota : (id : string, data : perbaruiAnggotaType) => Promise<void>;
+    perbaruiAnggota : (id : string, data : perbaruiAnggotaType) => Promise<T>;
     hapusAnggota : (id : string) => Promise<void>;
     hapusSemuaAnggota : () => Promise<void>
 }
