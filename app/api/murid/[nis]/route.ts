@@ -13,13 +13,13 @@ export async function GET(req : Request, {params} : paramsType) {
         const dataMurid = await murid.cariAnggota(nis) as muridType;
 
         if (!dataMurid?.nis) {
-            return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
+            return new Error("Data murid tidak ditemukan");
         }
 
-        return NextResponse.json({murid}, {status : 200})
+        return NextResponse.json(dataMurid, {status : 200})
 
-    } catch (e) {
-        return NextResponse.json({message : "Gagal mendapatkan data murid"}, {status : 501})
+    } catch (error) {
+        return NextResponse.json({message : "Gagal mendapatkan data murid", details : error}, {status : 501})
     }
 }
 
@@ -28,19 +28,19 @@ export async function PUT(req : Request, {params} : paramsType) {
         const {nis} = await params;
         const body = await req.json();
 
-        const dataMurid = await murid.cariAnggota(nis) as muridType;
+        // const dataMurid = await murid.cariAnggota(nis) as muridType;
 
-        if (!dataMurid?.nis) {
-            return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
-        }
+        // if (!dataMurid?.nis) {
+        //     return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
+        // }
 
-        murid.perbaruiAnggota(nis, body);
+        const dataMurid = await murid.perbaruiAnggota(nis, body);
 
-        return NextResponse.json({murid}, {status : 200})
+        return NextResponse.json(dataMurid, {status : 200})
 
 
-    } catch (e) {
-        return NextResponse.json({message : "Gagal mendapatkan data murid"}, {status : 501})
+    } catch (error) {
+        return NextResponse.json({message : "Gagal memperbarui data murid", details : error}, {status : 501})
     }
 }
 
@@ -48,17 +48,17 @@ export async function DELETE(req : Request, {params} : paramsType) {
     try {
         const {nis} = await params;
         
-        const dataMurid = await murid.cariAnggota(nis) as muridType;
+        // const dataMurid = await murid.cariAnggota(nis) as muridType;
 
-        if (!dataMurid?.nis) {
-            return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
-        }
+        // if (!dataMurid?.nis) {
+        //     return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
+        // }
 
         await murid.hapusAnggota(nis);
 
         return NextResponse.json({message : "Berhasil menghapus data murid"}, {status : 200})
 
-    } catch (e) { 
-        return NextResponse.json({message : "Gagal menghapus data murid"}, {status : 501})
+    } catch (error) { 
+        return NextResponse.json({message : "Gagal menghapus data murid", details : error}, {status : 501})
     }
 }

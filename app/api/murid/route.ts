@@ -8,7 +8,7 @@ export async function GET() {
     return NextResponse.json(dataMurid, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Gagal mendapatkan data murid" },
+      { message: "Data murid tidak ditemukan", details : error },
       { status: 503 }
     );
   }
@@ -18,15 +18,13 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    await murid.tambahAnggota(body);
+    const dataMurid = await murid.tambahAnggota(body);
     
-    return NextResponse.json({
-      message: "Data berhasil ditambahkan"
-    });
+    return NextResponse.json(dataMurid, {status : 200});
   } catch (error) {
     return NextResponse.json(
       {
-        error: "Gagal menambahkan murid",
+        message: "Gagal menambahkan data murid",
         details: error,
       },
       { status: 500 }

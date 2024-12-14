@@ -1,4 +1,4 @@
-import {bukuType, cariBukuType, Hash, eksemplarBukuType, perbaruiBukuType, prisma, konversiDataKeId, penulisType, genreType, penerbitType} from '@/lib'
+import {bukuType, cariBukuType, Hash, eksemplarBukuType, perbaruiBukuType, prisma, konversiDataKeId, penulisType, genreType, penerbitType, tambahBukuType, eksemplarDenganBukuType} from '@/lib'
 import { NextResponse } from 'next/server';
 
 
@@ -6,15 +6,15 @@ export class Buku{
     judul? : string;
     penulis? : string[] | number[] | penulisType[];
     genre? : string[] | number[] | genreType[];
-    isbn? : string;
-    linkGambar? : string;
-    sinopsis? : string;
-    penerbit? : string | number | penerbitType; 
-    halaman? : number;
-    tanggalMasuk? : Date;
-    tanggalRusak?: Date; 
-    tanggalHilang? : Date; 
-    posisi? : string;
+    isbn? : string | null;
+    linkGambar? : string | null;
+    sinopsis? : string | null;
+    penerbit? : string | number | penerbitType | null; 
+    halaman? : number | null;
+    tanggalMasuk? : Date | null;
+    tanggalRusak?: Date | null; 
+    tanggalHilang? : Date | null; 
+    posisi? : string | null;
 
     constructor(req? : Request) {
         req?.json().then((data : bukuType) => {
@@ -33,7 +33,7 @@ export class Buku{
         })
     }
 
-    async tambahBuku(dataBuku : bukuType & eksemplarBukuType) : Promise<void> {
+    async tambahBuku(dataBuku: tambahBukuType) : Promise<eksemplarDenganBukuType> {
         const { judul, isbn, linkGambar, sinopsis, halaman, tanggalMasuk, tanggalRusak, tanggalHilang, posisi } = dataBuku;
         let {penulis, penerbit, genre} = dataBuku;
         
@@ -82,7 +82,7 @@ export class Buku{
           });
         }
 
-          await prisma.eksemplarBuku.create({
+        const result =  await prisma.eksemplarBuku.create({
             data : {
                 id : count + 1,
                 tanggalMasuk,
@@ -90,13 +90,21 @@ export class Buku{
                 tanggalHilang,
                 posisi,
                 bukuISBN : isbn
+            },
+            include : {
+                buku : {
+                    include : {
+                        penulis : true,
+                        genre : true,
+                    }
+                }
             }
           })
       
-        
+        return result;
     }
 
-    async tambahBanyakBuku(dataBuku : (bukuType & eksemplarBukuType)[]) {
+    async tambahBanyakBuku(dataBuku : (bukuType & eksemplarBukuType)[]) : Promise<void> {
         const map : Hash<number> = {}
 
         // await Promise.all(dataBuku.map(isbnCounter))
@@ -286,13 +294,15 @@ export class Buku{
         await prisma.buku.update({
             data : {
                 judul : judul || buku.judul, 
-                isbn : bukuISBN || buku.isbn, 
                 linkGambar : linkGambar || buku.linkGambar, 
                 sinopsis : sinopsis || buku.sinopsis, 
                 penerbit : (penerbit || buku.penerbit) as number, 
                 halaman : halaman || buku.halaman,
                 genre : {
-                    connect : (genre?.map(id => ({id})) || buku.genre.map(id => ({id}))) as {id : number}[]
+                    set : (genre?.map(id => ({id})) || buku.genre.map(id => ({id}))) as {id : number}[]
+                },
+                penulis : {
+                    set : (penulis?.map(id => ({id})) || buku.penulis?.map(id => ({id}))) as {id : number}[]
                 }
             },
             where : {
@@ -304,6 +314,11 @@ export class Buku{
     }
 
     async hapusBuku(isbn : string) : Promise<void> {
+        await prisma.eksemplarBuku.deleteMany({
+            where : {
+                bukuISBN : isbn
+            }
+        })
         const buku = await prisma.buku.delete({
             where : {
                 isbn

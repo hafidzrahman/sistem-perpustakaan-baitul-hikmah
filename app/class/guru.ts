@@ -7,7 +7,7 @@ export class Guru implements Anggota<guruType>{
     nama? : string;
     jenisKelamin? : JenisKelamin;
     kontak? : string;
-    alamat? : string;
+    alamat? : string | null;
 
     constructor(req? : Request) 
         {
@@ -20,14 +20,20 @@ export class Guru implements Anggota<guruType>{
         })
     }
 
-    async tambahAnggota(dataGuru : guruType) : Promise<void> {
+    async tambahAnggota(dataGuru : guruType) : Promise<guruType> {
         const {nip, nama, jenisKelamin, kontak, alamat} = dataGuru;
 
-        if (!nip || !nama || !jenisKelamin || kontak) {
+        if (!nip || !nama || !jenisKelamin || !kontak) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        await prisma.guru.create({
+        const cariGuru = await this.cariAnggota(nip) as guruType;
+
+        if (cariGuru.nip) {
+            throw new Error("NIP sudah terdaftar!")
+        }
+
+        const result = await prisma.guru.create({
             data: {
               nip,
               nama,
@@ -36,15 +42,18 @@ export class Guru implements Anggota<guruType>{
               alamat,
             },
           });
+
+          return result;
       
         
     }
 
 
-    async tambahBanyakAnggota(dataGuru : guruType[]) : Promise<void> {
-        await prisma.guru.createMany({
+    async tambahBanyakAnggota(dataGuru : guruType[]) : Promise<guruType[]> {
+        const result = await prisma.guru.createManyAndReturn({
             data : dataGuru
         })
+        return result;
     }
 
     async cariAnggota (nip? : string) : Promise<guruType | guruType[]> {
@@ -70,16 +79,16 @@ export class Guru implements Anggota<guruType>{
 
 }
 
-    async perbaruiAnggota(nip : string, data : perbaruiAnggotaType) :Promise<void> {
+    async perbaruiAnggota(nip : string, data : perbaruiAnggotaType) :Promise<guruType> {
         const {nama, jenisKelamin, kontak, alamat} = data;
 
         let guru = await this.cariAnggota(nip) as guruType;
 
         if (!guru?.nip) {
-            throw ({message : "Data kelas tidak ditemukan"})
+            throw new Error("Data kelas tidak ditemukan")
         }
 
-        await prisma.guru.update({
+        const result = await prisma.guru.update({
             data : {
                 nama : nama || guru.nama,
                 jenisKelamin : jenisKelamin || guru.jenisKelamin,
@@ -90,6 +99,8 @@ export class Guru implements Anggota<guruType>{
                 nip
             }
         })
+
+        return result;
 
 
     }

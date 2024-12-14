@@ -7,7 +7,7 @@ export async function GET() {
 
         return NextResponse.json(dataGuru, {status : 200})
     } catch (error) {
-        return NextResponse.json({message : "Gagal mendapatkan data guru"}, {status : 504})
+        return NextResponse.json({message : "Data guru tidak ditemukan", details : error}, {status : 504})
     }
 }
 
@@ -16,12 +16,12 @@ export async function POST(req : Request) {
     try {
         const body = await req.json();
 
-        await guru.tambahAnggota(body);
+        const dataGuru = await guru.tambahAnggota(body);
 
-    return NextResponse.json({message : "Data berhasil ditambahkan"}, {status : 200})
-    } catch (e) {
+    return NextResponse.json(dataGuru, {status : 200})
+    } catch (error) {
         return NextResponse.json(
-            {message : "Gagal menambahkan data Guru"},
+            {message : "Gagal menambahkan data Guru", details : error},
             {status : 503}
         )
     }

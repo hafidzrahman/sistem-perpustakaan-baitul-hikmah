@@ -6,18 +6,17 @@ export async function GET() {
     const dataKelas = await kelas.cariKelas();
     return NextResponse.json(dataKelas, {status : 200});
   } catch (error) {
-    return NextResponse.json({ error });
+    return NextResponse.json({message : "Data murid tidak ditemukan", details : error }, {status : 500});
   }
 }
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    await kelas.tambahKelas(body); 
+    const dataKelas = await kelas.tambahKelas(body); 
     
-    return NextResponse.json({
-      message: "Data berhasil ditambahkan"}, {status : 200});
+    return NextResponse.json(dataKelas, {status : 200});
   } catch (error) {
-    return NextResponse.json({ error });
+    return NextResponse.json({ message : "Gagal menambahkan data murid", details : error }, {status : 500});
   }
 }

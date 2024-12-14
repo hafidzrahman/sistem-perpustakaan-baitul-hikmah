@@ -7,18 +7,44 @@ type paramsType = {
 
 
 export async function GET(req: Request, {params} : paramsType) {
+
+  try {
   
   const {isbn} = await params;
 
   const dataBuku = await buku.cariBuku(isbn)
 
   if (!dataBuku) {
-    return NextResponse.json({ message: "Buku Tidak ditemukan", status: 404 });
+    throw new Error("Data buku tidak ditemukan");
   }
 
-  return NextResponse.json(dataBuku);
+  return NextResponse.json(dataBuku, {status : 200});
+
+} catch (error) {
+  return NextResponse.json({message : "Gagal mendapatkan data buku", details : error}, {status : 500})
+}
 }
 
-function titleToUrlParser(title : string) : string {
-    return title.split(' ').map(s => s.toLowerCase).join('-')
+export async function PUT(req : Request, {params} : paramsType) {
+  try {
+    const body = await req.json();
+    const {isbn} = await params;
+    const dataBuku = await buku.perbaruiBuku(isbn, body);
+
+    return NextResponse.json(dataBuku, {status : 200});
+  } catch (error) {
+    return NextResponse.json({message : "Gagal memperbarui data buku", details : error}, {status : 500})
+  }
+}
+
+export async function DELETE(req : Request, {params} : paramsType) {
+  try {
+    const {isbn} = await params;
+
+    await buku.hapusBuku(isbn);
+
+    return NextResponse.json({message : "Berhasil menghapus data buku"}, {status : 200})
+  } catch (error) {
+    return NextResponse.json({message : "Gagal menghapus data buku", details : error}, {status : 500})
+  }
 }
