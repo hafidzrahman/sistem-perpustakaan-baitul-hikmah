@@ -1,14 +1,27 @@
 "use client";
 import BukuGenreDoughnutChart from "@/app/components/BukuGenreDoughnutChart";
 import PeminjamanLineChart from "@/app/components/PeminjamanLineChart";
+import TablePeminjaman from "@/app/components/TablePeminjaman";
 import {
   Mortarboard01Icon,
   TeacherIcon,
   BookOpen02Icon,
 } from "hugeicons-react";
-interface PageProps {}
+import { useEffect, useState } from "react";
+interface BerandaPageProps {}
 
-const Page = ({}: PageProps) => {
+const BerandaPage = ({}: BerandaPageProps) => {
+  const [peminjaman, setPeminjaman] = useState([]);
+
+  useEffect(() => {
+    const fetchPeminjaman = async () => {
+      const response = await fetch("/api/peminjaman");
+      const data = await response.json();
+      setPeminjaman(data);
+    };
+    fetchPeminjaman();
+  }, []);
+
   return (
     <>
       <div className="mb-4">
@@ -54,10 +67,11 @@ const Page = ({}: PageProps) => {
           <h1 className="font-source-sans text-2xl text-primary font-bold">
             Riwayat Peminjaman
           </h1>
+          <TablePeminjaman data={peminjaman} />
         </div>
       </div>
     </>
   );
 };
 
-export default Page;
+export default BerandaPage;

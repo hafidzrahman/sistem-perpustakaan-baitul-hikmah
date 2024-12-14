@@ -5,13 +5,12 @@ import React, { useEffect, useState } from "react";
 import { cariBukuType, genreType } from "@/lib";
 
 const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
-
   const [detailBuku, setDetailBuku] = useState<cariBukuType | null>(null);
 
   useEffect(() => {
     const fetchDetailBuku = async () => {
-        const { isbn } = await params;
-        console.log(isbn)
+      const { isbn } = await params;
+      console.log(isbn);
       try {
         const response = await fetch(`/api/buku/${isbn}`);
         const data = await response.json();
@@ -84,10 +83,14 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
     "border-pastel-blue",
   ];
 
-  const {linkGambar, judul, penulis, genre, sinopsis, _count : stock} = detailBuku;
-  // console.log(detailBuku.id);
-  // console.log(fromBg[detailBuku?.id % bg.length]);
-  // console.log(toBg[detailBuku?.id + (Math.floor(Math.random()) % bg.length)]);
+  const {
+    linkGambar,
+    judul,
+    penulis,
+    genre,
+    sinopsis,
+    _count: stock,
+  } = detailBuku;
 
   return (
     <div className="relative bg-noise bg-repeat">
@@ -97,7 +100,7 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
             fromBg[(1 + 1) % bg.length]
           } ${
             toBg[3 % bg.length]
-          } flex -z-[0] rounded-lg border-dark border-4`}
+          } flex -z-[0] rounded-2xl border-dark border-4`}
         ></div>
         <div className="w-[30%] relative z-10 p-12">
           <Image
@@ -105,7 +108,7 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
             src={linkGambar || "/img/book-2.png"}
             width={2140}
             height={0}
-            className="rounded-md border-2 w-full border-black-custom"
+            className="rounded-xl border-4 w-full border-black-custom"
           />
         </div>
         <div className="w-[70%] flex flex-col gap-8 z-10 py-12">
@@ -114,16 +117,17 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
               {judul}
             </h1>
             <h2 className="text-xl ml-0.5 font-normal text-white-custom">
-              {penulis.map((e => e.nama)).join(", ")}
+              {penulis.map((e) => e.nama).join(", ")}
             </h2>
             <div className="w-full flex items-center gap-2">
-              {genre.map((item: genreType, index: number) => <div
-                    key={index}
-                    className={`${bg[index]} ${border[index]} font-bold mt-4 flex justify-center text-white-custom items-center gap-2 border-2 font-source-sans leading-none text-xs rounded-full py-2 px-4`}
-                  >
-                    {item.nama}
-                  </div>
-                )}
+              {genre.map((item: genreType, index: number) => (
+                <div
+                  key={index}
+                  className={`${bg[index]} ${border[index]} font-bold mt-4 flex justify-center text-white-custom items-center gap-2 border-2 font-source-sans leading-none text-xs rounded-full py-2 px-4`}
+                >
+                  {item.nama}
+                </div>
+              ))}
             </div>
           </div>
           <div className="pr-12 flex flex-col gap-2">
