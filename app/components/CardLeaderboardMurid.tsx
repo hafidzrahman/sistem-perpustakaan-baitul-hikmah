@@ -1,5 +1,14 @@
-import React from "react";
-import { PieChart, Pie, Cell, Label } from "recharts";
+"use client";
+
+import dynamic from "next/dynamic";
+import { Pie, Label, Cell } from "recharts";
+
+const PieChart = dynamic(
+  () => import("recharts").then((recharts) => recharts.PieChart),
+  {
+    ssr: false,
+  }
+);
 
 interface CardLeaderboardMuridProps {
   name: string;
@@ -23,7 +32,7 @@ const CardLeaderboardMurid = ({
   // Color scheme
   const BG_COLORS = ["#055A39", "#064359", "#C50043"];
   const GRADIENT = ["#adf7b6", "#a0ced9", "#ffc09f"];
-  const COLORS = ["#a0ced9", "#E5E7EB"];
+  const COLORS = ["#ffc09f", "#C50043"];
 
   return (
     <div
