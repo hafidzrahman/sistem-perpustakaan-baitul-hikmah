@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { kelasType } from "@/lib";
+
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 
 interface ModalTambahKelasProps {
