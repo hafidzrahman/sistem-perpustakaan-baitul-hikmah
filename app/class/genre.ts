@@ -30,4 +30,10 @@ export class GenreClass {
             })
             return dataGenre;
         }
+        
+    static async ambilSemuaDataGenre() : Promise<genreType[]> {
+            const dataGenre = await prisma.genre.findMany({});
+    
+            return dataGenre;
+        }
 }

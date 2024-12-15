@@ -61,20 +61,22 @@ export class Peminjaman {
       },
     });
 
-    let timer = setTimeout(setDenda, result);
+    let timer = setTimeout(() => setDenda(peminjaman.id, dataBukuPinjaman.bukuISBN, dataBukuPinjaman.bukuId), result);
 
-    async function setDenda() {
-      console.log("test")
+    async function setDenda(idPeminjaman : number, bukuISBN : string, bukuId : number) {
+      // jika timer sedang berjalan, sementara kita pergi ke /api yang menyebabkan terdeletenya semua data peminjaman
+      // maka ketika timer sudah habis, fungsi setDenda dijalankan, dan ketika bukuPinjaman.findUnique({}) dijalankan,
+      // idPeminjaman tidak ditemukan karena sudah di delete, yang hal ini juga dikarenakan id Peminjaman menggunakan autoincrement()
+      // sementara data bukuISBN dan bukuId aman karena tidak menggunakan autoincrement() tapi input isbn & id secara manual
       const bukuPinjaman = await prisma.bukuPinjaman.findUnique({
         where: {
           idPeminjaman_bukuISBN_bukuId: {
-            idPeminjaman: peminjaman.id,
-            bukuISBN: dataBukuPinjaman.bukuISBN,
-            bukuId: dataBukuPinjaman.bukuId,
+            idPeminjaman,
+            bukuISBN,
+            bukuId,
           },
         },
       });
-
       if (!bukuPinjaman?.bukuISBN) {
         throw new Error("Data buku tidak ditemukan");
       }
@@ -101,7 +103,7 @@ export class Peminjaman {
       } else if (Date.now() < bukuPinjaman.tenggatWaktu.getTime()) {
         const result = bukuPinjaman.tenggatWaktu.getTime() - Date.now()
         // clearTimeout(timer);
-        timer = setTimeout(setDenda, result);
+        timer = setTimeout(() => setDenda(peminjaman.id, dataBukuPinjaman.bukuISBN, dataBukuPinjaman.bukuId), result);
       }
     }}
   }

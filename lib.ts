@@ -177,6 +177,27 @@ export type bukuPinjamanType = {
     tanggalKembali? : Date | null
 }
 
+export type formBuktiType = {
+    id? : number,
+    bukuISBN : string,
+    muridNIS : string,
+    tanggal : Date,
+    intisari : string,
+    halamanAwal : number,
+    halamanAkhir : number,
+    status : boolean;
+}
+
+export type perbaruiFormBuktiType = {
+    bukuISBN? : string,
+    muridNIS? : string,
+    tanggal? : Date,
+    intisari? : string,
+    halamanAwal? : number,
+    halamanAkhir? : number,
+    status? : boolean;
+}
+
 export interface Anggota<T,> {
     nama? : string;
     jenisKelamin? : JenisKelamin;
