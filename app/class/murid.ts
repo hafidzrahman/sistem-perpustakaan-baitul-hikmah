@@ -23,16 +23,15 @@ export class Murid implements Anggota<muridType>{
 
     static async tambahAnggota(dataMurid : muridType) : Promise<muridType> {
         const {nis, nama, jenisKelamin, idKelas, kontak, alamat} = dataMurid;
-
         if (!nis || !nama || !jenisKelamin || !idKelas || !kontak) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        const cariMurid = await Murid.cariAnggota(nis) as muridType;
+        // const cariMurid = await Murid.cariAnggota(nis) as muridType;
         
-        if (cariMurid.nis) {
-            throw new Error("NIS sudah terdaftar!")
-        }
+        // if (cariMurid.nis) {
+        //     throw new Error("NIS sudah terdaftar!")
+        // }
 
         const dataKelas = await Kelas.cariKelas(idKelas) as kelasType;
 

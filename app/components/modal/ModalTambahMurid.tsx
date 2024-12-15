@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
+import {muridType} from "@/lib";
 
 interface ModalTambahMuridProps {
   status: boolean;
@@ -33,6 +34,14 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
     e.preventDefault();
 
     try {
+      const data : muridType = {
+        nis,
+        nama,
+        jenisKelamin,
+        kontak : kontakOrtu,
+        alamat,
+        idKelas: Number(idKelas),
+      }
       const response = await fetch("/api/murid", {
         method: "POST",
         headers: {

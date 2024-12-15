@@ -22,7 +22,7 @@ export async function GET() {
     keterangan: dataKeterangan,
     peminjaman: dataPeminjaman,
   } = seeds;
-
+  
   await RiwayatKelas.hapusSemuaRiwayatKelas();
   await prisma.denda.deleteMany({})
   await prisma.sumbangan.deleteMany({})
@@ -40,8 +40,7 @@ export async function GET() {
     await Murid.tambahBanyakAnggota(dataMurid);
     await Guru.tambahBanyakAnggota(dataGuru);
     await Keterangan.tambahBanyakKeterangan(dataKeterangan);
-
-    await Kelas.tambahKelas({nama : "tset", tingkat : 3})
+    
 
     await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
     
@@ -56,6 +55,6 @@ export async function GET() {
     let arrayBukuPinjaman = await prisma.bukuPinjaman.findMany({})
     let arrayDenda = await prisma.denda.findMany({});
 
-    return NextResponse.json({arrayKelas})
+    return NextResponse.json({arrayDenda, arrayPeminjaman, arrayBukuPinjaman, arrayBuku})
 }
 
