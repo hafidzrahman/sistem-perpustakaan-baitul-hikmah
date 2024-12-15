@@ -1,4 +1,4 @@
-import { bukuPinjamanType, peminjamanType, peminjamType, perbaruiPeminjaman, prisma } from "@/lib";
+import { ambilSemuaDataPeminjamanType, bukuPinjamanType, peminjamanType, peminjamType, perbaruiPeminjaman, prisma } from "@/lib";
 import { NextResponse } from "next/server";
 import { Buku } from "@/app/class/buku";
 import { EksemplarBuku } from "./eksemplarbuku";
@@ -45,9 +45,12 @@ export class Peminjaman {
     const dataEksemplarBuku = await EksemplarBuku.ketersediaanEksemplarBuku(isbn);
 
     if (dataEksemplarBuku) {
+    // 31536000000 --> satu tahun ke ms
+    // 604800000 --> satu minggu ke ms
     // default peminjaman seminggu, bisa diatur sesuai dengan keinginan petugas perpustakaan
     const date = new Date();
     const deadline = tenggatWaktu || new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const result = deadline.getTime() - date.getTime();
 
     const dataBukuPinjaman = await prisma.bukuPinjaman.create({
       data: {
@@ -58,9 +61,10 @@ export class Peminjaman {
       },
     });
 
-    setTimeout(setDenda, deadline.getTime());
+    let timer = setTimeout(setDenda, result);
 
     async function setDenda() {
+      console.log("test")
       const bukuPinjaman = await prisma.bukuPinjaman.findUnique({
         where: {
           idPeminjaman_bukuISBN_bukuId: {
@@ -71,7 +75,12 @@ export class Peminjaman {
         },
       });
 
-      if (!bukuPinjaman?.tanggalKembali) {
+      if (!bukuPinjaman?.bukuISBN) {
+        throw new Error("Data buku tidak ditemukan");
+      }
+
+      if (Date.now() >= bukuPinjaman.tenggatWaktu.getTime() && !bukuPinjaman?.tanggalKembali) {
+        clearTimeout(timer)
         const dataSumbangan = await prisma.sumbangan.create({
           data: {
             idKeterangan: 1,
@@ -89,6 +98,10 @@ export class Peminjaman {
             bukuId: dataBukuPinjaman.bukuId,
           },
         });
+      } else if (Date.now() < bukuPinjaman.tenggatWaktu.getTime()) {
+        const result = bukuPinjaman.tenggatWaktu.getTime() - Date.now()
+        // clearTimeout(timer);
+        timer = setTimeout(setDenda, result);
       }
     }}
   }
@@ -105,11 +118,7 @@ export class Peminjaman {
       throw new Error("Data buku tidak ditemukan.");
     }
 
-    const dataPeminjaman = await prisma.peminjaman.findUnique({
-      where: {
-        id: idPeminjaman,
-      },
-    });
+    const dataPeminjaman = await Peminjaman.cariPeminjaman(idPeminjaman);
 
     if (!dataPeminjaman?.id) {
       throw new Error("Data peminjaman tidak ditemukan.");
@@ -146,12 +155,12 @@ export class Peminjaman {
       return peminjaman;
   }
 
-  static async ambilSemuaDataPeminjaman() : Promise<peminjamanType[]> {
+  static async ambilSemuaDataPeminjaman() : Promise<ambilSemuaDataPeminjamanType[]> {
     const peminjaman = (await prisma.peminjaman.findMany({
       include: {
         bukuPinjaman: { include: { eksemplarBuku: true } },
       },
-    })) as peminjamanType[]
+    })) as ambilSemuaDataPeminjamanType[]
 
     return peminjaman;
   }

@@ -265,7 +265,7 @@ export const seeds = {
     },
   ],
   peminjaman: [
-    { nis: "12250111791", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [ {isbn : "978-602-06-5192-9", tenggatWaktu : new Date()}] },
+    { nis: "12250111791", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [ {isbn : "978-602-06-5192-9", tenggatWaktu : new Date(Date.now() + 10000000)}] },
     { nip: "112233", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [] },
     { nip: "122331", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [] },
     { nip: "112233", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [] },

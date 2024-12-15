@@ -35,6 +35,8 @@ export type perbaruiAnggotaType = {
 
 export type perbaruiPeminjaman = Omit<peminjamanType, "id" | "tanggalPinjam">;
 
+export type ambilSemuaDataPeminjamanType = peminjamanType & {bukuPinjaman : (bukuPinjamanType & {eksemplarBuku : eksemplarBukuType})[]}
+
 export type perbaruiKelasType = {
     nama? : string,
     tingkat? : number
@@ -170,7 +172,7 @@ export type peminjamType = {
 
 export type bukuPinjamanType = {
     bukuISBN : string,
-    id : number,
+    id? : number,
     tenggatWaktu : Date,
     tanggalKembali? : Date | null
 }

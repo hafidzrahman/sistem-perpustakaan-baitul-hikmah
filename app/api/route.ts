@@ -41,6 +41,8 @@ export async function GET() {
     await Guru.tambahBanyakAnggota(dataGuru);
     await Keterangan.tambahBanyakKeterangan(dataKeterangan);
 
+    await Kelas.tambahKelas({nama : "tset", tingkat : 3})
+
     await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
     
     let arrayBuku: bukuType[] = (await Buku.ambilSemuaDataBuku()) as bukuType[];
@@ -52,7 +54,8 @@ export async function GET() {
     let arrayPenulis = await prisma.penulis.findMany({})
     let arrayPenerbit = await prisma.penerbit.findMany({})
     let arrayBukuPinjaman = await prisma.bukuPinjaman.findMany({})
+    let arrayDenda = await prisma.denda.findMany({});
 
-    return NextResponse.json({arrayPeminjaman, arrayBukuPinjaman, arrayBuku})
+    return NextResponse.json({arrayKelas})
 }
 
