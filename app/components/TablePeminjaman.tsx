@@ -1,19 +1,73 @@
+import { use, useEffect, useState } from "react";
 import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
-import { peminjamanType, peminjamType } from "@/lib";
+import { peminjamanType } from "@/lib";
 
 const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
+  const [murid, setMurid] = useState<any>([]);
+  const [guru, setGuru] = useState<any>([]);
+
+  useEffect(() => {
+    const fetchMurid = async () => {
+      try {
+        const allMurid = [];
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].nis) {
+            // Pastikan ada NIS
+            const response = await fetch(`/api/murid/${data[i].nis}`);
+            if (!response.ok) {
+              throw new Error(`Error fetching murid with NIS: ${data[i].nis}`);
+            }
+            const murid = await response.json();
+            allMurid.push(murid); // Kumpulkan hasil
+          }
+        }
+        setMurid(allMurid); // Set semua murid setelah selesai
+      } catch (error) {
+        console.error("Error fetching murid data:", error);
+      }
+    };
+
+    fetchMurid();
+  }, [data]);
+
+  useEffect(() => {
+    const fetchGuru = async () => {
+      try {
+        const allGuru = [];
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].nip) {
+            // Pastikan ada NIP
+            const response = await fetch(`/api/guru/${data[i].nip}`);
+            if (!response.ok) {
+              throw new Error(`Error fetching guru with NIP: ${data[i].nip}`);
+            }
+            const guru = await response.json();
+            allGuru.push(guru); // Kumpulkan hasil
+          }
+        }
+        setGuru(allGuru); // Set semua guru setelah selesai
+      } catch (error) {
+        console.error("Error fetching guru data:", error);
+      }
+    };
+
+    fetchGuru();
+  }, [data]);
+
+  console.log(murid);
+  console.log(guru);
+
   return (
-    <div className="max-h-80 overflow-y-auto border border-gray-300 rounded-lg shadow-md">
+    <div className="max-h-80 overflow-y-auto border border-primary rounded-lg">
       <table className="min-w-full bg-white">
         <thead>
           <tr className="bg-light-primary text-white sticky top-0 z-10">
-            <th className="px-4 py-2 text-left w-2/12">ISBN</th>
+            <th className="px-4 py-2 text-left w-1/12">ID</th>
             <th className="px-4 py-2 text-left w-3/12">Judul</th>
-            <th className="px-4 py-2 text-left w-2/12">Penulis</th>
-            <th className="px-4 py-2 text-center w-2/12">Genre</th>
+            <th className="px-4 py-2 text-left w-3/12">Peminjam</th>
+            <th className="px-4 py-2 text-left w-2/12">Mulai</th>
+            <th className="px-4 py-2 text-center w-2/12">Tenggat</th>
             <th className="px-4 py-2 text-center w-1/12">Status</th>
-            <th className="px-4 py-2 text-center w-1/12">Aksi</th>
-            <th className="px-4 py-2 text-center w-1/12">Detail</th>
           </tr>
         </thead>
         <tbody>
@@ -23,10 +77,10 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
               className="group relative border-t-2 hover:border-y-2 hover:border-black-custom border-dashed transition-all duration-100"
             >
               <td className="px-4 py-2 font-source-sans font-semibold text-sm">
-                {/* {item?.isbn} */}
+                {item?.id}
               </td>
               <td className="px-4 py-2 font-source-serif font-semibold text-sm">
-                {/* {item?.judul} */}
+                {item?.nis}
               </td>
               <td className="px-4 py-2 font-source-sans text-sm">
                 {/* {item?.penulis.map((p) => p.nama).join(", ")} */}
@@ -58,14 +112,6 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
                   <Delete02Icon className="w-5 h-5 text-jewel-red" />
                   <PencilEdit01Icon className="w-5 h-5 text-jewel-blue " />
                 </div>
-              </td>
-              <td className="px-4 py-2 ">
-                <button
-                  type="submit"
-                  className="bg-dark-primary text-white-custom font-source-sans py-1 px-2 w-full rounded-lg border-2 border-black text-xs hover:shadow-sm transition-all duration-300 hover:transition-all hover:duration-300"
-                >
-                  Detail
-                </button>
               </td>
             </tr>
           ))}
