@@ -1,11 +1,11 @@
-import { buku } from "@/app/class/buku";
+import { Buku } from "@/app/class/buku";
 import { NextResponse } from "next/server";
 
 
 
 export async function GET() {
   try {
-    const dataBuku = await buku.cariBuku();
+    const dataBuku = await Buku.ambilSemuaDataBuku();
     return NextResponse.json(dataBuku, {status : 200});
   } catch (error) {
     return NextResponse.json({ message : "Data buku tidak ditemukan", details : error }, {status : 500});
@@ -15,7 +15,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const dataBuku = await buku.tambahBuku(body)
+    const dataBuku = await Buku.tambahBuku(body)
 
     return NextResponse.json(dataBuku, {status : 200});
   } catch (error) {

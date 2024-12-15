@@ -1,4 +1,4 @@
-import {buku} from '@/app/class/buku';
+import {Buku} from '@/app/class/buku';
 import { NextResponse } from "next/server";
 
 type paramsType = {
@@ -12,7 +12,7 @@ export async function GET(req: Request, {params} : paramsType) {
   
   const {isbn} = await params;
 
-  const dataBuku = await buku.cariBuku(isbn)
+  const dataBuku = await Buku.cariBuku(isbn)
 
   if (!dataBuku) {
     throw new Error("Data buku tidak ditemukan");
@@ -29,7 +29,7 @@ export async function PUT(req : Request, {params} : paramsType) {
   try {
     const body = await req.json();
     const {isbn} = await params;
-    const dataBuku = await buku.perbaruiBuku(isbn, body);
+    const dataBuku = await Buku.perbaruiBuku(isbn, body);
 
     return NextResponse.json(dataBuku, {status : 200});
   } catch (error) {
@@ -41,7 +41,7 @@ export async function DELETE(req : Request, {params} : paramsType) {
   try {
     const {isbn} = await params;
 
-    await buku.hapusBuku(isbn);
+    await Buku.hapusBuku(isbn);
 
     return NextResponse.json({message : "Berhasil menghapus data buku"}, {status : 200})
   } catch (error) {

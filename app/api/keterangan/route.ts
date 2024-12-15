@@ -1,10 +1,10 @@
-import {keterangan} from "@/app/class/keterangan";
+import {Keterangan} from "@/app/class/keterangan";
 import {NextResponse} from "next/server"
 
 
 export async function GET() {
     try {
-        const dataKeterangan = await keterangan.cariKeterangan();
+        const dataKeterangan = await Keterangan.ambilSemuaDataKeterangan();
 
         return NextResponse.json(dataKeterangan, {status:200})
     }
@@ -17,7 +17,7 @@ export async function POST(req : Request) {
     try {
         const body = await req.json();
 
-        const dataKeterangan = await keterangan.tambahKeterangan(body);
+        const dataKeterangan = await Keterangan.tambahKeterangan(body);
 
         return NextResponse.json(dataKeterangan, {status : 200})
     } catch (error) {

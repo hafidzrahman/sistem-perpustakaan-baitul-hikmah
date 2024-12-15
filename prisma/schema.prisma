@@ -119,7 +119,7 @@ model Guru {
 
 model RiwayatKelas {
   tahunAjaran   String
-  nomorPresensi Int    @default(autoincrement())
+  nomorPresensi Int?   @default(autoincrement())
 
   muridNIS String
   murid    Murid  @relation(fields: [muridNIS], references: [nis])
@@ -183,9 +183,9 @@ model BukuPinjaman {
   idPeminjaman Int
   peminjaman   Peminjaman @relation(fields: [idPeminjaman], references: [id])
 
-  bukuISBN String
-  bukuId   Int
-  buku     EksemplarBuku @relation(fields: [bukuISBN, bukuId], references: [bukuISBN, id])
+  bukuISBN      String
+  bukuId        Int
+  eksemplarBuku EksemplarBuku @relation(fields: [bukuISBN, bukuId], references: [bukuISBN, id])
 
   @@id([idPeminjaman, bukuISBN, bukuId])
   @@index([idPeminjaman, bukuISBN, bukuId])
