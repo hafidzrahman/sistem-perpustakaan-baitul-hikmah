@@ -153,7 +153,7 @@ model FormBukti {
   murid    Murid  @relation(fields: [muridNIS], references: [nis])
 
   bukuISBN String
-  Buku     Buku   @relation(fields: [bukuISBN], references: [isbn])
+  buku     Buku   @relation(fields: [bukuISBN], references: [isbn])
 
   @@index([id])
 }
