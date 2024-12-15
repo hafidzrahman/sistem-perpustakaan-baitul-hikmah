@@ -125,6 +125,11 @@ export class Murid implements Anggota<muridType>{
                     nis
                 }, 
                 include : {
+                    Peminjaman : {
+                        include : {
+                            bukuPinjaman : true
+                        }
+                    },
                     riwayatKelas : {
                         select : {
                             kelas : true,
