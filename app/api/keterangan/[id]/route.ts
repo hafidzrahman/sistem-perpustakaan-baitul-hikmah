@@ -13,10 +13,6 @@ export async function GET(req : Request, {params} : paramsType) {
         
         const dataKeterangan = await Keterangan.cariKeterangan(Number(id)) as keteranganType;
 
-        if (!dataKeterangan?.id) {
-            return new Error("Data keterangan tidak ditemukan");
-        }
-
         return NextResponse.json(dataKeterangan, {status : 200})
 
     } catch (error) {

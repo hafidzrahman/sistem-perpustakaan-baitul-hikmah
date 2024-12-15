@@ -48,7 +48,7 @@ export async function GET() {
     let arrayMurid : muridType[] = (await Murid.ambilSemuDataMurid()) as muridType[];
     let arrayKeterangan : keteranganType[] = (await Keterangan.ambilSemuaDataKeterangan()) as keteranganType[];
     let arrayGuru : guruType[] = (await Guru.ambilSemuaDataGuru()) as guruType[];
-    let arrayPeminjaman : peminjamanType[] = (await Peminjaman.cariPeminjaman()) as peminjamanType[]
+    let arrayPeminjaman : peminjamanType[] = (await Peminjaman.ambilSemuaDataPeminjaman()) as peminjamanType[]
     let arrayPenulis = await prisma.penulis.findMany({})
     let arrayPenerbit = await prisma.penerbit.findMany({})
     let arrayBukuPinjaman = await prisma.bukuPinjaman.findMany({})

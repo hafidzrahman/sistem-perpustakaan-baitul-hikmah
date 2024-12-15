@@ -33,6 +33,8 @@ export type perbaruiAnggotaType = {
     idKelas? : number
 }
 
+export type perbaruiPeminjaman = Omit<peminjamanType, "id" | "tanggalPinjam">;
+
 export type perbaruiKelasType = {
     nama? : string,
     tingkat? : number

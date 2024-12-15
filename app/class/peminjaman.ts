@@ -1,4 +1,4 @@
-import { bukuPinjamanType, peminjamanType, peminjamType, prisma } from "@/lib";
+import { bukuPinjamanType, peminjamanType, peminjamType, perbaruiPeminjaman, prisma } from "@/lib";
 import { NextResponse } from "next/server";
 import { Buku } from "@/app/class/buku";
 import { EksemplarBuku } from "./eksemplarbuku";
@@ -129,19 +129,8 @@ export class Peminjaman {
     });
   }
 
-  // static async tambahBanyakPeminjaman(
-  //   datapeminjaman: Omit<peminjamanType, "id">[]
-  // ): Promise<void> {
-  //   await prisma.peminjaman.createMany({
-  //     data: datapeminjaman,
-  //   });
-  // }
-
-  static async cariPeminjaman(id?: number) : Promise<peminjamanType | peminjamanType[]> {
-    let peminjaman: peminjamanType | peminjamanType[] = [];
-
-    if (id) {
-      peminjaman = (await prisma.peminjaman.findUnique({
+  static async cariPeminjaman(id: number) : Promise<peminjamanType> {
+      const peminjaman = (await prisma.peminjaman.findUnique({
         where: {
           id,
         },
@@ -155,18 +144,19 @@ export class Peminjaman {
       }
 
       return peminjaman;
-    }
+  }
 
-    peminjaman = (await prisma.peminjaman.findMany({
+  static async ambilSemuaDataPeminjaman() : Promise<peminjamanType[]> {
+    const peminjaman = (await prisma.peminjaman.findMany({
       include: {
         bukuPinjaman: { include: { eksemplarBuku: true } },
       },
-    })) as peminjamanType[];
+    })) as peminjamanType[]
 
     return peminjaman;
   }
 
-  static async perbaruiPeminjaman(id: number, dataPeminjaman: Omit<peminjamanType, "id" | "tanggalPinjam">
+  static async perbaruiPeminjaman(id: number, dataPeminjaman: perbaruiPeminjaman
   ) : Promise<void> {
     // tanggal pinjam boleh diperbarui?
     const { nis, nip, keterangan } = dataPeminjaman;
