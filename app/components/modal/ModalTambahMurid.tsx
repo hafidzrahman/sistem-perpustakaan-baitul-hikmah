@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 
-interface CardTambahMuridProps {
+interface ModalTambahMuridProps {
   status: boolean;
   handle: () => void;
 }
 
-const CardTambahMurid = ({ status, handle }: CardTambahMuridProps) => {
+const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
   const [nis, setNIS] = useState("");
   const [nama, setNama] = useState("");
   const [jenisKelamin, setJenisKelamin] = useState("");
@@ -225,4 +225,4 @@ const CardTambahMurid = ({ status, handle }: CardTambahMuridProps) => {
   );
 };
 
-export default CardTambahMurid;
+export default ModalTambahMurid;

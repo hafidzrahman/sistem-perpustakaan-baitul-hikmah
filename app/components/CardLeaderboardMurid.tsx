@@ -27,25 +27,25 @@ const CardLeaderboardMurid = ({
 
   return (
     <div
-      className={`rounded-lg bg-gradient-to-r from-[#064359] to-[#055A39] border-jewel-green border-2 px-8 py-1 w-full gap-4 flex items-center`}
+      className={`rounded-lg bg-white-custom border-jewel-green border-2 px-8 py-1 w-full gap-4 flex items-center`}
     >
       {/* Info Section */}
       <div className="flex flex-col justify-center flex-grow ">
-        <p className="text-sm text-gray-600">{kelas}</p>
-        <h2 className="text-lg font-source-serif leading-none font-bold">
+        <p className="text-xs text-gray-600">{kelas}</p>
+        <h2 className="text-sm font-source-serif leading-none font-bold">
           {name}
         </h2>
       </div>
 
       {/* Chart Section */}
       <div className="flex-shrink-0">
-        <PieChart width={88} height={88}>
+        <PieChart width={48} height={66}>
           <Pie
             data={chartData}
-            cx={44}
-            cy={39}
-            innerRadius={20}
-            outerRadius={38}
+            cx={20}
+            cy={28}
+            innerRadius={8}
+            outerRadius={24}
             cornerRadius={4}
             dataKey="value"
           >
@@ -58,7 +58,7 @@ const CardLeaderboardMurid = ({
             <Label
               value={`${booksRead}/${totalBooksToRead}`}
               position="center"
-              className="text-xs font-bold text-black-custom"
+              className="text-xs font-black text-black-custom"
               fill="#101010"
             />
           </Pie>

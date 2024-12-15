@@ -83,21 +83,21 @@ const PeminjamanCalendar: React.FC = () => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-xl mx-auto">
+    <div className="bg-white border-2 border-primary rounded-lg overflow-hidden max-w-xl mx-auto">
       {/* Header Kalender */}
-      <div className="bg-indigo-600 text-white p-4 flex justify-between items-center">
+      <div className="bg-light-primary text-white py-1 px-4 flex justify-between items-center">
         <button
           onClick={() => changeMonth("prev")}
-          className="hover:bg-indigo-500 p-1 rounded-full"
+          className="hover:bg-primary p-1 rounded-full"
         >
           <ArrowLeft01Icon />
         </button>
-        <h2 className="text-xl font-bold">
+        <h2 className="text-md font-semibold">
           {format(currentDate, "MMMM yyyy", { locale: id })}
         </h2>
         <button
           onClick={() => changeMonth("next")}
-          className="hover:bg-indigo-500 p-1 rounded-full"
+          className="hover:bg-primary p-1 rounded-full"
         >
           <ArrowRight01Icon />
         </button>
@@ -105,8 +105,8 @@ const PeminjamanCalendar: React.FC = () => {
 
       {/* Grid Kalender */}
       <div className="grid grid-cols-7 gap-1 p-2 text-center">
-        {["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"].map((day) => (
-          <div key={day} className="text-xs font-semibold text-gray-500">
+        {["Ahad", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"].map((day) => (
+          <div key={day} className="text-xs font-normal text-primary">
             {day}
           </div>
         ))}

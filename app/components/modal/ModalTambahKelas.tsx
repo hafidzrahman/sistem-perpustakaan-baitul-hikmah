@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 
-interface CardTambahKelasProps {
+interface ModalTambahKelasProps {
   status: boolean;
   handle: () => void;
 }
 
-const CardTambahKelas = ({ status, handle }: CardTambahKelasProps) => {
+const ModalTambahKelas = ({ status, handle }: ModalTambahKelasProps) => {
   const [nama, setNama] = useState("");
   const [tingkat, setTingkat] = useState<number>(7);
 
@@ -116,4 +116,4 @@ const CardTambahKelas = ({ status, handle }: CardTambahKelasProps) => {
   );
 };
 
-export default CardTambahKelas;
+export default ModalTambahKelas;
