@@ -32,7 +32,7 @@ const CardLeaderboardMurid = ({
   // Color scheme
   const BG_COLORS = ["#055A39", "#064359", "#C50043"];
   const GRADIENT = ["#adf7b6", "#a0ced9", "#ffc09f"];
-  const COLORS = ["#ffc09f", "#C50043"];
+  const COLORS = ["#055A39", "#adf7b6"];
 
   return (
     <div
@@ -66,9 +66,9 @@ const CardLeaderboardMurid = ({
             ))}
             <Label
               value={`${booksRead}/${totalBooksToRead}`}
-              position="center"
-              className="text-xs font-black text-black-custom"
-              fill="#101010"
+              position="end"
+              className="text-xs font-black"
+              fill="#fff"
             />
           </Pie>
         </PieChart>
