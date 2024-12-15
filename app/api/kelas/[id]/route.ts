@@ -1,4 +1,4 @@
-import {kelas} from '@/app/class/kelas';
+import {Kelas} from '@/app/class/kelas';
 import {kelasType} from '@/lib';
 import { NextResponse } from 'next/server';
 
@@ -10,7 +10,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
         
-        const dataKelas = await kelas.cariKelas(Number(id)) as kelasType;
+        const dataKelas = await Kelas.cariKelas(Number(id)) as kelasType;
 
         if (!dataKelas?.id) {
             return new Error("Data kelas tidak ditemukan");
@@ -33,7 +33,7 @@ export async function PUT(req : Request, {params} : paramsType) {
         //     return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
         // }
 
-        const dataKelas = await kelas.perbaruiKelas(Number(id), body);
+        const dataKelas = await Kelas.perbaruiKelas(Number(id), body);
 
         return NextResponse.json(dataKelas, {status : 200})
 
@@ -53,7 +53,7 @@ export async function DELETE(req : Request, {params} : paramsType) {
         //     return NextResponse.json({message : "Data kelas tidak ditemukan"}, {status : 502})
         // }
 
-        await kelas.hapusKelas(Number(id));
+        await Kelas.hapusKelas(Number(id));
 
         return NextResponse.json({message : "Berhasil menghapus data kelas"}, {status : 200})
 

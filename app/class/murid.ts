@@ -1,42 +1,40 @@
 import { Anggota, kelasType, muridType, perbaruiAnggotaType, prisma } from "@/lib";
 import { JenisKelamin } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { kelas } from "./kelas";
+import { Kelas } from "./kelas";
+import {RiwayatKelas} from "./riwayatkelas"
 
 export class Murid implements Anggota<muridType>{
-    nis? : string;
-    nama? : string;
-    idKelas? : number;
-    jenisKelamin? : JenisKelamin;
-    kontak? : string;
+    nis : string;
+    nama : string;
+    idKelas? : number | null;
+    jenisKelamin : JenisKelamin;
+    kontak : string;
     alamat? : string | null;
 
-    constructor(req? : Request) 
-        {
-        req?.json().then((data : muridType) => {
+    constructor(data : muridType) {
         this.nis = data.nis;
         this.nama = data.nama;
         this.jenisKelamin = data.jenisKelamin;
         this.idKelas = data.idKelas;
         this.kontak = data.kontak;
         this.alamat = data.alamat;
-        })
     }
 
-    async tambahAnggota(dataMurid : muridType) : Promise<muridType> {
+    static async tambahAnggota(dataMurid : muridType) : Promise<muridType> {
         const {nis, nama, jenisKelamin, idKelas, kontak, alamat} = dataMurid;
 
         if (!nis || !nama || !jenisKelamin || !idKelas || !kontak) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        const cariMurid = await this.cariAnggota(nis) as muridType;
+        const cariMurid = await Murid.cariAnggota(nis) as muridType;
         
         if (cariMurid.nis) {
             throw new Error("NIS sudah terdaftar!")
         }
 
-        const dataKelas = await kelas.cariKelas(idKelas) as kelasType;
+        const dataKelas = await Kelas.cariKelas(idKelas) as kelasType;
 
         if (!dataKelas?.id) {
             throw new Error("Data kelas tidak ditemukan")
@@ -55,20 +53,18 @@ export class Murid implements Anggota<muridType>{
           const date = new Date();
           const month = date.getMonth();
           const year = date.getFullYear();
-      
-          await prisma.riwayatKelas.create({
-            data : {
-              idKelas,
-              muridNIS : nis,
-              tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`)
-            }
-          })
+
+          const dataRiwayatKelas = new RiwayatKelas({
+            idKelas : idKelas, 
+            muridNIS : nis, 
+            tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`)})
+          await RiwayatKelas.tambahRiwayatKelas(dataRiwayatKelas);
           
           return result;
         
     }
 
-    async tambahBanyakAnggota(dataMurid : muridType[]) : Promise<muridType[]> {
+    static async tambahBanyakAnggota(dataMurid : muridType[]) : Promise<muridType[]> {
           const date = new Date();
           const month = date.getMonth();
           const year = date.getFullYear();
@@ -108,13 +104,13 @@ export class Murid implements Anggota<muridType>{
                 throw new Error("Harus mengisi field yang wajib")
             }
             
-            await prisma.riwayatKelas.create({
-                data : {
-                  idKelas : m.idKelas,
-                  muridNIS : m.nis,
-                  tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`),
-                },
+            const dataRiwayatKelas = new RiwayatKelas({
+                idKelas : m.idKelas,
+                muridNIS : m.nis,
+                tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`),
               })
+
+            await RiwayatKelas.tambahRiwayatKelas(dataRiwayatKelas);
 
               
           }
@@ -122,11 +118,9 @@ export class Murid implements Anggota<muridType>{
         return result;
     }
 
-    async cariAnggota (nis? : string) : Promise<muridType | muridType[]> {
-        let murid : muridType | muridType[] = []; 
-
-        if (nis) {    
-            murid = await prisma.murid.findUnique({
+    static async cariAnggota (nis : string) : Promise<muridType | undefined | null> {
+  
+            const murid = await prisma.murid.findUnique({
                 where : {
                     nis
                 }, 
@@ -149,9 +143,11 @@ export class Murid implements Anggota<muridType>{
             }
 
             return murid;
-    } 
 
-        murid = await prisma.murid.findMany({
+}
+
+    static async ambilSemuDataMurid() : Promise<muridType[]> {
+        const murid = await prisma.murid.findMany({
             include : {
                 riwayatKelas : {
                     select : {
@@ -167,13 +163,12 @@ export class Murid implements Anggota<muridType>{
         }) as muridType[];
 
         return murid;
+    }
 
-}
-
-    async perbaruiAnggota(nis : string, data : perbaruiAnggotaType) :Promise<muridType> {
+    static async perbaruiAnggota(nis : string, data : perbaruiAnggotaType) :Promise<muridType> {
         const {nama, jenisKelamin, kontak, alamat, idKelas} = data;
 
-        let murid = await this.cariAnggota(nis) as muridType
+        let murid = await Murid.cariAnggota(nis) as muridType
 
         if (!murid?.nis) {
             throw ({message : "Data kelas tidak ditemukan"})
@@ -198,25 +193,21 @@ export class Murid implements Anggota<muridType>{
 
         // kelas sebelumnya tetap ada untuk jadi riwayat
         // id kelas harus undefined jika tidak ingin mengupdate kelas, 
-        if (idKelas)
-        await prisma.riwayatKelas.create({
-            data : {
-                muridNIS : nis,
-                idKelas : idKelas,
-                tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`)
-            }
+        if (idKelas) {
+        const dataRiwayatKelas = new RiwayatKelas({
+            muridNIS : nis,
+            idKelas : idKelas,
+            tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`)
         })
 
+        await RiwayatKelas.tambahRiwayatKelas(dataRiwayatKelas)
+}
         return result;
 
     }
 
-    async hapusAnggota(nis : string) : Promise<void> {
-        await prisma.riwayatKelas.deleteMany({
-            where : {
-                muridNIS : nis
-            }
-        })
+    static async hapusAnggota(nis : string) : Promise<void> {
+        await RiwayatKelas.hapusSemuaRiwayatKelas();
         const murid = await prisma.murid.delete({
             where : {
                 nis
@@ -228,11 +219,9 @@ export class Murid implements Anggota<muridType>{
         }
     }
 
-    async hapusSemuaAnggota() : Promise<void> {
-        await prisma.riwayatKelas.deleteMany({})
+    static async hapusSemuaAnggota() : Promise<void> {
+        await RiwayatKelas.hapusSemuaRiwayatKelas();
         await prisma.murid.deleteMany({})
     }
     
 }
-
-export const murid = new Murid()

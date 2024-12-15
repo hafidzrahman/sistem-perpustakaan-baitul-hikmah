@@ -1,5 +1,8 @@
 import {PrismaClient} from '@prisma/client';
 import { JenisKelamin } from "@prisma/client";
+import {Penulis} from '@/app/class/penulis'
+import {Penerbit} from '@/app/class/penerbit'
+import {GenreClass} from '@/app/class/genre'
 
 export interface Hash<T,> {
     [indexer : string] : T
@@ -41,6 +44,13 @@ export type kelasType = {
     tingkat : number
 }
 
+export type riwayatKelasType = {
+    muridNIS : string
+    idKelas : number,
+    tahunAjaran : string,
+    nomorPresensi? : number
+}
+
 // id dan bukuISBN jadi opsional (!)
 // sumbangan belum ditambahkan
 
@@ -79,7 +89,7 @@ export type eksemplarDenganBukuType = eksemplarBukuType & {buku : bukuType}
 export type penerbitType = {
     id: number;
     nama: string;
-} | null
+}
 
 export type genreType = {
     id : number,
@@ -153,7 +163,14 @@ export type peminjamType = {
     nis? : string,
     nip? : string,
     keterangan? : string,
-    tenggatWaktu? : Date
+    daftarBukuPinjaman : {isbn : string, tenggatWaktu : Date}[]
+}
+
+export type bukuPinjamanType = {
+    bukuISBN : string,
+    id : number,
+    tenggatWaktu : Date,
+    tanggalKembali? : Date | null
 }
 
 export interface Anggota<T,> {
@@ -161,13 +178,6 @@ export interface Anggota<T,> {
     jenisKelamin? : JenisKelamin;
     kontak? : string;
     alamat? : string | null;
-
-    tambahAnggota : (data : T) => Promise<T>;
-    tambahBanyakAnggota : (data : T[]) => Promise<T[]>;
-    cariAnggota : (id? : string) => Promise<T | T[]>;
-    perbaruiAnggota : (id : string, data : perbaruiAnggotaType) => Promise<T>;
-    hapusAnggota : (id : string) => Promise<void>;
-    hapusSemuaAnggota : () => Promise<void>
 }
 
 export enum Genre {
@@ -192,36 +202,20 @@ export async function konversiDataKeId(tableName : string, data : string | strin
         // jika data penulis atau genre yang dimasukkan adalah array string, pasti data belum ada di drop down menu
         if (tableName === "penulis") {
         for await (const nama of data as string[]) {
-            let dataPenulis = await prisma.penulis.findFirst({
-                where : {
-                    nama
-                }
-            })
+            let dataPenulis = await Penulis.cariPenulis({nama})
 
             if (!dataPenulis) {
-                dataPenulis = await prisma.penulis.create({
-                    data : {
-                        nama
-                    }
-                })
+                dataPenulis = await Penulis.tambahPenulis(nama)
             }
             arrayId.push(dataPenulis.id)
         }
         return arrayId;
     } else if (tableName === "genre") {
         for await (const nama of data as string[]) {
-            let dataGenre = await prisma.genre.findFirst({
-                where : {
-                    nama
-                }
-            })
+            let dataGenre = await GenreClass.cariGenre({nama})
 
             if (!dataGenre) {
-                dataGenre = await prisma.genre.create({
-                    data : {
-                        nama
-                    }
-                })
+                dataGenre = await GenreClass.tambahGenre(nama);
             }
             arrayId.push(dataGenre.id)
         }
@@ -229,17 +223,10 @@ export async function konversiDataKeId(tableName : string, data : string | strin
 }  
     
 
-    let dataPenerbit = await prisma.penerbit.findFirst({
-        where : {
-            nama : data as string
-        }
-    })
+    let dataPenerbit = await Penerbit.cariPenerbit({nama : data as string})
+
     if (!dataPenerbit) {
-        dataPenerbit = await prisma.penerbit.create({
-            data : {
-                nama : data as string
-            }
-        })
+        dataPenerbit = await Penerbit.tambahPenerbit(data as string);
     }
     
     
