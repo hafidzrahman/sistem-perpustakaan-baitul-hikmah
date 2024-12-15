@@ -3,31 +3,28 @@ import { JenisKelamin } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export class Guru implements Anggota<guruType>{
-    nip? : string;
-    nama? : string;
-    jenisKelamin? : JenisKelamin;
-    kontak? : string;
+    nip : string;
+    nama : string;
+    jenisKelamin : JenisKelamin;
+    kontak : string;
     alamat? : string | null;
 
-    constructor(req? : Request) 
-        {
-        req?.json().then((data : guruType) => {
+    constructor(data : guruType) {
             this.nip = data.nip;
             this.nama = data.nama;
             this.jenisKelamin = data.jenisKelamin;
             this.kontak = data.kontak;
             this.alamat = data.alamat;
-        })
     }
 
-    async tambahAnggota(dataGuru : guruType) : Promise<guruType> {
+    static async tambahAnggota(dataGuru : guruType) : Promise<guruType> {
         const {nip, nama, jenisKelamin, kontak, alamat} = dataGuru;
 
         if (!nip || !nama || !jenisKelamin || !kontak) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        const cariGuru = await this.cariAnggota(nip) as guruType;
+        const cariGuru = await Guru.cariAnggota(nip) as guruType;
 
         if (cariGuru.nip) {
             throw new Error("NIP sudah terdaftar!")
@@ -49,18 +46,16 @@ export class Guru implements Anggota<guruType>{
     }
 
 
-    async tambahBanyakAnggota(dataGuru : guruType[]) : Promise<guruType[]> {
+    static async tambahBanyakAnggota(dataGuru : guruType[]) : Promise<guruType[]> {
         const result = await prisma.guru.createManyAndReturn({
             data : dataGuru
         })
         return result;
     }
 
-    async cariAnggota (nip? : string) : Promise<guruType | guruType[]> {
-        let guru : guruType | guruType[] = []; 
-
-        if (nip) {    
-            guru = await prisma.guru.findUnique({
+    static async cariAnggota (nip : string) : Promise<guruType | undefined | null> {
+ 
+            const guru = await prisma.guru.findUnique({
                 where : {
                     nip
                 }
@@ -71,18 +66,18 @@ export class Guru implements Anggota<guruType>{
             }
 
             return guru;
-    } 
-
-        guru = await prisma.guru.findMany({}) as guruType[]
-
-        return guru;
 
 }
+    static async ambilSemuaDataGuru () : Promise<guruType[]> {
+        const guru = await prisma.guru.findMany({}) as guruType[]
 
-    async perbaruiAnggota(nip : string, data : perbaruiAnggotaType) :Promise<guruType> {
+        return guru;
+    }
+
+    static async perbaruiAnggota(nip : string, data : perbaruiAnggotaType) :Promise<guruType> {
         const {nama, jenisKelamin, kontak, alamat} = data;
 
-        let guru = await this.cariAnggota(nip) as guruType;
+        let guru = await Guru.cariAnggota(nip) as guruType;
 
         if (!guru?.nip) {
             throw new Error("Data kelas tidak ditemukan")
@@ -105,7 +100,7 @@ export class Guru implements Anggota<guruType>{
 
     }
 
-    async hapusAnggota(nip : string) : Promise<void> {
+    static async hapusAnggota(nip : string) : Promise<void> {
         const guru = await prisma.guru.delete({
             where : {
                 nip
@@ -117,10 +112,8 @@ export class Guru implements Anggota<guruType>{
         }
     }
 
-    async hapusSemuaAnggota() : Promise<void> {
+    static async hapusSemuaAnggota() : Promise<void> {
         await prisma.guru.deleteMany({})
     }
     
 }
-
-export const guru = new Guru();

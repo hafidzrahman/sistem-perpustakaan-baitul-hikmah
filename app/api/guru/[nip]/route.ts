@@ -1,4 +1,4 @@
-import { guru } from '@/app/class/guru';
+import { Guru } from '@/app/class/guru';
 import {guruType} from '@/lib';
 import { NextResponse } from 'next/server';
 
@@ -10,7 +10,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {nip} = await params;
         
-        const dataGuru = await guru.cariAnggota(nip) as guruType;
+        const dataGuru = await Guru.cariAnggota(nip) as guruType;
 
         if (!dataGuru?.nip) {
             return new Error("Data Guru tidak ditemukan")
@@ -34,7 +34,7 @@ export async function PUT(req : Request, {params} : paramsType) {
         //     return NextResponse.json({message : "Data Guru tidak ditemukan"}, {status : 502})
         // }
 
-        const dataGuru = await guru.perbaruiAnggota(nip, body);
+        const dataGuru = await Guru.perbaruiAnggota(nip, body);
 
         return NextResponse.json(dataGuru, {status : 200})
 
@@ -54,7 +54,7 @@ export async function DELETE(req : Request, {params} : paramsType) {
         //     return NextResponse.json({message : "Data Guru tidak ditemukan"}, {status : 502})
         // }
 
-        await guru.hapusAnggota(nip);
+        await Guru.hapusAnggota(nip);
 
         return NextResponse.json({message : "Berhasil menghapus data Guru"}, {status : 200})
 

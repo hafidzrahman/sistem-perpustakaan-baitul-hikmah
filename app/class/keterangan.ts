@@ -2,26 +2,21 @@ import {keteranganType, prisma} from '@/lib'
 import { NextResponse } from 'next/server';
 
 export class Keterangan{
-    id? : number;
-    keterangan? : string;
+    id : number;
+    keterangan : string;
     jumlahBuku? : number | null;
     totalNominal? : number | null;
     nominalPerHari? : number | null;
 
-    constructor(req? : Request) {
-        req?.json().then(({id, keterangan, jumlahBuku, totalNominal, nominalPerHari} : keteranganType) => 
-            {
-            this.id = id;
-            this.keterangan = keterangan;
-            this.jumlahBuku = jumlahBuku;
-            this.totalNominal = totalNominal;
-            this.nominalPerHari = nominalPerHari;
-        }).catch(() => {
-            throw new Error("Gagal mendapatkan data")
-        })
+    constructor(data : keteranganType) {
+            this.id = data.id;
+            this.keterangan = data.keterangan;
+            this.jumlahBuku = data.jumlahBuku;
+            this.totalNominal = data.totalNominal;
+            this.nominalPerHari = data.nominalPerHari;
     }
 
-    async tambahKeterangan(dataKeterangan : Omit<keteranganType, 'id'>) : Promise<keteranganType> {
+    static async tambahKeterangan(dataKeterangan : Omit<keteranganType, 'id'>) : Promise<keteranganType> {
         const {keterangan, jumlahBuku, totalNominal, nominalPerHari} = dataKeterangan;
         
 
@@ -41,7 +36,7 @@ export class Keterangan{
           return result;
     }
 
-    async tambahBanyakKeterangan(dataKeterangan : Omit<keteranganType, 'id'>[]) : Promise<keteranganType[]> {
+    static async tambahBanyakKeterangan(dataKeterangan : Omit<keteranganType, 'id'>[]) : Promise<keteranganType[]> {
         const result = await prisma.keterangan.createManyAndReturn({
             data : dataKeterangan
         })
@@ -49,11 +44,9 @@ export class Keterangan{
         return result;
     }
 
-    async cariKeterangan (id? : number) : Promise<keteranganType | keteranganType[]> {
-        let keterangan : keteranganType | keteranganType[] = []; 
-
-        if (id) {    
-            keterangan = await prisma.keterangan.findUnique({
+    static async cariKeterangan (id : number) : Promise<keteranganType | undefined | null> {
+ 
+            const keterangan = await prisma.keterangan.findUnique({
                 where : {
                     id
                 }
@@ -64,18 +57,18 @@ export class Keterangan{
             }
 
             return keterangan;
-    } 
-
-        keterangan = await prisma.keterangan.findMany({}) as keteranganType[]
-
-        return keterangan;
 
 }
+    static async ambilSemuaDataKeterangan() : Promise<keteranganType[]> {
+        const keterangan = await prisma.keterangan.findMany({}) as keteranganType[]
 
-    async perbaruiKeterangan(id : number, dataKeterangan : Omit<keteranganType, 'id'>) :Promise<keteranganType> {
+        return keterangan;
+    }
+
+    static async perbaruiKeterangan(id : number, dataKeterangan : Omit<keteranganType, 'id'>) :Promise<keteranganType> {
         const {keterangan : deskripsi, jumlahBuku, totalNominal, nominalPerHari} = dataKeterangan;
 
-        const keterangan = await this.cariKeterangan(id) as keteranganType;
+        const keterangan = await Keterangan.cariKeterangan(id) as keteranganType;
 
         if (!keterangan?.id) {
             throw new Error("Data keterangan tidak ditemukan")
@@ -96,7 +89,7 @@ export class Keterangan{
         return result;
     }
 
-    async hapusKeterangan(id : number) : Promise<void> {
+    static async hapusKeterangan(id : number) : Promise<void> {
         const keterangan = await prisma.keterangan.delete({
             where : {
                 id
@@ -108,10 +101,8 @@ export class Keterangan{
         }
     }
 
-    async hapusSemuaKeterangan() : Promise<void> {
+    static async hapusSemuaKeterangan() : Promise<void> {
         await prisma.keterangan.deleteMany({}) 
     }
     
 }
-
-export const keterangan = new Keterangan();

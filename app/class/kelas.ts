@@ -1,18 +1,17 @@
 import { kelasType, perbaruiKelasType, prisma } from "@/lib";
 
 export class Kelas{
-    nama? : string;
-    tingkat? : number;
+    id : number;
+    nama : string;
+    tingkat : number;
 
-    constructor(req? : Request) 
-        {
-        req?.json().then((data : kelasType) => {
+    constructor(data : kelasType) {
+            this.id = data.id;
             this.nama = data.nama;
             this.tingkat = data.tingkat;
-        })
     }
 
-    async tambahKelas(dataKelas : Omit<kelasType, 'id'>) : Promise<kelasType> {
+    static async tambahKelas(dataKelas : Omit<kelasType, 'id'>) : Promise<kelasType> {
         const {nama, tingkat} = dataKelas;
 
         if (!nama || !tingkat) {
@@ -29,18 +28,16 @@ export class Kelas{
           return result;
     }
     
-    async tambahBanyakKelas(dataKelas : Omit<kelasType, 'id'>[]) : Promise<kelasType[]> {
+    static async tambahBanyakKelas(dataKelas : Omit<kelasType, 'id'>[]) : Promise<kelasType[]> {
         const result = await prisma.kelas.createManyAndReturn({
             data : dataKelas
         })
         return result;
     }
 
-    async cariKelas (id? : number) : Promise<kelasType | kelasType[]> {
-        let kelas : kelasType | kelasType[] = []; 
-
-        if (id) {    
-            kelas = await prisma.kelas.findUnique({
+    static async cariKelas (id : number) : Promise<kelasType | undefined | null> {
+  
+            const kelas = await prisma.kelas.findUnique({
                 where : {
                     id
                 }
@@ -51,18 +48,18 @@ export class Kelas{
             }
 
             return kelas;
-    } 
-
-        kelas = await prisma.kelas.findMany({}) as kelasType[]
-
-        return kelas;
 
 }
+    static async ambilSemuaDataKelas() : Promise<kelasType[]> {
+        const result = await prisma.kelas.findMany({});
 
-    async perbaruiKelas(id : number, data : perbaruiKelasType) :Promise<kelasType> {
+        return result;
+    }
+
+    static async perbaruiKelas(id : number, data : perbaruiKelasType) :Promise<kelasType> {
         const {nama, tingkat} = data;
 
-        let kelas = await this.cariKelas(id) as kelasType;
+        let kelas = await Kelas.cariKelas(id) as kelasType;
 
         if (!kelas?.id) {
             throw ({message : "Data kelas tidak ditemukan"})
@@ -83,7 +80,7 @@ export class Kelas{
 
     }
 
-    async hapusKelas(id : number) : Promise<void> {
+    static async hapusKelas(id : number) : Promise<void> {
         await prisma.riwayatKelas.deleteMany({
             where : {
                 idKelas : id
@@ -100,11 +97,9 @@ export class Kelas{
         }
     }
 
-    async hapusSemuaKelas() {
-        // await prisma.riwayatKelas.deleteMany({})
+    static async hapusSemuaKelas() {
+        await prisma.riwayatKelas.deleteMany({})
         await prisma.kelas.deleteMany({})
     }
     
 }
-
-export const kelas = new Kelas();

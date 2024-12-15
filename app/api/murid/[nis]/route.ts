@@ -1,4 +1,4 @@
-import {murid} from '@/app/class/murid';
+import {Murid} from '@/app/class/murid';
 import {muridType} from '@/lib';
 import { NextResponse } from 'next/server';
 
@@ -10,7 +10,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {nis} = await params;
         
-        const dataMurid = await murid.cariAnggota(nis) as muridType;
+        const dataMurid = await Murid.cariAnggota(nis) as muridType;
 
         if (!dataMurid?.nis) {
             return new Error("Data murid tidak ditemukan");
@@ -34,7 +34,7 @@ export async function PUT(req : Request, {params} : paramsType) {
         //     return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
         // }
 
-        const dataMurid = await murid.perbaruiAnggota(nis, body);
+        const dataMurid = await Murid.perbaruiAnggota(nis, body);
 
         return NextResponse.json(dataMurid, {status : 200})
 
@@ -54,7 +54,7 @@ export async function DELETE(req : Request, {params} : paramsType) {
         //     return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
         // }
 
-        await murid.hapusAnggota(nis);
+        await Murid.hapusAnggota(nis);
 
         return NextResponse.json({message : "Berhasil menghapus data murid"}, {status : 200})
 

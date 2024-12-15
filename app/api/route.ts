@@ -11,6 +11,7 @@ import {Peminjaman} from '@/app/class/peminjaman';
 import {seeds} from "@/seeds";
 import { prisma } from "@/lib";
 import { JenisKelamin } from "@prisma/client";
+import { RiwayatKelas } from "../class/riwayatkelas";
 
 export async function GET() {
   const {
@@ -21,41 +22,37 @@ export async function GET() {
     keterangan: dataKeterangan,
     peminjaman: dataPeminjaman,
   } = seeds;
-    const buku = new Buku();
-    const kelas = new Kelas();
-    const murid = new Murid();
-    const guru = new Guru();
-    const keterangan = new Keterangan();
-    const peminjaman = new Peminjaman();
 
-    await prisma.riwayatKelas.deleteMany({})
-    await buku.hapusSemuaBuku();
-    await kelas.hapusSemuaKelas();
-    await murid.hapusSemuaAnggota();
-    await guru.hapusSemuaAnggota();
-    await keterangan.hapusSemuaKeterangan();
-    // await prisma.penulis.deleteMany({})
-    // await prisma.penerbit.deleteMany({})
-    await prisma.peminjaman.deleteMany({})
-
-    await buku.tambahBanyakBuku(dataBuku);
-    await kelas.tambahBanyakKelas(dataKelas);
-    await murid.tambahBanyakAnggota(dataMurid);
-    await guru.tambahBanyakAnggota(dataGuru);
-    await keterangan.tambahBanyakKeterangan(dataKeterangan);
-
-    await peminjaman.tambahBanyakPeminjaman(dataPeminjaman);
+  await RiwayatKelas.hapusSemuaRiwayatKelas();
+  await prisma.denda.deleteMany({})
+  await prisma.sumbangan.deleteMany({})
+  await Kelas.hapusSemuaKelas();
+  await Murid.hapusSemuaAnggota();
+  await Guru.hapusSemuaAnggota();
+  await Keterangan.hapusSemuaKeterangan();
+  // await prisma.penulis.deleteMany({})
+  // await prisma.penerbit.deleteMany({})
+  await Peminjaman.hapusSemuaPeminjaman();
+  await Buku.hapusSemuaBuku();
     
-    let arrayBuku: bukuType[] = (await buku.cariBuku()) as bukuType[];
-    let arrayKelas: kelasType[] = (await kelas.cariKelas()) as kelasType[];
-    let arrayMurid : muridType[] = (await murid.cariAnggota()) as muridType[];
-    let arrayKeterangan : keteranganType[] = (await keterangan.cariKeterangan()) as keteranganType[];
-    let arrayGuru : guruType[] = (await guru.cariAnggota()) as guruType[];
-    let arrayPeminjaman : peminjamanType[] = (await peminjaman.cariPeminjaman()) as peminjamanType[]
+    await Buku.tambahBanyakBuku(dataBuku);
+    await Kelas.tambahBanyakKelas(dataKelas);
+    await Murid.tambahBanyakAnggota(dataMurid);
+    await Guru.tambahBanyakAnggota(dataGuru);
+    await Keterangan.tambahBanyakKeterangan(dataKeterangan);
+
+    await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
+    
+    let arrayBuku: bukuType[] = (await Buku.ambilSemuaDataBuku()) as bukuType[];
+    let arrayKelas: kelasType[] = (await Kelas.ambilSemuaDataKelas()) as kelasType[];
+    let arrayMurid : muridType[] = (await Murid.ambilSemuDataMurid()) as muridType[];
+    let arrayKeterangan : keteranganType[] = (await Keterangan.ambilSemuaDataKeterangan()) as keteranganType[];
+    let arrayGuru : guruType[] = (await Guru.ambilSemuaDataGuru()) as guruType[];
+    let arrayPeminjaman : peminjamanType[] = (await Peminjaman.ambilSemuaDataPeminjaman()) as peminjamanType[]
     let arrayPenulis = await prisma.penulis.findMany({})
     let arrayPenerbit = await prisma.penerbit.findMany({})
     let arrayBukuPinjaman = await prisma.bukuPinjaman.findMany({})
 
-    return NextResponse.json({arrayBukuPinjaman, arrayBuku, arrayKelas, arrayMurid, arrayKeterangan, arrayGuru, arrayPeminjaman})
+    return NextResponse.json({arrayPeminjaman, arrayBukuPinjaman, arrayBuku})
 }
 
