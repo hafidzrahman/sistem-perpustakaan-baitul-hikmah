@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
+import {muridType} from "@/lib";
 
 interface ModalTambahMuridProps {
   status: boolean;
@@ -42,10 +43,10 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
           nis,
           nama,
           jenisKelamin,
-          kontakOrtu,
+          kontak : kontakOrtu,
           alamat,
           idKelas: Number(idKelas),
-        }),
+        } as muridType),
       });
 
       const data = await response.json();

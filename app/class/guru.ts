@@ -24,11 +24,11 @@ export class Guru implements Anggota<guruType>{
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        const cariGuru = await Guru.cariAnggota(nip) as guruType;
+        // const cariGuru = await Guru.cariAnggota(nip) as guruType;
 
-        if (cariGuru.nip) {
-            throw new Error("NIP sudah terdaftar!")
-        }
+        // if (cariGuru.nip) {
+        //     throw new Error("NIP sudah terdaftar!")
+        // }
 
         const result = await prisma.guru.create({
             data: {

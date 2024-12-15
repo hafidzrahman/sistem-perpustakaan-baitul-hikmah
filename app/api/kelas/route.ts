@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const dataKelas = await Kelas.ambilSemuaDataKelas();
+    console.log(dataKelas);
     return NextResponse.json(dataKelas, {status : 200});
   } catch (error) {
     return NextResponse.json({message : "Data murid tidak ditemukan", details : error }, {status : 500});
