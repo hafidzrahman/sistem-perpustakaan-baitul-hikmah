@@ -32,7 +32,7 @@ export class EksemplarBuku {
         this.idSumbanganBantuan = data.idSumbanganBantuan;
     }
 
-    static async tambahEksemplarBuku(data : constructorEksemplarBukuType) {
+    static async tambahEksemplarBuku(data : constructorEksemplarBukuType) : Promise<constructorEksemplarBukuType> {
         const dataEksemplarBuku =  await prisma.eksemplarBuku.create({
             data : {
                 id : data.id,

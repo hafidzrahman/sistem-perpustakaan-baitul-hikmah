@@ -265,6 +265,7 @@ export const seeds = {
     },
   ],
   peminjaman: [
+<<<<<<< HEAD
     {
       nis: "12250111791",
       tanggalPinjam: new Date(),
@@ -310,5 +311,16 @@ export const seeds = {
       keterangan: "WOW",
       daftarBukuPinjaman: [],
     },
+=======
+    { nis: "12250111791", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [ {isbn : "978-602-06-5192-9", tenggatWaktu : new Date(Date.now() + 20000)}] },
+    { nip: "112233", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [] },
+    { nip: "122331", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [] },
+    { nip: "112233", tanggalPinjam: new Date(), keterangan: "WOW", daftarBukuPinjaman : [] },
+>>>>>>> b400ac317fe7ac57bb10772de64013e2afa380b4
   ],
+  formBukti : [
+    {bukuISBN : "978-602-06-5192-7", muridNIS : "12250111794", tanggal : new Date(), intisari : "WOW", halamanAwal : 23, halamanAkhir : 25, status : false},
+    {bukuISBN : "978-602-8519-93-9", muridNIS : "12250111048", tanggal : new Date(), intisari : "WOW", halamanAwal : 23, halamanAkhir : 25, status : false},
+    {bukuISBN : "978-602-06-5192-9", muridNIS : "12250111791", tanggal : new Date(), intisari : "WOW", halamanAwal : 23, halamanAkhir : 25, status : false}
+  ]
 };

@@ -30,4 +30,10 @@ export class Penulis {
         })
         return dataPenulis;
     }
+
+    static async ambilSemuaDataPenulis() : Promise<penulisType[]> {
+            const dataPenulis = await prisma.penulis.findMany({});
+    
+            return dataPenulis;
+        }
 }

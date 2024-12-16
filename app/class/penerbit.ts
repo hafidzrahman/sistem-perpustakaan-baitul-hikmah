@@ -30,4 +30,9 @@ export class Penerbit {
             })
             return dataPenerbit;
         }
+    static async ambilSemuaDataPenerbit() : Promise<penerbitType[]> {
+        const dataPenerbit = await prisma.penerbit.findMany({});
+
+        return dataPenerbit;
+    }
 }

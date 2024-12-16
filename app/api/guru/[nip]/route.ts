@@ -12,9 +12,9 @@ export async function GET(req : Request, {params} : paramsType) {
         
         const dataGuru = await Guru.cariAnggota(nip) as guruType;
 
-        if (!dataGuru?.nip) {
-            return new Error("Data Guru tidak ditemukan")
-        }
+        // if (!dataGuru?.nip) {
+        //     return new Error("Data Guru tidak ditemukan")
+        // }
 
         return NextResponse.json(dataGuru, {status : 200})
 
