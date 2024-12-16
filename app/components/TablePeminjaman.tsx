@@ -12,16 +12,16 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
         const allMurid = [];
         for (let i = 0; i < data.length; i++) {
           if (data[i].nis) {
-            // Pastikan ada NIS
+            // Fetch murid berdasarkan NIS
             const response = await fetch(`/api/murid/${data[i].nis}`);
             if (!response.ok) {
               throw new Error(`Error fetching murid with NIS: ${data[i].nis}`);
             }
             const murid = await response.json();
-            allMurid.push(murid); // Kumpulkan hasil
+            allMurid.push(murid); // Kumpulkan data murid
           }
         }
-        setMurid(allMurid); // Set semua murid setelah selesai
+        setMurid(allMurid); // Simpan data murid
       } catch (error) {
         console.error("Error fetching murid data:", error);
       }
@@ -36,16 +36,16 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
         const allGuru = [];
         for (let i = 0; i < data.length; i++) {
           if (data[i].nip) {
-            // Pastikan ada NIP
+            // Fetch guru berdasarkan NIP
             const response = await fetch(`/api/guru/${data[i].nip}`);
             if (!response.ok) {
               throw new Error(`Error fetching guru with NIP: ${data[i].nip}`);
             }
             const guru = await response.json();
-            allGuru.push(guru); // Kumpulkan hasil
+            allGuru.push(guru); // Kumpulkan data guru
           }
         }
-        setGuru(allGuru); // Set semua guru setelah selesai
+        setGuru(allGuru); // Simpan data guru
       } catch (error) {
         console.error("Error fetching guru data:", error);
       }
@@ -54,8 +54,18 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
     fetchGuru();
   }, [data]);
 
-  console.log(murid);
-  console.log(guru);
+  // Fungsi untuk mendapatkan nama berdasarkan NIS atau NIP
+  const getNama = (nis?: string, nip?: string): string => {
+    if (nis) {
+      const muridData = murid.find((m: any) => m.nis === nis);
+      return muridData ? muridData.nama : "Nama tidak ditemukan";
+    }
+    if (nip) {
+      const guruData = guru.find((g: any) => g.nip === nip);
+      return guruData ? guruData.nama : "Nama tidak ditemukan";
+    }
+    return "Nama tidak tersedia";
+  };
 
   return (
     <div className="max-h-80 overflow-y-auto border border-primary rounded-lg">
@@ -80,7 +90,10 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
                 {item?.id}
               </td>
               <td className="px-4 py-2 font-source-serif font-semibold text-sm">
-                {item?.nis}
+                {item?.keterangan}
+              </td>
+              <td className="px-4 py-2 font-source-sans font-semibold text-sm">
+                {getNama(item.nis, item.nip)}
               </td>
               <td className="px-4 py-2 font-source-sans text-sm">
                 {/* {item?.penulis.map((p) => p.nama).join(", ")} */}
