@@ -163,6 +163,7 @@ export type peminjamanType = {
     keterangan? : string
 }
 
+// untuk user yang ingin meminjam buku
 export type peminjamType = {
     nis? : string,
     nip? : string,
@@ -171,9 +172,10 @@ export type peminjamType = {
 }
 
 export type bukuPinjamanType = {
+    idPeminjaman : number,
     bukuISBN : string,
-    id? : number,
-    tenggatWaktu : Date,
+    bukuId? : number,
+    tenggatWaktu? : Date | null,
     tanggalKembali? : Date | null
 }
 
@@ -197,6 +199,67 @@ export type perbaruiFormBuktiType = {
     halamanAkhir? : number,
     status? : boolean;
 }
+
+export type dendaType = {
+    id? : number
+    idSumbangan : number,
+    tanggal? : Date | null,
+    idPeminjaman? : number | null,
+    bukuISBN? : string | null,
+    bukuId? : number | null,
+}
+
+export type userType = {
+    id? : string
+    username : string,
+    password : string,
+    role : string,
+}
+
+export type sumbanganType = {
+    id? : number,
+    idKeterangan : number,
+    nis? : string | null,
+    nip? : string | null,
+    tanggalSelesai? : Date | null,
+    berlebih? : boolean | null,
+}
+
+export type cariSumbanganType = (sumbanganType & {
+    keterangan : keteranganType, 
+    pembayaranTunai : pembayaranTunaiType,
+    _count : {
+        sumbanganBuku : number,
+        sumbanganBukuBantuan : number,
+    },
+    denda : dendaType
+})
+
+
+export type riwayatBantuanType = {
+    idPembayaranTunai : number,
+    idSumbangan : number,
+    jumlah : number
+}
+
+export type pembayaranTunaiType = {
+    id? : number,
+    idSumbangan? : number | null,
+    tanggal : Date,
+    jumlah : number
+}
+
+export type beriSumbanganType = {
+    idSumbangan? : number,
+    nis? : string,
+    nip? : string,
+    pilihan : "Hibah" | "Bantuan" | "Sesuaikan",
+    jumlahBuku? : number,
+    nominalTotal? : number,
+    buku : tambahBukuType[]
+} | null
+
+export const hariKeMiliDetik = 1000 * 60 * 60 * 24
 
 export interface Anggota<T,> {
     nama? : string;

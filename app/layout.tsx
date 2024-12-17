@@ -1,6 +1,10 @@
+'use client'
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import {SessionProvider} from 'next-auth/react'
+import { redirect } from "next/navigation";
 
 const spaceSans = localFont({
   src: "./fonts/SpaceGrotesk-VariableFont_wght.ttf",
@@ -41,10 +45,10 @@ const sourceSans = localFont({
   weight: "200 900",
 });
 
-export const metadata: Metadata = {
-  title: "Baitul Hikmah Al-Fityah",
-  description: "Sistem Informasi Perpustakaan di SMP IT Al-Fityah",
-};
+// export const metadata: Metadata = {
+//   title: "Baitul Hikmah Al-Fityah",
+//   description: "Sistem Informasi Perpustakaan di SMP IT Al-Fityah",
+// };
 
 export default function RootLayout({
   children,
@@ -56,7 +60,9 @@ export default function RootLayout({
       <body
         className={`${sourceSerif.variable} ${sourceSans.variable} ${spaceSans.variable} antialiased`}
       >
+        <SessionProvider>
         {children}
+        </SessionProvider>
       </body>
     </html>
   );

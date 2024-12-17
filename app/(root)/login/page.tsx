@@ -1,9 +1,35 @@
+'use client'
+
 import BtnPrimary from "@/app/components/BtnPrimary";
 import Image from "next/image";
+import { signIn } from "next-auth/react";
+import { LegacyRef, MutableRefObject, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 interface LoginPageProps {}
 
 const LoginPage = ({}: LoginPageProps) => {
+  const {push} = useRouter();
+  const username = useRef<HTMLInputElement>(null);
+  const password = useRef<HTMLInputElement>(null);
+
+  async function handleOnClick() {
+    try {
+      console.log(username);
+      const res = await signIn('credentials', {
+        redirect : false,
+        username : 'test2312',
+        password : 'password',
+        callbackUrl : "/panel-kontrol"
+      })
+      if (!res?.error) {
+        push('/panel-kontrol')
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="flex overflow-hidden items-center justify-center flex-col gap-8 h-screen relative bg-noise bg-repeat bg-center">
       <Image
@@ -61,10 +87,12 @@ const LoginPage = ({}: LoginPageProps) => {
             NISN / NIP
           </label>
           <input
+            name="username"
             type="text"
             id="id"
             placeholder="Masukkan NISN atau NIP"
             className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+            ref={username}
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -75,10 +103,12 @@ const LoginPage = ({}: LoginPageProps) => {
             Kata Sandi
           </label>
           <input
+            name="password"
             type="password"
             id="password"
             placeholder="Masukkan kata sandi"
             className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+            ref={password}
           />
         </div>
         <p className="text-xs font-source-sans ml-1 underline">
@@ -86,6 +116,7 @@ const LoginPage = ({}: LoginPageProps) => {
         </p>
         <button
           className={`bg-dark-primary text-white-custom font-source-sans leading-none text-sm font-normal rounded-lg border-2 border-black-custom py-3 px-14`}
+          onClick={handleOnClick}
         >
           Masuk
         </button>
