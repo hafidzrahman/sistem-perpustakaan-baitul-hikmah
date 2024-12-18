@@ -69,8 +69,8 @@ const DoughnutChartGenreBuku = () => {
           cy="50%"
           innerRadius="40%"
           outerRadius="80%"
-          paddingAngle={4} // Jarak antar segmen
-          cornerRadius={4} // Lengkungan sudut
+          paddingAngle={4}
+          cornerRadius={4}
           dataKey="value"
         >
           {bookData.map((entry, index) => (
