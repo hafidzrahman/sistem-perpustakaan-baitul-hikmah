@@ -12,7 +12,7 @@ interface TableMuridProps {
 
 const TableMurid = ({ data }: TableMuridProps) => {
   return (
-    <div className="max-h-80 overflow-y-auto border border-gray-300 rounded-lg">
+    <div className="max-h-80 overflow-y-auto border border-primary rounded-lg">
       <table className="min-w-full bg-white">
         <thead>
           <tr className="bg-light-primary text-white sticky top-0 z-10">

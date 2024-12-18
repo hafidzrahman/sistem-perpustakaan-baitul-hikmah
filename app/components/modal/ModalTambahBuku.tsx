@@ -7,6 +7,21 @@ interface ModalTambahBukuProps {
   handle: () => void;
 }
 
+const bg = [
+  "bg-jewel-purple",
+  "bg-jewel-red",
+  "bg-jewel-green",
+  "bg-jewel-yellow",
+  "bg-jewel-blue",
+];
+const border = [
+  "border-pastel-purple",
+  "border-pastel-red",
+  "border-pastel-green",
+  "border-pastel-yellow",
+  "border-pastel-blue",
+];
+
 const ModalTambahBuku = ({ status, handle }: ModalTambahBukuProps) => {
   const [judul, setJudul] = useState("");
   const [penulis, setPenulis] = useState("");
@@ -15,21 +30,6 @@ const ModalTambahBuku = ({ status, handle }: ModalTambahBukuProps) => {
   const [sinopsis, setSinopsis] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
-
-  const bg = [
-    "bg-jewel-purple",
-    "bg-jewel-red",
-    "bg-jewel-green",
-    "bg-jewel-yellow",
-    "bg-jewel-blue",
-  ];
-  const border = [
-    "border-pastel-purple",
-    "border-pastel-red",
-    "border-pastel-green",
-    "border-pastel-yellow",
-    "border-pastel-blue",
-  ];
 
   // Generate shelf positions
   const shelfPositions = (() => {
@@ -279,12 +279,6 @@ const ModalTambahBuku = ({ status, handle }: ModalTambahBukuProps) => {
                   ))}
                 </div>
               </div>
-
-              {selectedPosition && (
-                <div className="text-center mt-2 text-sm text-gray-600">
-                  Dipilih: <span className="font-bold">{selectedPosition}</span>
-                </div>
-              )}
             </div>
           </div>
 
