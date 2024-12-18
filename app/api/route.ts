@@ -60,10 +60,17 @@ export async function GET() {
   await Peminjaman.hapusSemuaPeminjaman();
   await Buku.hapusSemuaBuku();
 
-    await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
-    await prisma.eksemplarBuku.createMany({
-      data : dataEksemplarBuku
-    })
+  await Buku.tambahBanyakBuku(dataBuku);
+  await Kelas.tambahBanyakKelas(dataKelas);
+  await Murid.tambahBanyakAnggota(dataMurid);
+  await Guru.tambahBanyakAnggota(dataGuru);
+  await Keterangan.tambahBanyakKeterangan(dataKeterangan);
+
+  await FormBukti.tambahDataFormBukti(dataFormBukti[0]);
+  await FormBukti.tambahDataFormBukti(dataFormBukti[1]);
+  await FormBukti.tambahDataFormBukti(dataFormBukti[2]);
+
+  await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
 
     // await test();
 
@@ -151,19 +158,19 @@ export async function GET() {
 
     return NextResponse.json({
       test,
-      arraySumbangan
+      arraySumbangan,
       // arrayEksemplarBuku
       // arrayDataFormBukti, 
-      // arrayBuku, 
-      // arrayKelas, 
-      // arrayMurid, 
-      // arrayKeterangan, 
-      // arrayGuru, 
-      // arrayPeminjaman,
-      // arrayPenulis,
-      // arrayPenerbit,
-      // arrayBukuPinjaman,
-      // arrayDenda
+      arrayBuku, 
+      arrayKelas, 
+      arrayMurid, 
+      arrayKeterangan, 
+      arrayGuru, 
+      arrayPeminjaman,
+      arrayPenulis,
+      arrayPenerbit,
+      arrayBukuPinjaman,
+      arrayDenda
     })
 }
 
