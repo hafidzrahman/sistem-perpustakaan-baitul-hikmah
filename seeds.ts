@@ -69,7 +69,7 @@ solusinya buat delete row yang ingin diganti id nya dan buat row baru, nanti id 
 // intisari ditotalkan dari bulan 1~6 atau 7~12
 
 import { JenisKelamin } from "@prisma/client";
-import { Genre } from "@/lib";
+import { Genre, hariKeMiliDetik } from "@/lib";
 
 export const seeds = {
   buku: [
@@ -179,6 +179,14 @@ export const seeds = {
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
   ],
+  eksemplarBuku : [
+    {id : 999, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 3)},
+    {id : 1000, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 4)},
+    {id : 1001, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 5)},
+    {id : 1002, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 3)},
+    {id : 1003, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 4)},
+    {id : 1004, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 5)},
+  ],
   kelas: [
     { id: 1, nama: "Al Fatih", tingkat: 7 },
     { id: 2, nama: "Al Muttaqin", tingkat: 8 },
@@ -238,30 +246,30 @@ export const seeds = {
     {
       id: 1,
       keterangan: "Keterlambatan Pengembalian Buku",
-      jumlahBuku: 5,
-      totalNominal: 110000,
+      jumlahBuku: 0,
+      totalNominal: 0,
       nominalPerHari: 1000,
     },
     {
       id: 2,
-      keterangan: "Keterlambatan Pengembalian Buku",
-      jumlahBuku: 2,
-      totalNominal: 550000,
-      nominalPerHari: 1000,
+      keterangan: "Tidak Mencapai Target Baca",
+      jumlahBuku: 1,
+      totalNominal: 35000,
+      nominalPerHari: 0,
     },
     {
       id: 3,
-      keterangan: "Keterlambatan Pengembalian Buku",
-      jumlahBuku: 3,
-      totalNominal: 300000,
-      nominalPerHari: 1000,
+      keterangan: "Menghilangkan Buku Pelajaran",
+      jumlahBuku: 1,
+      totalNominal: 55000,
+      nominalPerHari: 0,
     },
     {
       id: 4,
-      keterangan: "Keterlambatan Pengembalian Buku",
-      jumlahBuku: 3,
-      totalNominal: 300000,
-      nominalPerHari: 1000,
+      keterangan: "Persyaratan Lulus SMP",
+      jumlahBuku: 2,
+      totalNominal: 110000,
+      nominalPerHari: 0,
     },
   ],
   peminjaman: [

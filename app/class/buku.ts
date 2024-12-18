@@ -87,7 +87,7 @@ export class Buku{
 
         const result =  await EksemplarBuku.tambahEksemplarBuku(dataEksemplarBuku);
       
-        return result;
+        return result as unknown as eksemplarDenganBukuType;
     }
 
     static async tambahBanyakBuku(dataBuku : (bukuType & eksemplarBukuType)[]) : Promise<void> {

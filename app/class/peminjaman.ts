@@ -1,7 +1,8 @@
-import { ambilSemuaDataPeminjamanType, bukuPinjamanType, peminjamanType, peminjamType, perbaruiPeminjaman, prisma } from "@/lib";
+import { ambilSemuaDataPeminjamanType, peminjamanType, peminjamType, perbaruiPeminjaman, prisma } from "@/lib";
 import { NextResponse } from "next/server";
-import { Buku } from "@/app/class/buku";
 import { EksemplarBuku } from "./eksemplarbuku";
+import { BukuPinjaman } from "./bukupinjaman";
+import { Denda } from "./denda";
 
 export class Peminjaman {
   id: number;
@@ -52,14 +53,14 @@ export class Peminjaman {
     const deadline = tenggatWaktu || new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
     const result = deadline.getTime() - date.getTime();
 
-    const dataBukuPinjaman = await prisma.bukuPinjaman.create({
-      data: {
-        idPeminjaman: peminjaman.id,
+    const objectBukuPinjaman = new BukuPinjaman({
+      idPeminjaman: peminjaman.id,
         bukuISBN: dataEksemplarBuku.bukuISBN!,
         bukuId: dataEksemplarBuku.id!,
         tenggatWaktu: deadline,
-      },
-    });
+    })
+
+    const dataBukuPinjaman = await BukuPinjaman.tambahBukuPinjaman(objectBukuPinjaman);
 
     let timer = setTimeout(() => setDenda(peminjaman.id, dataBukuPinjaman.bukuISBN, dataBukuPinjaman.bukuId), result);
 
@@ -81,26 +82,26 @@ export class Peminjaman {
         throw new Error("Data buku tidak ditemukan");
       }
 
-      if (Date.now() >= bukuPinjaman.tenggatWaktu.getTime() && !bukuPinjaman?.tanggalKembali) {
+      if (bukuPinjaman.tenggatWaktu && Date.now() >= bukuPinjaman.tenggatWaktu.getTime() && !bukuPinjaman?.tanggalKembali) {
         clearTimeout(timer)
         const dataSumbangan = await prisma.sumbangan.create({
           data: {
             idKeterangan: 1,
             nis,
             nip,
-            berlebih: false,
           },
         });
 
-        await prisma.denda.create({
-          data: {
-            idSumbangan: dataSumbangan.id,
-            bukuISBN: dataBukuPinjaman.bukuISBN,
-            idPeminjaman: dataBukuPinjaman.idPeminjaman,
-            bukuId: dataBukuPinjaman.bukuId,
-          },
-        });
-      } else if (Date.now() < bukuPinjaman.tenggatWaktu.getTime()) {
+        const objectDenda = new Denda({
+          idSumbangan: dataSumbangan.id,
+          bukuISBN: dataBukuPinjaman.bukuISBN,
+          idPeminjaman: dataBukuPinjaman.idPeminjaman,
+          bukuId: dataBukuPinjaman.bukuId,
+        })
+
+        await Denda.tambahDenda(objectDenda);
+
+      } else if (bukuPinjaman.tenggatWaktu && Date.now() < bukuPinjaman.tenggatWaktu.getTime()) {
         const result = bukuPinjaman.tenggatWaktu.getTime() - Date.now()
         // clearTimeout(timer);
         timer = setTimeout(() => setDenda(peminjaman.id, dataBukuPinjaman.bukuISBN, dataBukuPinjaman.bukuId), result);
@@ -108,37 +109,6 @@ export class Peminjaman {
     }}
   }
 }
-
-  static async konfirmasiPengembalian(
-    idPeminjaman: number,
-    idBuku: { isbn: string; id: number }
-  ) {
-
-    const dataEksemplarBuku = await EksemplarBuku.cariEksemplarBuku(idBuku);
-
-    if (!dataEksemplarBuku?.bukuISBN || !dataEksemplarBuku?.id) {
-      throw new Error("Data buku tidak ditemukan.");
-    }
-
-    const dataPeminjaman = await Peminjaman.cariPeminjaman(idPeminjaman);
-
-    if (!dataPeminjaman?.id) {
-      throw new Error("Data peminjaman tidak ditemukan.");
-    }
-
-    await prisma.bukuPinjaman.update({
-      data: {
-        tanggalKembali: new Date(),
-      },
-      where: {
-        idPeminjaman_bukuISBN_bukuId: {
-          idPeminjaman: dataPeminjaman.id,
-          bukuISBN: dataEksemplarBuku.bukuISBN,
-          bukuId: dataEksemplarBuku.id,
-        },
-      },
-    });
-  }
 
   static async cariPeminjaman(id: number) : Promise<peminjamanType> {
       const peminjaman = (await prisma.peminjaman.findUnique({
@@ -191,34 +161,11 @@ export class Peminjaman {
     });
   }
 
-  static async perbaruiTenggatWaktuPeminjaman(
-    idPeminjaman: number,
-    idBuku: { isbn: string; id: number },
-    tenggatWaktu: Date
-  ) {
-    await prisma.bukuPinjaman.update({
-      data: {
-        tenggatWaktu,
-      },
-      where: {
-        idPeminjaman_bukuISBN_bukuId: {
-          idPeminjaman,
-          bukuISBN: idBuku.isbn,
-          bukuId: idBuku.id,
-        },
-      },
-    });
-  }
-
-  static async hapusPeminjaman(id: number): Promise<void> {
-    await prisma.bukuPinjaman.deleteMany({
-      where : {
-        idPeminjaman : id
-      }
-    })
+  static async hapusPeminjaman(idPeminjaman: number): Promise<void> {
+    await BukuPinjaman.hapusSemuaBukuPinjaman(idPeminjaman);
     const peminjaman = await prisma.peminjaman.delete({
       where: {
-        id,
+        id : idPeminjaman,
       },
     });
 
@@ -232,7 +179,7 @@ export class Peminjaman {
 
   static async hapusSemuaPeminjaman(): Promise<void> {
     await prisma.denda.deleteMany({})
-    await prisma.sumbangan.deleteMany({})
+    // await prisma.sumbangan.deleteMany({})
     await prisma.bukuPinjaman.deleteMany({})
     await prisma.peminjaman.deleteMany({});
   }
