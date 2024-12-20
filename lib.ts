@@ -160,7 +160,7 @@ export type peminjamanType = {
   id: number;
   nis?: string;
   nip?: string;
-  tanggalPinjam: Date;
+  tanggalPinjam?: Date | null;
   keterangan?: string;
   bukuPinjaman: bukuPinjamanType[];
 };
@@ -170,7 +170,7 @@ export type peminjamType = {
   nis?: string;
   nip?: string;
   keterangan?: string;
-  daftarBukuPinjaman: { isbn: string; tenggatWaktu: Date }[];
+  daftarBukuPinjaman: { isbn: string; tenggatWaktu?: Date | null }[];
 };
 
 export type bukuPinjamanType = {

@@ -10,6 +10,10 @@ export async function GET(req : Request) {
             by : ['bukuISBN'],
             where : {
                 OR : [
+                {   tanggalMasuk : {
+                        gte : batasTanggalAwal
+                    }
+                },
                 {tanggalRusak : {
                     gte : batasTanggalAwal,
                 },
@@ -18,6 +22,7 @@ export async function GET(req : Request) {
             }}
             ]},
             _count : {
+                tanggalMasuk : true,
                 tanggalRusak : true,
                 tanggalHilang : true,
             }
@@ -39,9 +44,34 @@ export async function GET(req : Request) {
             }
         })
 
+        const dataKelas = await prisma.kelas.findMany({
+            include : {
+                RiwayatKelas : {
+                    select : {
+                        murid : {
+                            select : {
+                                _count : {
+                                    select : {
+                                        FormBukti : {
+                                            where : {
+                                                status : {
+                                                    equals : true
+                                                },
+                                                tanggal : batasTanggalAwal
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
 
 
-        return NextResponse.json({dataBuku, dataPeminjaman, dataFormBukti}, {status : 200})
+
+        return NextResponse.json({dataKelas, dataBuku, dataPeminjaman, dataFormBukti}, {status : 200})
     } catch (error) {
         return NextResponse.json({message : "Gagal mendapatkan data laporan", details : error}, {status : 405})
     }
