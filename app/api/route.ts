@@ -157,7 +157,6 @@ export async function GET() {
     const arraySumbangan = await prisma.sumbangan.findMany({});
 
     return NextResponse.json({
-      test,
       arraySumbangan,
       // arrayEksemplarBuku
       // arrayDataFormBukti, 

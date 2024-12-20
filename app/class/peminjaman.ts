@@ -8,7 +8,7 @@ export class Peminjaman {
   id: number;
   nis?: string;
   nip?: string;
-  tanggalPinjam: Date;
+  tanggalPinjam?: Date | null;
   keterangan?: string;
 
   constructor(data: peminjamanType) {
@@ -39,7 +39,7 @@ export class Peminjaman {
     }
 
 
-    async function setDataPeminjaman(bukuPinjaman : {isbn : string, tenggatWaktu : Date}) {
+    async function setDataPeminjaman(bukuPinjaman : {isbn : string, tenggatWaktu? : Date | null}) {
     
     const {isbn, tenggatWaktu} = bukuPinjaman;
 
@@ -152,7 +152,7 @@ export class Peminjaman {
       data: {
         nis: nis || peminjaman.nis,
         nip: nip || peminjaman.nip,
-        tanggalPinjam: peminjaman.tanggalPinjam,
+        tanggalPinjam: peminjaman.tanggalPinjam!,
         keterangan: keterangan || peminjaman.keterangan,
       },
       where: {

@@ -25,7 +25,7 @@ export class FormBukti {
         const {bukuISBN, muridNIS, intisari, tanggal, halamanAwal, halamanAkhir, status} = data;    
 
         // status harus bernilai false ketika baru mengisi data form bukti
-        if (!bukuISBN || !muridNIS || !intisari || !tanggal || !halamanAwal || !halamanAkhir || status) {
+        if (!bukuISBN || !muridNIS || !intisari || !tanggal || !halamanAwal || !halamanAkhir) {
             throw new Error("Harus mengisi field yang wajib");
         }
 
@@ -69,6 +69,21 @@ export class FormBukti {
         if (!dataFormBukti?.id) {
             throw new Error("Data form bukti tidak ditemukan");
         } 
+
+        return dataFormBukti;
+    }
+
+    static async cariDataFormBuktiDariMurid(muridNIS : string) : Promise<formBuktiType[]> {
+        const dataFormBukti = await prisma.formBukti.findMany({
+            where : {
+                muridNIS
+            },
+
+            include : {
+                buku : true,
+                murid : true,
+            }
+        })
 
         return dataFormBukti;
     }

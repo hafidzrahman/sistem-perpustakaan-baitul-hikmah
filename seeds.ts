@@ -186,6 +186,7 @@ export const seeds = {
     {id : 1002, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 3)},
     {id : 1003, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 4)},
     {id : 1004, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 5)},
+    {id : 1005, bukuISBN : "978-602-06-5192-7", tanggalMasuk : new Date(Date.now() - hariKeMiliDetik * 5)},
   ],
   kelas: [
     { id: 1, nama: "Al Fatih", tingkat: 7 },
@@ -327,7 +328,7 @@ export const seeds = {
       intisari: "WOW",
       halamanAwal: 23,
       halamanAkhir: 25,
-      status: false,
+      status: true,
     },
     {
       bukuISBN: "978-602-8519-93-9",
@@ -336,7 +337,7 @@ export const seeds = {
       intisari: "WOW",
       halamanAwal: 23,
       halamanAkhir: 25,
-      status: false,
+      status: true,
     },
     {
       bukuISBN: "978-602-06-5192-9",
@@ -345,7 +346,24 @@ export const seeds = {
       intisari: "WOW",
       halamanAwal: 23,
       halamanAkhir: 25,
-      status: false,
+      status: true,
+    },
+    {
+      bukuISBN: "978-602-06-5192-9",
+      muridNIS: "12250111791",
+      tanggal: new Date(),
+      intisari: "WOW",
+      halamanAwal: 23,
+      halamanAkhir: 25,
+      status: true,
+    },{
+      bukuISBN: "978-602-06-5192-9",
+      muridNIS: "12250111791",
+      tanggal: new Date(),
+      intisari: "WOW",
+      halamanAwal: 23,
+      halamanAkhir: 25,
+      status: true,
     },
   ],
 };
