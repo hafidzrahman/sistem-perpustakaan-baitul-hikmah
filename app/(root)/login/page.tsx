@@ -15,16 +15,17 @@ const LoginPage = ({}: LoginPageProps) => {
 
   async function handleOnClick() {
     try {
-      console.log(username);
+      if (username.current && password.current) {
       const res = await signIn("credentials", {
         redirect: false,
-        username: "test2312",
-        password: "password",
+        username: username.current.value,
+        password: password.current.value,
         callbackUrl: "/panel-kontrol",
       });
       if (!res?.error) {
         push("/panel-kontrol");
       }
+    }
     } catch (error) {
       console.log(error);
     }

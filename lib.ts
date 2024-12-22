@@ -228,10 +228,14 @@ export type dendaType = {
 };
 
 export type userType = {
-  id?: string;
-  username: string;
-  password: string;
-  role: string;
+  id? : string,
+  username : string,
+  password : string,
+  role : string,
+  muridNIS? : string,
+  guruNIP? : string,
+  petugasPerpustakaanId? : string
+
 };
 
 export type sumbanganType = {

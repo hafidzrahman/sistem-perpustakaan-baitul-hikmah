@@ -11,6 +11,7 @@ import {
   perbaruiAnggotaType,
   perbaruiKelasType,
   Genre,
+  userType,
 } from "@/lib";
 
 import { Buku } from "@/app/class/buku";
@@ -40,6 +41,7 @@ export async function GET() {
     peminjaman: dataPeminjaman,
     formBukti: dataFormBukti,
     eksemplarBuku: dataEksemplarBuku,
+    user : dataUser
   } = seeds;
 
   await prisma.riwayatBantuan.deleteMany({});
@@ -71,7 +73,7 @@ export async function GET() {
 
   await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
 
-  await test();
+  await test(dataUser);
 
   await prisma.sumbangan.createMany({
     data: [
@@ -191,16 +193,22 @@ export async function GET() {
   });
 }
 
-async function test(): Promise<void> {
+async function test(dataUser : userType[]): Promise<void> {
   await prisma.user.deleteMany({});
-  const password = await hash("password", 12);
-  const user = await prisma.user.create({
-    data: {
-      username: "test2312",
-      password,
-      role: "admin",
-    },
-  });
+  for await (const user of dataUser) {
+    const {username, password, role, muridNIS, guruNIP, petugasPerpustakaanId} = user;
+    const hashedPassword = await hash(password, 12);
+    const data = await prisma.user.create({
+      data: {
+        username,
+        password : hashedPassword,
+        role,
+        muridNIS,
+        guruNIP,
+        petugasPerpustakaanId
+      },
+    });
 
-  console.log(user);
+    console.log(data);
+  }
 }

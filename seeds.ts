@@ -350,4 +350,23 @@ export const seeds = {
       status: false,
     },
   ],
+  user : [
+    {
+      username : "12250111048",
+      password : "test123",
+      role : "murid",
+      muridNIS : "12250111048"
+    },
+    {
+      username : "122331",
+      password : "test123",
+      role : "guru",
+      guruNIP : "122331"
+    },
+    {
+      username : "admin",
+      password : "admin",
+      role : "admin",
+    }
+  ]
 };
