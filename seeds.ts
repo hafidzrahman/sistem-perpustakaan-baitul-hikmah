@@ -28,6 +28,7 @@ Misal :
 C. Denda Terlambat
 1. Murid hanya dapat sumbang tunai
 
+
 Kesimpulan :
 1. Jika nilai tunai yang berlebih lebih kecil dari nilai tunai tertinggi yang disumbangkan, maka ambil nilai tunai tertinggi saja dan kalkulasi ulang
 2. Jika nilai tunai yang berlebih lebih besar dari nilai tunai tertinggi yang disumbangkan, 
@@ -77,7 +78,7 @@ export const seeds = {
       isbn: "978-602-06-5192-7",
       judul: "Funiculi Funicula",
       penerbit: "Gramedia Pustaka Utama",
-      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      genre: [Genre.FIKSI.toString()],
       penulis: ["Toshikazu Kawaguchi"],
       halaman: 224,
       sinopsis:
@@ -91,7 +92,7 @@ export const seeds = {
     {
       isbn: "978-602-8519-93-9",
       judul: "Killing Commandantore",
-      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      genre: [Genre.SEJARAH.toString()],
       penerbit: "Orang Ganteng",
       penulis: ["Haruki Murakami"],
       halaman: 200,
@@ -107,7 +108,7 @@ export const seeds = {
       isbn: "978-602-06-5192-9",
       judul: "Funiculi Funicula",
       penerbit: "Gramedia Pustaka Utama",
-      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      genre: [Genre.FIKSI.toString()],
       penulis: ["Toshikazu Kawaguchi"],
       halaman: 224,
       sinopsis:
@@ -121,7 +122,7 @@ export const seeds = {
     {
       isbn: "978-602-06-5192-9",
       judul: "Funiculi Funicula",
-      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      genre: [Genre.FIKSI.toString()],
       penerbit: "Gramedia Pustaka Utama",
       penulis: ["Toshikazu Kawaguchi"],
       halaman: 224,
@@ -136,7 +137,7 @@ export const seeds = {
     {
       isbn: "978-602-06-5192-9",
       judul: "Funiculi Funicula",
-      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      genre: [Genre.FIKSI.toString()],
       penerbit: "Gramedia Pustaka Utama",
       penulis: ["Toshikazu Kawaguchi"],
       halaman: 224,
@@ -151,7 +152,7 @@ export const seeds = {
     {
       isbn: "978-602-06-5192-9",
       judul: "Funiculi Funicula",
-      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      genre: [Genre.FIKSI.toString()],
       penerbit: "Gramedia Pustaka Utama",
       penulis: ["Toshikazu Kawaguchi"],
       halaman: 224,
@@ -166,7 +167,7 @@ export const seeds = {
     {
       isbn: "978-602-06-5192-9",
       judul: "Funiculi Funicula",
-      genre: [Genre.FANTASY.toString(), Genre.SCIFI.toString()],
+      genre: [Genre.FIKSI.toString()],
       penerbit: "Gramedia Pustaka Utama",
       penulis: ["Toshikazu Kawaguchi"],
       halaman: 224,
@@ -247,30 +248,30 @@ export const seeds = {
     {
       id: 1,
       keterangan: "Keterlambatan Pengembalian Buku",
-      jumlahBuku: 0,
-      totalNominal: 0,
+      jumlahBuku: 5,
+      totalNominal: 110000,
       nominalPerHari: 1000,
     },
     {
       id: 2,
-      keterangan: "Tidak Mencapai Target Baca",
-      jumlahBuku: 1,
-      totalNominal: 35000,
-      nominalPerHari: 0,
+      keterangan: "Keterlambatan Pengembalian Buku",
+      jumlahBuku: 2,
+      totalNominal: 550000,
+      nominalPerHari: 1000,
     },
     {
       id: 3,
-      keterangan: "Menghilangkan Buku Pelajaran",
-      jumlahBuku: 1,
-      totalNominal: 55000,
-      nominalPerHari: 0,
+      keterangan: "Keterlambatan Pengembalian Buku",
+      jumlahBuku: 3,
+      totalNominal: 300000,
+      nominalPerHari: 1000,
     },
     {
       id: 4,
-      keterangan: "Persyaratan Lulus SMP",
-      jumlahBuku: 2,
-      totalNominal: 110000,
-      nominalPerHari: 0,
+      keterangan: "Keterlambatan Pengembalian Buku",
+      jumlahBuku: 3,
+      totalNominal: 300000,
+      nominalPerHari: 1000,
     },
   ],
   peminjaman: [
@@ -328,7 +329,7 @@ export const seeds = {
       intisari: "WOW",
       halamanAwal: 23,
       halamanAkhir: 25,
-      status: true,
+      status: false,
     },
     {
       bukuISBN: "978-602-8519-93-9",
@@ -337,7 +338,7 @@ export const seeds = {
       intisari: "WOW",
       halamanAwal: 23,
       halamanAkhir: 25,
-      status: true,
+      status: false,
     },
     {
       bukuISBN: "978-602-06-5192-9",
@@ -346,24 +347,7 @@ export const seeds = {
       intisari: "WOW",
       halamanAwal: 23,
       halamanAkhir: 25,
-      status: true,
-    },
-    {
-      bukuISBN: "978-602-06-5192-9",
-      muridNIS: "12250111791",
-      tanggal: new Date(),
-      intisari: "WOW",
-      halamanAwal: 23,
-      halamanAkhir: 25,
-      status: true,
-    },{
-      bukuISBN: "978-602-06-5192-9",
-      muridNIS: "12250111791",
-      tanggal: new Date(),
-      intisari: "WOW",
-      halamanAwal: 23,
-      halamanAkhir: 25,
-      status: true,
+      status: false,
     },
   ],
 };

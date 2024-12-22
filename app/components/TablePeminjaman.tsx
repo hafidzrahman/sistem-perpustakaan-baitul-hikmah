@@ -133,11 +133,13 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
             <p className="mt-2 text-sm font-source-sans text-gray-500">
               Tanggal Pinjam:{" "}
               <span className="font-medium text-gray-700">
-                {new Date(item.tanggalPinjam).toLocaleString("id-ID", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {item.tanggalPinjam
+                  ? new Date(item.tanggalPinjam).toLocaleString("id-ID", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "Tanggal tidak tersedia"}
               </span>
             </p>
             <p className="mt-2 text-sm text-gray-500">
@@ -186,11 +188,13 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
                   {getNama(item.nis, item.nip)}
                 </td>
                 <td className="px-4 py-2 font-source-sans text-sm text-center">
-                  {new Date(item.tanggalPinjam).toLocaleString("id-ID", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {item.tanggalPinjam
+                    ? new Date(item.tanggalPinjam).toLocaleString("id-ID", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "Tanggal tidak tersedia"}
                 </td>
                 <td className="px-4 py-2 text-sm text-center">
                   {item.bukuPinjaman?.[0]?.tenggatWaktu
