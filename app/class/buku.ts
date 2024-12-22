@@ -1,4 +1,4 @@
-import {bukuType, Hash, eksemplarBukuType, perbaruiBukuType, prisma, konversiDataKeId, penulisType, genreType, penerbitType, tambahBukuType, eksemplarDenganBukuType} from '@/lib'
+import {bukuType, Hash, eksemplarBukuType, perbaruiBukuType, prisma, konversiDataKeId, penulisType, genreType, penerbitType, tambahBukuType, eksemplarDenganBukuType, detailsBukuType} from '@/lib'
 import { NextResponse } from 'next/server';
 import {EksemplarBuku} from './eksemplarbuku'
 
@@ -166,21 +166,31 @@ export class Buku{
 
 }
 
-    static async cariBuku (isbn : string) : Promise<bukuType | undefined | null> {  
+    static async cariBuku (isbn : string) : Promise<detailsBukuType | undefined | null> {  
             const buku = await prisma.buku.findUnique({
                 where : {
                     isbn : isbn
                 },
                 include : {
-                        _count : {
-                            select : {
-                                eksemplarBuku : {
-                                    where : {
-                                        bukuISBN : isbn
-                                    }
+                    _count : {
+                        select : {
+                            eksemplarBuku : {
+                                where : {
+                                    OR : [
+                                        {bukuPinjaman : undefined}, 
+                                    {
+                                        bukuPinjaman : {
+                                        none : {
+                                            tanggalKembali : undefined
+                                        }
+                                        }
+                                    },
+                                    ]
                                 }
                             }
-                        },
+                        }
+                    },
+                        eksemplarBuku : true,
                         penulis : true,
                         genre : true,
                         penerbitDetails : true
@@ -190,7 +200,7 @@ export class Buku{
             if (!buku?.isbn) {
                 throw ({message : "Data buku tidak ditemukan"})
             }
-            return buku as bukuType;
+            return buku as detailsBukuType;
 }
     static async ambilSemuaDataBuku() : Promise<bukuType[]> {
         const buku = await prisma.buku.findMany({
