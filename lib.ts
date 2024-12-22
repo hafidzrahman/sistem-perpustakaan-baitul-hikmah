@@ -39,10 +39,26 @@ export type ambilSemuaDataPeminjamanType = peminjamanType & {
   bukuPinjaman: (bukuPinjamanType & { eksemplarBuku: eksemplarBukuType })[];
 };
 
+export type detailsBukuType = bukuType & {
+  _count : {
+    eksemplarBuku : number
+  },
+  eksemplarBuku : eksemplarBukuType[], 
+  penulis : penulisType[],
+  penerbitDetails : penerbitType,
+  genre : genreType[]  
+}
+
 export type perbaruiKelasType = {
   nama?: string;
   tingkat?: number;
 };
+
+export type ambilSemuaDataKelasType = kelasType & {
+  _count : {
+    RiwayatKelas : number
+  }
+}
 
 export type kelasType = {
   id: number;
