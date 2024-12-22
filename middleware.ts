@@ -8,9 +8,9 @@ export async function middleware(req : NextRequest) {
         req : req,
         secret : secret,
     });
-    console.log(token);
+    console.log(token?.role);
 
-    if (!token) {
+    if (!token?.role) {
         return NextResponse.redirect(new URL('/login', req.url));
     } 
     return NextResponse.next();

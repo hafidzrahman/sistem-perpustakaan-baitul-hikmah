@@ -70,7 +70,7 @@ solusinya buat delete row yang ingin diganti id nya dan buat row baru, nanti id 
 // intisari ditotalkan dari bulan 1~6 atau 7~12
 
 import { JenisKelamin } from "@prisma/client";
-import { Genre } from "@/lib";
+import { Genre, hariKeMiliDetik } from "@/lib";
 
 export const seeds = {
   buku: [
@@ -100,7 +100,7 @@ export const seeds = {
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
-      posisi: "A1",
+      posisi: "A2",
       linkGambar:
         "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1527854255i/38820047.jpg",
     },
@@ -116,7 +116,7 @@ export const seeds = {
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
-      posisi: "A1",
+      posisi: "A3",
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
@@ -131,7 +131,7 @@ export const seeds = {
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
-      posisi: "A1",
+      posisi: "B1",
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
@@ -146,7 +146,7 @@ export const seeds = {
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
-      posisi: "A1",
+      posisi: "B2",
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
@@ -161,7 +161,7 @@ export const seeds = {
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
-      posisi: "A1",
+      posisi: "C1",
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
@@ -176,21 +176,30 @@ export const seeds = {
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
-      posisi: "A1",
+      posisi: "D1",
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
   ],
+  eksemplarBuku : [
+    {id : 999, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 3), posisi : "A1"},
+    {id : 1000, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 4), posisi : "A2"},
+    {id : 1001, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 5), posisi : "A3"},
+    {id : 1002, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 3), posisi : "B5"},
+    {id : 1003, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 4), posisi : "C1"},
+    {id : 1004, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 5), posisi : "C5"},
+    {id : 1005, bukuISBN : "978-602-06-5192-7", tanggalMasuk : new Date(Date.now() - hariKeMiliDetik * 5), posisi : "C7"},
+  ],
   kelas: [
-    { id: 1, nama: "Al Fatih", tingkat: 7 },
-    { id: 2, nama: "Al Muttaqin", tingkat: 8 },
-    { id: 3, nama: "Al Falah", tingkat: 9 },
+    { id: 1, nama: "Al Fatih", tingkat: 7, JKMurid : JenisKelamin.PEREMPUAN },
+    { id: 2, nama: "Al Muttaqin", tingkat: 8, JKMurid : JenisKelamin.LAKI },
+    { id: 3, nama: "Al Falah", tingkat: 9, JKMurid : JenisKelamin.LAKI },
   ],
   murid: [
     {
       nis: "12250111791",
       nama: "Muhammad Faruq",
       jenisKelamin: JenisKelamin.LAKI,
-      idKelas: 1,
+      idKelas: 2,
       kontak: "08123456789",
       alamat: "Jl. Garuda Sakti",
     },
@@ -234,6 +243,9 @@ export const seeds = {
       kontak: "0831242152",
       alamat: "Jl. Soebrantas",
     },
+  ],
+  petugasPerpustakaan : [
+    {id : "10000", nama : "Good One"}
   ],
   keterangan: [
     {
@@ -341,13 +353,24 @@ export const seeds = {
       status: false,
     },
   ],
-
-  eksemplarBuku: [
+  user : [
     {
-      bukuISBN: "978-602-06-5192-7",
-      id: 2002,
-      idSumbangan: 1000,
-      idSumbanganBantuan: null,
+      username : "12250111048",
+      password : "test123",
+      role : "murid",
+      muridNIS : "12250111048"
     },
-  ],
+    {
+      username : "122331",
+      password : "test123",
+      role : "guru",
+      guruNIP : "122331"
+    },
+    {
+      username : "admin",
+      password : "admin",
+      role : "admin",
+      petugasPerpustakaanId : "10000"
+    }
+  ]
 };

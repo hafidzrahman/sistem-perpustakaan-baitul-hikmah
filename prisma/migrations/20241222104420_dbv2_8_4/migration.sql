@@ -114,6 +114,7 @@ CREATE TABLE "Kelas" (
     "id" SERIAL NOT NULL,
     "nama" TEXT NOT NULL,
     "tingkat" INTEGER NOT NULL,
+    "JKmurid" "JenisKelamin",
 
     CONSTRAINT "Kelas_pkey" PRIMARY KEY ("id")
 );
@@ -146,7 +147,7 @@ CREATE TABLE "Peminjaman" (
 -- CreateTable
 CREATE TABLE "BukuPinjaman" (
     "tanggalKembali" TIMESTAMP(3),
-    "tenggatWaktu" TIMESTAMP(3) NOT NULL,
+    "tenggatWaktu" TIMESTAMP(3),
     "idPeminjaman" INTEGER NOT NULL,
     "bukuISBN" TEXT NOT NULL,
     "bukuId" INTEGER NOT NULL,
@@ -181,7 +182,7 @@ CREATE TABLE "Denda" (
 CREATE TABLE "Sumbangan" (
     "id" SERIAL NOT NULL,
     "tanggalSelesai" TIMESTAMP(3),
-    "berlebih" BOOLEAN NOT NULL,
+    "berlebih" BOOLEAN NOT NULL DEFAULT false,
     "idKeterangan" INTEGER NOT NULL,
     "nis" TEXT,
     "nip" TEXT,
@@ -207,7 +208,7 @@ CREATE TABLE "PembayaranTunai" (
     "id" SERIAL NOT NULL,
     "tanggal" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "jumlah" INTEGER NOT NULL,
-    "idSumbangan" INTEGER NOT NULL,
+    "idSumbangan" INTEGER,
 
     CONSTRAINT "PembayaranTunai_pkey" PRIMARY KEY ("id")
 );
@@ -236,6 +237,9 @@ CREATE TABLE "_BukuToPenulis" (
 
     CONSTRAINT "_BukuToPenulis_AB_pkey" PRIMARY KEY ("A","B")
 );
+
+-- CreateIndex
+CREATE INDEX "PetugasPerpustakaan_id_idx" ON "PetugasPerpustakaan"("id");
 
 -- CreateIndex
 CREATE INDEX "Buku_isbn_idx" ON "Buku"("isbn");
@@ -299,6 +303,9 @@ CREATE UNIQUE INDEX "User_guruNIP_key" ON "User"("guruNIP");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_petugasPerpustakaanId_key" ON "User"("petugasPerpustakaanId");
+
+-- CreateIndex
+CREATE INDEX "User_id_idx" ON "User"("id");
 
 -- CreateIndex
 CREATE INDEX "PembayaranTunai_id_idx" ON "PembayaranTunai"("id");
@@ -373,7 +380,7 @@ ALTER TABLE "User" ADD CONSTRAINT "User_guruNIP_fkey" FOREIGN KEY ("guruNIP") RE
 ALTER TABLE "User" ADD CONSTRAINT "User_petugasPerpustakaanId_fkey" FOREIGN KEY ("petugasPerpustakaanId") REFERENCES "PetugasPerpustakaan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PembayaranTunai" ADD CONSTRAINT "PembayaranTunai_idSumbangan_fkey" FOREIGN KEY ("idSumbangan") REFERENCES "Sumbangan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PembayaranTunai" ADD CONSTRAINT "PembayaranTunai_idSumbangan_fkey" FOREIGN KEY ("idSumbangan") REFERENCES "Sumbangan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RiwayatBantuan" ADD CONSTRAINT "RiwayatBantuan_idPembayaranTunai_fkey" FOREIGN KEY ("idPembayaranTunai") REFERENCES "PembayaranTunai"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
