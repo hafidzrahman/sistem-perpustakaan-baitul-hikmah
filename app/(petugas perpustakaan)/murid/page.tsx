@@ -17,6 +17,9 @@ const MuridPage = ({}: MuridPageProps) => {
   const [murid, setMurid] = useState();
   const [tambahKelas, setTambahKelas] = useState(false);
   const [tambahMurid, setTambahMurid] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter data berdasarkan pencarian
 
   const handleTambahKelas = () => {
     setTambahKelas(!tambahKelas);
@@ -86,11 +89,12 @@ const MuridPage = ({}: MuridPageProps) => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-4 order-last col-span-1 row-span-2 p-6 bg-white rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-4 lg:row-span-2 dark-gray">
-          <div className="w-full flex px-2 justify-between items-center">
-            <h1 className="font-source-sans text-2xl text-primary font-bold">
+        <div className="flex flex-col gap-0 md:gap-4 order-last col-span-1 row-span-2 p-6 bg-white rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-4 lg:row-span-2 dark-gray">
+          <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-0 sm:justify-between sm:items-center mb-4">
+            <h2 className="font-source-sans md:text-2xl text-xl text-primary font-bold">
               Daftar Murid
-            </h1>
+            </h2>
+
             <div className="flex gap-2">
               <BtnSecondary
                 label="Tambah Kelas"
@@ -104,7 +108,7 @@ const MuridPage = ({}: MuridPageProps) => {
               />
             </div>
           </div>
-          <div className="rounded-lg overflow-hidden border-black-custom border">
+          <div className="rounded-lg overflow-hidden md:border-black-custom md:border">
             <TableMurid data={murid} />
           </div>
         </div>
