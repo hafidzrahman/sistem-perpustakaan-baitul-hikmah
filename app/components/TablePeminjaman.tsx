@@ -109,7 +109,7 @@ const TablePeminjaman = ({ data }: { data: peminjamanType[] }) => {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Cari berdasarkan judul atau nama peminjam..."
+          placeholder="Cari berdasarkan judul buku atau nama peminjam..."
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}

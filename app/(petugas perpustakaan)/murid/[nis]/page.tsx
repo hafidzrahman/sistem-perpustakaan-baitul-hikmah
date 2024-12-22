@@ -9,27 +9,40 @@ import Image from "next/image";
 interface PageProps {}
 
 const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
-  const [detailMurid, setDetailMurid] = useState<any | null>();
+  const [detailMurid, setDetailMurid] = useState<any>();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchDetailMurid = async () => {
       const { nis } = await params;
-      console.log(nis);
       try {
         const response = await fetch(`/api/murid/${nis}`);
         const data = await response.json();
-        console.log(data);
         setDetailMurid(data);
       } catch (error) {
-        console.error("Gagal mengambil detail buku:", error);
+        console.error("Failed to fetch student details:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchDetailMurid();
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   if (!detailMurid) {
-    return <div>bentar</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600">Data tidak ditemukan</p>
+      </div>
+    );
   }
   const kelas = detailMurid.riwayatKelas[0].kelas.tingkat
     ? `${detailMurid.riwayatKelas[0].kelas.tingkat} ${detailMurid.riwayatKelas[0].kelas.nama}`
@@ -99,7 +112,7 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
         <h1 className="font-source-sans text-2xl text-primary font-bold">
           Kalender
         </h1>
-        <PeminjamanCalendar />
+        <PeminjamanCalendar loans={detailMurid.Peminjaman} />
       </div>
       <div className="flex flex-col gap-4 order-last col-span-1 row-span-2 p-6 bg-white rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-4 lg:row-span-2 dark-gray">
         <div className="w-full flex px-2 justify-between items-center">

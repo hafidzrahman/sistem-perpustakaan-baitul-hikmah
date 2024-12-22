@@ -60,7 +60,7 @@ const TableMurid = ({ data }: { data: any }) => {
       </div>
 
       {/* Mobile and Tablet View (Card Layout) */}
-      <div className="md:hidden space-y-4">
+      <div className="lg:hidden space-y-4">
         {filteredData?.map((item: any, index: number) => {
           const kelas = item.riwayatKelas[0].kelas.tingkat
             ? `${item.riwayatKelas[0].kelas.tingkat} ${item.riwayatKelas[0].kelas.nama}`
@@ -71,7 +71,7 @@ const TableMurid = ({ data }: { data: any }) => {
               key={index}
               className="bg-white p-4 rounded-lg border-2 border-primary"
             >
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-source-serif font-semibold text-lg">
@@ -127,7 +127,7 @@ const TableMurid = ({ data }: { data: any }) => {
       </div>
 
       {/* Desktop View (Table Layout) */}
-      <div className="hidden md:block max-h-80 overflow-y-auto border border-primary rounded-lg">
+      <div className="hidden lg:block border border-primary rounded-lg max-h-80 overflow-y-auto">
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-light-primary text-white sticky top-0 z-10">

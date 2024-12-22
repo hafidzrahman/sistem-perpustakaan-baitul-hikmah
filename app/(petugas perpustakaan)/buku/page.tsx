@@ -112,9 +112,9 @@ const BukuPage = ({}: BukuPageProps) => {
               icon={AddCircleHalfDotIcon}
             />
           </div>
-          <div className="rounded-lg overflow-hidden md:border-black-custom border">
-            {buku.length && <TableBuku data={buku} />}
-          </div>
+          {/* <div className="rounded-lg overflow-hidden md:border-black-custom border"> */}
+          {buku.length && <TableBuku data={buku} />}
+          {/* </div> */}
         </div>
       </div>
     </>

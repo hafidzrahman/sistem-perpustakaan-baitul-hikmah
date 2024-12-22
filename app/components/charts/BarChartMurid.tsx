@@ -10,22 +10,25 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface ClassData {
-  name: string;
-  male: number;
-  female: number;
+interface KelasData {
+  id: number;
+  nama: string;
+  tingkat: number;
+  _count: {
+    RiwayatKelas: number;
+  };
 }
 
-const classData: ClassData[] = [
-  { name: "7 Al-Fatih", male: 20, female: 18 },
-  { name: "7 Ibnu Abbas", male: 17, female: 16 },
-  { name: "8 Geber", male: 17, female: 15 },
-  { name: "8 Avicenna", male: 20, female: 22 },
-  { name: "9 Ibnu Umar", male: 20, female: 19 },
-  { name: "9 Syafii", male: 18, female: 17 },
-];
+interface ChartData {
+  name: string;
+  total: number;
+}
 
 const BarChartMurid: React.FC = () => {
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [chartConfig, setChartConfig] = useState({
     barSize: 20,
     fontSize: 14,
@@ -36,10 +39,35 @@ const BarChartMurid: React.FC = () => {
   });
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/kelas");
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const data: KelasData[] = await response.json();
+
+        // Transform the data for the chart
+        const transformedData = data.map((kelas) => ({
+          name: `${kelas.tingkat} ${kelas.nama}`,
+          total: kelas._count.RiwayatKelas,
+        }));
+
+        setChartData(transformedData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       if (width >= 1024) {
-        // Desktop
         setChartConfig({
           barSize: 20,
           fontSize: 14,
@@ -49,7 +77,6 @@ const BarChartMurid: React.FC = () => {
           bottomMargin: 60,
         });
       } else if (width >= 768) {
-        // Tablet
         setChartConfig({
           barSize: 16,
           fontSize: 12,
@@ -59,7 +86,6 @@ const BarChartMurid: React.FC = () => {
           bottomMargin: 50,
         });
       } else if (width >= 640) {
-        // Small Tablet
         setChartConfig({
           barSize: 14,
           fontSize: 11,
@@ -69,7 +95,6 @@ const BarChartMurid: React.FC = () => {
           bottomMargin: 45,
         });
       } else {
-        // Mobile
         setChartConfig({
           barSize: 12,
           fontSize: 10,
@@ -86,11 +111,21 @@ const BarChartMurid: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">Loading...</div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center h-64">Error: {error}</div>;
+  }
+
   return (
     <div className="w-full flex flex-col">
       <ResponsiveContainer width="100%" height={chartConfig.chartHeight}>
         <BarChart
-          data={classData}
+          data={chartData}
           margin={{
             top: 20,
             right: 20,
@@ -121,7 +156,7 @@ const BarChartMurid: React.FC = () => {
             fontSize={chartConfig.fontSize}
             fontWeight="bold"
             tickMargin={8}
-            domain={[0, "dataMax + 4"]}
+            domain={[0, "dataMax + 2"]}
           />
           <Tooltip
             contentStyle={{
@@ -132,30 +167,12 @@ const BarChartMurid: React.FC = () => {
             }}
             cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
           />
-          <Legend
-            verticalAlign="top"
-            height={36}
-            wrapperStyle={{
-              fontSize: chartConfig.fontSize,
-              paddingBottom: "8px",
-            }}
-          />
           <Bar
-            dataKey="male"
+            dataKey="total"
             fill="#064359"
             stroke="#a0ced9"
             strokeWidth={1}
-            name="Ikhwan"
-            barSize={chartConfig.barSize}
-            radius={[4, 4, 0, 0]}
-            className="transition-all duration-300 hover:opacity-80"
-          />
-          <Bar
-            dataKey="female"
-            fill="#C50043"
-            stroke="#ffc09f"
-            strokeWidth={1}
-            name="Akhwat"
+            name="Total Siswa"
             barSize={chartConfig.barSize}
             radius={[4, 4, 0, 0]}
             className="transition-all duration-300 hover:opacity-80"

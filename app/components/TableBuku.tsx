@@ -22,7 +22,7 @@ const TableBuku = ({ data }: { data: cariBukuType[] }) => {
   return (
     <div className="w-full">
       {/* Mobile and Tablet View (Card Layout) */}
-      <div className="md:hidden space-y-4">
+      <div className="lg:hidden space-y-4">
         {data?.map((item: cariBukuType, index: number) => (
           <div
             key={index}
@@ -77,7 +77,7 @@ const TableBuku = ({ data }: { data: cariBukuType[] }) => {
       </div>
 
       {/* Desktop View (Table Layout) */}
-      <div className="hidden md:block max-h-80 overflow-y-auto border border-primary rounded-lg">
+      <div className="hidden lg:block max-h-80 overflow-y-auto border border-primary rounded-lg">
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-light-primary text-white sticky top-0 z-10">
