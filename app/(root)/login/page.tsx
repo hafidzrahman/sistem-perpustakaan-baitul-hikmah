@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import BtnPrimary from "@/app/components/BtnPrimary";
 import Image from "next/image";
@@ -9,21 +9,21 @@ import { useRouter } from "next/navigation";
 interface LoginPageProps {}
 
 const LoginPage = ({}: LoginPageProps) => {
-  const {push} = useRouter();
+  const { push } = useRouter();
   const username = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
 
   async function handleOnClick() {
     try {
       console.log(username);
-      const res = await signIn('credentials', {
-        redirect : false,
-        username : 'test2312',
-        password : 'password',
-        callbackUrl : "/panel-kontrol"
-      })
+      const res = await signIn("credentials", {
+        redirect: false,
+        username: "test2312",
+        password: "password",
+        callbackUrl: "/panel-kontrol",
+      });
       if (!res?.error) {
-        push('/panel-kontrol')
+        push("/panel-kontrol");
       }
     } catch (error) {
       console.log(error);
@@ -115,7 +115,7 @@ const LoginPage = ({}: LoginPageProps) => {
           Lupa kata sandi?
         </p>
         <button
-          className={`bg-dark-primary text-white-custom font-source-sans leading-none text-sm font-normal rounded-lg border-2 border-black-custom py-3 px-14`}
+          className={`bg-dark-primary text-white-custom font-source-sans leading-none text-sm font-normal rounded-lg border-2 border-black-custom py-4 px-14`}
           onClick={handleOnClick}
         >
           Masuk
