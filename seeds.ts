@@ -244,6 +244,9 @@ export const seeds = {
       alamat: "Jl. Soebrantas",
     },
   ],
+  petugasPerpustakaan : [
+    {id : "10000", nama : "Good One"}
+  ],
   keterangan: [
     {
       id: 1,
@@ -367,6 +370,7 @@ export const seeds = {
       username : "admin",
       password : "admin",
       role : "admin",
+      petugasPerpustakaanId : "10000"
     }
   ]
 };

@@ -41,7 +41,8 @@ export async function GET() {
     peminjaman: dataPeminjaman,
     formBukti: dataFormBukti,
     eksemplarBuku: dataEksemplarBuku,
-    user : dataUser
+    user : dataUser,
+    petugasPerpustakaan : dataPetugasPerpustakaan
   } = seeds;
 
   await prisma.riwayatBantuan.deleteMany({});
@@ -72,6 +73,10 @@ export async function GET() {
   await FormBukti.tambahDataFormBukti(dataFormBukti[2]);
 
   await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
+
+  await prisma.petugasPerpustakaan.createMany({
+    data : dataPetugasPerpustakaan
+  });
 
   await test(dataUser);
 
@@ -147,6 +152,7 @@ export async function GET() {
       { idPembayaranTunai: 3005, idSumbangan: 1000, jumlah: 50000 },
     ],
   });
+
 
   // const test = await Sumbangan.cariSumbangan({nis : "12250111794"});
 

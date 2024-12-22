@@ -39,12 +39,13 @@ export const authOptions: NextAuthOptions = {
                     if (!user || !(await compare(credentials.password, user.password))) {
                         return null
                     }
+                    const date = new Date();
                     return {
                         id : user.id,
                         username : user.username,
                         name : user.petugasPerpustakaan?.nama || user.guru?.nama || user.murid?.nama,
                         role : user.role,
-                        randomKey : "test123"
+                        randomKey : date.toISOString(),
                     };
                 }
             
@@ -52,6 +53,7 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks : {
         session : ({session, token}) => {
+            console.log({session, token})
             return {
                 ...session,
                 user : {
@@ -65,6 +67,7 @@ export const authOptions: NextAuthOptions = {
             }
         },
         jwt : ({token, user}) => {
+            console.log({token, user})
             if (user) {
                 const u = user as unknown as any;
                 return {
