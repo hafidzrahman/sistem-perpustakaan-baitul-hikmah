@@ -190,16 +190,16 @@ export const seeds = {
     {id : 1005, bukuISBN : "978-602-06-5192-7", tanggalMasuk : new Date(Date.now() - hariKeMiliDetik * 5), posisi : "C7"},
   ],
   kelas: [
-    { id: 1, nama: "Al Fatih", tingkat: 7 },
-    { id: 2, nama: "Al Muttaqin", tingkat: 8 },
-    { id: 3, nama: "Al Falah", tingkat: 9 },
+    { id: 1, nama: "Al Fatih", tingkat: 7, JKMurid : JenisKelamin.PEREMPUAN },
+    { id: 2, nama: "Al Muttaqin", tingkat: 8, JKMurid : JenisKelamin.LAKI },
+    { id: 3, nama: "Al Falah", tingkat: 9, JKMurid : JenisKelamin.LAKI },
   ],
   murid: [
     {
       nis: "12250111791",
       nama: "Muhammad Faruq",
       jenisKelamin: JenisKelamin.LAKI,
-      idKelas: 1,
+      idKelas: 2,
       kontak: "08123456789",
       alamat: "Jl. Garuda Sakti",
     },

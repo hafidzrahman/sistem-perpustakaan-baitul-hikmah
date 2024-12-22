@@ -74,6 +74,8 @@ export async function GET() {
 
   await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
 
+  await prisma.petugasPerpustakaan.deleteMany({});
+
   await prisma.petugasPerpustakaan.createMany({
     data : dataPetugasPerpustakaan
   });
