@@ -32,6 +32,7 @@ const ModalTambahBuku = ({ status, handle }: ModalTambahBukuProps) => {
   const [sinopsis, setSinopsis] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
+  const [isExistingBook, setIsExistingBook] = useState(false);
 
   const fetchBookByISBN = async (isbn: string) => {
     try {
@@ -39,6 +40,7 @@ const ModalTambahBuku = ({ status, handle }: ModalTambahBukuProps) => {
       const data = await response.json();
 
       if (response.ok && data) {
+        setIsExistingBook(true);
         setJudul(data.judul);
         setPenulis(
           data.penulis.map((p: { nama: string }) => p.nama).join(", ")
@@ -51,7 +53,31 @@ const ModalTambahBuku = ({ status, handle }: ModalTambahBukuProps) => {
       }
     } catch (error) {
       console.log("Error fetching book data:", error);
+
+      setIsExistingBook(false);
     }
+  };
+
+  useEffect(() => {
+    if (isbn.length >= 13) {
+      fetchBookByISBN(isbn);
+    } else if (isbn.length < 13) {
+      // Reset fields if ISBN is cleared or invalid
+      setIsExistingBook(false);
+    }
+  }, [isbn]);
+
+  const resetFields = (includeISBN: boolean = true) => {
+    if (includeISBN) setISBN("");
+    setJudul("");
+    setPenulis("");
+    setPenerbit("");
+    setHalaman("");
+    setLinkGambar("");
+    setSinopsis("");
+    setSelectedGenres([]);
+    setSelectedPosition(null);
+    setIsExistingBook(false);
   };
 
   useEffect(() => {
@@ -92,7 +118,7 @@ const ModalTambahBuku = ({ status, handle }: ModalTambahBukuProps) => {
           judul,
           penulis: penulis.split(","),
           penerbit,
-          halaman,
+          halaman: parseInt(halaman),
           genre: selectedGenres,
           linkGambar,
           sinopsis,
