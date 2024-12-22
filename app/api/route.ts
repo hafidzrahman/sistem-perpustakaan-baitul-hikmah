@@ -93,25 +93,7 @@ export async function GET() {
     })
 
     await prisma.eksemplarBuku.createMany({
-      data : [{
-        bukuISBN : "978-602-06-5192-7",
-        id : 2000,
-        idSumbangan : 1000,
-        idSumbanganBantuan: 1001
-      },
-      {
-        bukuISBN : "978-602-06-5192-7",
-        id : 2001,
-        idSumbangan : 1000,
-        idSumbanganBantuan : null
-      },
-      {
-        bukuISBN : "978-602-06-5192-7",
-        id : 2002,
-        idSumbangan : 1000,
-        idSumbanganBantuan : null
-      }
-    ]
+      data : dataEksemplarBuku
     })
 
     await prisma.pembayaranTunai.createMany({
@@ -158,7 +140,7 @@ export async function GET() {
 
     return NextResponse.json({
       arraySumbangan,
-      // arrayEksemplarBuku
+      arrayEksemplarBuku,
       // arrayDataFormBukti, 
       arrayBuku, 
       arrayKelas, 
