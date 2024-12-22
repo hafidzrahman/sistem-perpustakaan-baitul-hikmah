@@ -8,7 +8,6 @@ interface SidebarLinkProps {
   href: string;
   label: string;
   sidebar: boolean;
-  onLabel: (label: string) => void;
 }
 
 const SidebarLink = ({
@@ -16,19 +15,13 @@ const SidebarLink = ({
   href,
   label,
   sidebar,
-  onLabel,
 }: SidebarLinkProps) => {
   const pathname = usePathname();
   const isActive = pathname === href;
 
-  const handleClick = () => {
-    onLabel(label);
-  };
-
   return (
     <Link
       href={href}
-      onClick={handleClick}
       className={`w-full flex font-extralight items-center gap-2 py-4 border-b-2 transition-all duration-300 ease-in-out font-source-sans
     ${
       isActive
