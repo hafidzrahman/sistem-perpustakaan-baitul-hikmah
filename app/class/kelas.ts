@@ -1,4 +1,4 @@
-import { kelasType, perbaruiKelasType, prisma } from "@/lib";
+import { ambilSemuaDataKelasType, kelasType, perbaruiKelasType, prisma } from "@/lib";
 
 export class Kelas{
     id : number;
@@ -50,8 +50,16 @@ export class Kelas{
             return kelas;
 
 }
-    static async ambilSemuaDataKelas() : Promise<kelasType[]> {
-        const result = await prisma.kelas.findMany({});
+    static async ambilSemuaDataKelas() : Promise<ambilSemuaDataKelasType[]> {
+        const result = await prisma.kelas.findMany({
+            include : {
+                _count : {
+                    select : {
+                        RiwayatKelas : true
+                    }
+                }
+            }
+        });
 
         return result;
     }
