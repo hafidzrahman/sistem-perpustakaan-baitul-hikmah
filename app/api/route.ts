@@ -11,6 +11,7 @@ import {
   perbaruiAnggotaType,
   perbaruiKelasType,
   Genre,
+  userType,
 } from "@/lib";
 
 import { Buku } from "@/app/class/buku";
@@ -39,7 +40,9 @@ export async function GET() {
     keterangan: dataKeterangan,
     peminjaman: dataPeminjaman,
     formBukti: dataFormBukti,
-    // eksemplarBuku: dataEksemplarBuku,
+    eksemplarBuku: dataEksemplarBuku,
+    user : dataUser,
+    petugasPerpustakaan : dataPetugasPerpustakaan
   } = seeds;
 
   await prisma.riwayatBantuan.deleteMany({});
@@ -71,7 +74,13 @@ export async function GET() {
 
   await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
 
-  await test();
+  await prisma.petugasPerpustakaan.deleteMany({});
+
+  await prisma.petugasPerpustakaan.createMany({
+    data : dataPetugasPerpustakaan
+  });
+
+  await test(dataUser);
 
   await prisma.sumbangan.createMany({
     data: [
@@ -93,28 +102,9 @@ export async function GET() {
     ],
   });
 
-  await prisma.eksemplarBuku.createMany({
-    data: [
-      {
-        bukuISBN: "978-602-06-5192-7",
-        id: 2000,
-        idSumbangan: 1000,
-        idSumbanganBantuan: 1001,
-      },
-      {
-        bukuISBN: "978-602-06-5192-7",
-        id: 2001,
-        idSumbangan: 1000,
-        idSumbanganBantuan: null,
-      },
-      {
-        bukuISBN: "978-602-06-5192-7",
-        id: 2002,
-        idSumbangan: 1000,
-        idSumbanganBantuan: null,
-      },
-    ],
-  });
+    await prisma.eksemplarBuku.createMany({
+      data : dataEksemplarBuku
+    })
 
   await prisma.pembayaranTunai.createMany({
     data: [
@@ -165,6 +155,7 @@ export async function GET() {
     ],
   });
 
+
   // const test = await Sumbangan.cariSumbangan({nis : "12250111794"});
 
   // const a = await PembayaranTunai.totalkanPembayaranTunai(test[0].id);
@@ -195,8 +186,8 @@ export async function GET() {
   return NextResponse.json({
     // test,
     arraySumbangan,
-    // arrayEksemplarBuku
-    // arrayDataFormBukti,
+    arrayEksemplarBuku,
+    arrayDataFormBukti,
     arrayBuku,
     arrayKelas,
     arrayMurid,
@@ -210,16 +201,22 @@ export async function GET() {
   });
 }
 
-async function test(): Promise<void> {
+async function test(dataUser : userType[]): Promise<void> {
   await prisma.user.deleteMany({});
-  const password = await hash("password", 12);
-  const user = await prisma.user.create({
-    data: {
-      username: "test2312",
-      password,
-      role: "admin",
-    },
-  });
+  for await (const user of dataUser) {
+    const {username, password, role, muridNIS, guruNIP, petugasPerpustakaanId} = user;
+    const hashedPassword = await hash(password, 12);
+    const data = await prisma.user.create({
+      data: {
+        username,
+        password : hashedPassword,
+        role,
+        muridNIS,
+        guruNIP,
+        petugasPerpustakaanId
+      },
+    });
 
-  console.log(user);
+    console.log(data);
+  }
 }

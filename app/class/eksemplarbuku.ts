@@ -40,11 +40,9 @@ export class EksemplarBuku {
                 tanggalRusak : data.tanggalRusak,
                 tanggalHilang : data.tanggalHilang,
                 posisi : data.posisi,
-                buku : {
-                    connect :  {
-                        isbn : data.bukuISBN
-                    }
-                }
+                idSumbangan : data.idSumbangan || null,
+                idSumbanganBantuan : data.idSumbanganBantuan || null,
+                bukuISBN : data.bukuISBN
             },
             include : {
                 buku : {

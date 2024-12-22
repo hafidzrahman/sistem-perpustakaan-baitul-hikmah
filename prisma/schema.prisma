@@ -141,9 +141,10 @@ model RiwayatKelas {
 }
 
 model Kelas {
-  id      Int    @id @default(autoincrement())
+  id      Int           @id @default(autoincrement())
   nama    String
   tingkat Int
+  JKMurid JenisKelamin?
 
   RiwayatKelas RiwayatKelas[]
 
