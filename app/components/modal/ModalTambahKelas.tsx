@@ -69,6 +69,7 @@ const ModalTambahKelas = ({ status, handle }: ModalTambahKelasProps) => {
               Nama
             </label>
             <input
+              autoComplete="off"
               type="text"
               id="nama"
               value={nama}
