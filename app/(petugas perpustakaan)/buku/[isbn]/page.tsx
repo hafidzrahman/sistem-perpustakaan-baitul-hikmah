@@ -10,7 +10,6 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
   useEffect(() => {
     const fetchDetailBuku = async () => {
       const { isbn } = await params;
-      console.log(isbn);
       try {
         const response = await fetch(`/api/buku/${isbn}`);
         const data = await response.json();
@@ -21,30 +20,22 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
     };
 
     fetchDetailBuku();
-  }, []);
-
-  console.log(detailBuku);
+  }, [params]);
 
   if (!detailBuku) {
     return (
-      <div className="relative bg-gray-200 animate-pulse">
-        <div className="w-full flex gap-4 relative">
-          <div className="w-full h-48 absolute top-0 left-0 bg-gray-200 flex rounded-lg border-dark border-4"></div>
-          <div className="w-1/4 relative z-10 p-12">
-            <div className="rounded-md border-2 w-full border-black-custom h-48 bg-gray-200"></div>
-          </div>
-          <div className="w-3/4 flex flex-col gap-8 z-10 py-12">
-            <div>
-              <div className="h-12 bg-gray-200 rounded w-1/2 mb-1"></div>
-              <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
-              <div className="flex items-center gap-2 mt-3 h-6 bg-gray-200 rounded w-1/4"></div>
+      <div className="min-h-screen bg-gradient-to-br from-primary to-dark-primary p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-12 gap-8 animate-pulse">
+            <div className="md:col-span-4 lg:col-span-3">
+              <div className="aspect-[2/3] bg-gray-300 rounded-xl"></div>
             </div>
-            <div className="pr-12 flex flex-col gap-2">
-              <div className="h-8 bg-gray-200 rounded w-1/4 mb-2"></div>
-              <div className="text-justify font-source-serif text-sm indent-8">
-                <div className="h-5 bg-gray-200 rounded w-full mt-1"></div>
-                <div className="h-5 bg-gray-200 rounded w-2/3 mt-1"></div>
-                <div className="h-5 bg-gray-200 rounded w-1/2 mt-1"></div>
+            <div className="md:col-span-8 lg:col-span-9 space-y-6">
+              <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+              <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+              <div className="flex gap-2">
+                <div className="h-6 bg-gray-300 rounded w-20"></div>
+                <div className="h-6 bg-gray-300 rounded w-20"></div>
               </div>
             </div>
           </div>
@@ -60,21 +51,6 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
     "bg-jewel-yellow",
     "bg-jewel-blue",
   ];
-  const fromBg = [
-    "from-jewel-purple",
-    "from-jewel-red",
-    "from-jewel-green",
-    "from-jewel-yellow",
-    "from-jewel-blue",
-  ];
-  const toBg = [
-    "to-jewel-purple",
-    "to-jewel-red",
-    "to-jewel-green",
-    "to-jewel-yellow",
-    "to-jewel-blue",
-  ];
-
   const border = [
     "border-pastel-purple",
     "border-pastel-red",
@@ -84,60 +60,136 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
   ];
 
   const {
+    isbn,
     linkGambar,
     judul,
     penulis,
     genre,
     sinopsis,
+    halaman,
+    penerbitDetails,
     _count: stock,
   } = detailBuku;
 
   return (
-    <div className="relative bg-noise bg-repeat">
-      <div className="w-full flex gap-4 relative">
-        <div
-          className={`w-full h-48 absolute top-0 left-0 bg-gradient-to-r ${
-            fromBg[(1 + 1) % bg.length]
-          } ${
-            toBg[3 % bg.length]
-          } flex -z-[0] rounded-2xl border-dark border-4`}
-        ></div>
-        <div className="w-[30%] relative z-10 p-12">
-          <Image
-            alt="gambar-buku"
-            src={linkGambar || "/img/book-2.png"}
-            width={2140}
-            height={0}
-            className="rounded-xl border-4 w-full border-black-custom"
-          />
-        </div>
-        <div className="w-[70%] flex flex-col gap-8 z-10 py-12">
-          <div>
-            <h1 className="text-5xl font-bold font-source-serif text-white-custom">
-              {judul}
-            </h1>
-            <h2 className="text-xl ml-0.5 font-normal text-white-custom">
-              {penulis.map((e) => e.nama).join(", ")}
-            </h2>
-            <div className="w-full flex items-center gap-2">
-              {genre.map((item: genreType, index: number) => (
-                <div
-                  key={index}
-                  className={`${bg[index]} ${border[index]} font-bold mt-4 flex justify-center text-white-custom items-center gap-2 border-2 font-source-sans leading-none text-xs rounded-full py-2 px-4`}
-                >
-                  {item.nama}
-                </div>
-              ))}
+    <div className="min-h-screen bg-gradient-to-br from-primary to-dark-primary p-4 md:p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-12 gap-8">
+          {/* Gambar Buku */}
+          <div className="md:col-span-4 lg:col-span-3">
+            <div className="relative group">
+              <div className="overflow-hidden rounded-xl border-4 border-white/20 shadow-2xl transition-transform duration-300 group-hover:scale-[1.02]">
+                <Image
+                  alt={`Cover buku ${judul}`}
+                  src={linkGambar || "/img/book-2.png"}
+                  width={400}
+                  height={600}
+                  className="w-full object-cover"
+                />
+              </div>
             </div>
           </div>
-          <div className="pr-12 flex flex-col gap-2">
-            <h1 className="text-xl font-source-serif font-bold">Sinopsis</h1>
-            <div className="text-justify font-source-serif text-sm indent-8">
-              <p>{sinopsis}</p>
+
+          {/* Konten */}
+          <div className="md:col-span-8 lg:col-span-9 space-y-8">
+            {/* Header */}
+            <div className="space-y-4">
+              <h1 className="text-3xl md:text-5xl font-bold font-source-serif text-white-custom">
+                {judul}
+              </h1>
+              <h2 className="text-xl text-yellow-custom font-medium">
+                {penulis.map((e) => e.nama).join(", ")}
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {genre.map((item: genreType, index: number) => (
+                  <div
+                    key={index}
+                    className={`${bg[index]} ${border[index]} font-medium text-white-custom border-2 text-sm rounded-full py-1.5 px-4`}
+                  >
+                    {item.nama}
+                  </div>
+                ))}
+              </div>
             </div>
-            <h1 className="text-xl font-source-serif font-bold">Stock</h1>
-            <div className="text-justify font-source-serif text-sm indent-8">
-              <p>{stock.eksemplarBuku}</p>
+
+            {/* Info Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-6 bg-white/10 backdrop-blur-sm rounded-xl">
+              <div>
+                <h3 className="text-sm font-medium text-yellow-custom">ISBN</h3>
+                <p className="text-lg text-white-custom">{isbn}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-yellow-custom">
+                  Jumlah Halaman
+                </h3>
+                <p className="text-lg text-white-custom">{halaman}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-yellow-custom">
+                  Penerbit
+                </h3>
+                <p className="text-lg text-white-custom">
+                  {penerbitDetails?.nama}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-yellow-custom">Stok</h3>
+                <p className="text-lg text-white-custom">
+                  {stock.eksemplarBuku} buku
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-yellow-custom">
+                  Posisi
+                </h3>
+                <p className="text-lg text-white-custom">Rak A-1</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-yellow-custom">
+                  Status
+                </h3>
+                <p className="text-lg text-secondary font-medium">Tersedia</p>
+              </div>
+            </div>
+
+            {/* Sinopsis */}
+            <div className="space-y-3">
+              <h2 className="text-2xl font-source-serif font-bold text-yellow-custom">
+                Sinopsis
+              </h2>
+              <div className="text-white-custom/90 text-justify leading-relaxed">
+                <p className="indent-8">{sinopsis}</p>
+              </div>
+            </div>
+
+            {/* Detail Eksemplar */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-source-serif font-bold text-yellow-custom">
+                Detail Eksemplar
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[...Array(stock.eksemplarBuku)].map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
+                  >
+                    <div>
+                      <p className="text-white-custom font-medium">
+                        Eksemplar #{index + 1}
+                      </p>
+                      <p className="text-sm text-yellow-custom">
+                        Kondisi: Baik
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-secondary">
+                        Tersedia
+                      </p>
+                      <p className="text-xs text-yellow-custom">Rak A-1</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
