@@ -2,7 +2,7 @@
 
 import BtnPrimary from "@/app/components/BtnPrimary";
 import Image from "next/image";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { LegacyRef, MutableRefObject, useRef } from "react";
 import { useRouter } from "next/navigation";
 
@@ -12,20 +12,22 @@ const LoginPage = ({}: LoginPageProps) => {
   const { push } = useRouter();
   const username = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
+  const data = useSession();
+  console.log(data);
 
   async function handleOnClick() {
     try {
       if (username.current && password.current) {
-      const res = await signIn("credentials", {
-        redirect: false,
-        username: username.current.value,
-        password: password.current.value,
-        callbackUrl: "/panel-kontrol",
-      });
-      if (!res?.error) {
-        push("/panel-kontrol");
+        const res = await signIn("credentials", {
+          redirect: false,
+          username: username.current.value,
+          password: password.current.value,
+          callbackUrl: "/panel-kontrol",
+        });
+        if (!res?.error) {
+          push(`/panel-kontrol`);
+        }
       }
-    }
     } catch (error) {
       console.log(error);
     }
