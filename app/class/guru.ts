@@ -58,6 +58,13 @@ export class Guru implements Anggota<guruType>{
             const guru = await prisma.guru.findUnique({
                 where : {
                     nip
+                },
+                include : {
+                    peminjaman : {
+                        include : {
+                            bukuPinjaman : true
+                        }
+                    }
                 }
             }) as guruType
     
