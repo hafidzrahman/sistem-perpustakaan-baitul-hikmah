@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
                     return {
                         id : user.id,
                         username : user.username,
+                        email : "abc@gmail.com",
                         name : user.petugasPerpustakaan?.nama || user.guru?.nama || user.murid?.nama,
                         role : user.role,
                         randomKey : date.toISOString(),
@@ -53,21 +54,18 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks : {
         session : ({session, token}) => {
-            console.log({session, token})
             return {
                 ...session,
                 user : {
-                    ...session.user,
                     id : token.id,
                     username : token.username,
                     name : token.name,
                     role : token.role,
                     randomKey : token.randomKey
-                }
+                },
             }
         },
         jwt : ({token, user}) => {
-            console.log({token, user})
             if (user) {
                 const u = user as unknown as any;
                 return {

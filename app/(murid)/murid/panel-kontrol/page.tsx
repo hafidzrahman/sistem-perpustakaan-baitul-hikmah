@@ -10,9 +10,11 @@ import {
   BookOpen02Icon,
 } from "hugeicons-react";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 interface BerandaPageProps {}
 
 const BerandaPage = ({}: BerandaPageProps) => {
+  const {data : session, status} = useSession();
   const [peminjaman, setPeminjaman] = useState([]);
   const [data, setData] = useState<{
     buku: bukuType[];
@@ -20,14 +22,16 @@ const BerandaPage = ({}: BerandaPageProps) => {
     murid: muridType[];
   }>();
 
+
   useEffect(() => {
     const fetchPeminjaman = async () => {
+      console.log(session)
       const response = await fetch("/api/peminjaman");
       const data = await response.json();
       setPeminjaman(data);
     };
     fetchPeminjaman();
-  }, []);
+  }, [status]);
 
   useEffect(() => {
     const fetchData = async () => {
