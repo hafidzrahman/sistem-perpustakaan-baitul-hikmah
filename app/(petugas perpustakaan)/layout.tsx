@@ -16,6 +16,7 @@ import SidebarLink from "../components/SidebarLink";
 import Breadcrumb from "../components/Breadcrumbs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { SessionProvider } from "next-auth/react";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -170,7 +171,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </header>
 
         <main className="flex-grow overflow-y-auto bg-white-custom p-4 bg-noise bg-repeat">
+          <SessionProvider>
           {children}
+          </SessionProvider>
         </main>
       </div>
     </div>
