@@ -5,6 +5,7 @@ import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
 import { LegacyRef, MutableRefObject, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { getToken } from "next-auth/jwt";
 
 interface LoginPageProps {}
 
@@ -14,6 +15,7 @@ const LoginPage = ({}: LoginPageProps) => {
   const password = useRef<HTMLInputElement>(null);
   const data = useSession();
   console.log(data);
+  console.log(data?.data?.user?.name);
 
   async function handleOnClick() {
     try {
