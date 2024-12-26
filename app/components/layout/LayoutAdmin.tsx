@@ -33,6 +33,11 @@ const LayoutAdmin = ({ children }: { children: React.ReactNode }) => {
     { icon: BookOpen02Icon, href: "/buku", label: "Buku" },
     { icon: Mortarboard01Icon, href: "/murid", label: "Murid" },
     { icon: TeacherIcon, href: "/guru", label: "Guru" },
+    {
+      icon: ChartLineData03Icon,
+      href: "/form-bukti",
+      label: "Form Bukti",
+    },
     { icon: ChartLineData03Icon, href: "/laporan", label: "Laporan" },
   ];
 

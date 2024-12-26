@@ -3,6 +3,7 @@ import React from "react";
 import LayoutAdmin from "@/app/components/layout/LayoutAdmin";
 import LayoutMurid from "@/app/components/layout/LayoutMurid";
 import { SessionProvider, useSession } from "next-auth/react";
+import { ToastContainer } from "react-toastify";
 
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession();
@@ -24,7 +25,23 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SessionProvider>
-      <LayoutWrapper>{children}</LayoutWrapper>
+      <LayoutWrapper>
+        <>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+          {children}
+        </>
+      </LayoutWrapper>
     </SessionProvider>
   );
 };

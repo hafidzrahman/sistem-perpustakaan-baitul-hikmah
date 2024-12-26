@@ -34,6 +34,11 @@ const LayoutMurid = ({ children }: { children: React.ReactNode }) => {
       label: "Panel Kontrol",
     },
     { icon: BookOpen02Icon, href: "/buku", label: "Buku" },
+    {
+      icon: DashboardSquare02Icon,
+      href: "/form-bukti",
+      label: "Form Bukti",
+    },
   ];
 
   const pathname = usePathname();
