@@ -8,8 +8,7 @@ type paramsType = {
 
 export async function GET(req : Request, {params} : paramsType) {
     try {
-        const idPeminjaman = await params;
-
+        const {peminjaman : idPeminjaman} = await params;
         const dataPeminjaman = await Peminjaman.cariPeminjaman(Number(idPeminjaman));
 
         return NextResponse.json(dataPeminjaman, {status : 200});

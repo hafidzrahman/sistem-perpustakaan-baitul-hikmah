@@ -10,50 +10,57 @@ import {
   BookOpen02Icon,
 } from "hugeicons-react";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-interface BerandaPageProps {}
 
-const BerandaPage = ({}: BerandaPageProps) => {
-  const {data : session, status} = useSession();
+interface BerandaAdminProps {}
+
+const BerandaAdmin = ({}: BerandaAdminProps) => {
   const [peminjaman, setPeminjaman] = useState([]);
   const [data, setData] = useState<{
     buku: bukuType[];
     guru: guruType[];
     murid: muridType[];
-  }>();
-
+  }>({
+    buku: [],
+    guru: [],
+    murid: [],
+  });
 
   useEffect(() => {
     const fetchPeminjaman = async () => {
-      console.log(session)
-      const response = await fetch("/api/peminjaman");
-      const data = await response.json();
-      setPeminjaman(data);
+      try {
+        const response = await fetch("/api/peminjaman");
+        if (!response.ok) {
+          throw new Error("Failed to fetch peminjaman data");
+        }
+        const data = await response.json();
+        setPeminjaman(data);
+      } catch (error) {
+        console.error("Error fetching peminjaman:", error);
+        setPeminjaman([]);
+      }
     };
     fetchPeminjaman();
-  }, [status]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let response = await fetch("http://localhost:3000/api/buku");
+        const [bukuRes, guruRes, muridRes] = await Promise.all([
+          fetch("http://localhost:3000/api/buku"),
+          fetch("http://localhost:3000/api/guru"),
+          fetch("http://localhost:3000/api/murid"),
+        ]);
 
-        const dataBuku = await response.json();
-        if (!dataBuku) {
-          throw new Error("Data buku ga ada");
+        const [dataBuku, dataGuru, dataMurid] = await Promise.all([
+          bukuRes.json(),
+          guruRes.json(),
+          muridRes.json(),
+        ]);
+
+        if (!dataBuku || !dataGuru || !dataMurid) {
+          throw new Error("One or more data sets are missing");
         }
 
-        response = await fetch("http://localhost:3000/api/guru");
-        const dataGuru = await response.json();
-        if (!dataGuru) {
-          throw new Error("Data guru ga ada");
-        }
-
-        response = await fetch("http://localhost:3000/api/murid");
-        const dataMurid = await response.json();
-        if (!dataMurid) {
-          throw new Error("Data murid ga ada");
-        }
         setData({
           buku: dataBuku as bukuType[],
           guru: dataGuru as guruType[],
@@ -61,6 +68,12 @@ const BerandaPage = ({}: BerandaPageProps) => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
+        // Set empty arrays as fallback
+        setData({
+          buku: [],
+          guru: [],
+          murid: [],
+        });
       }
     };
     fetchData();
@@ -70,7 +83,7 @@ const BerandaPage = ({}: BerandaPageProps) => {
     <>
       <div className="mb-4">
         <h2 className="font-semibold font-source-sans text-[#465b65]">
-          Assalamu'alaikum wr wb., Murid
+          Assalamu'alaikum wr wb., Ustadzah Fulanah, S. Pd., M. Pd. ,
         </h2>
       </div>
       <div className="flex flex-col md:flex-col lg:flex-row gap-4 mb-4">
@@ -120,9 +133,9 @@ const BerandaPage = ({}: BerandaPageProps) => {
           </h1>
           <TablePeminjaman
             data={peminjaman}
-            bukuList={data?.buku || []}
-            guruList={data?.guru || []}
-            muridList={data?.murid || []}
+            bukuList={data.buku}
+            guruList={data.guru}
+            muridList={data.murid}
           />
         </div>
       </div>
@@ -130,4 +143,4 @@ const BerandaPage = ({}: BerandaPageProps) => {
   );
 };
 
-export default BerandaPage;
+export default BerandaAdmin;

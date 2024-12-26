@@ -1,3 +1,4 @@
+// app/api/peminjaman/route.ts
 import { Peminjaman } from "@/app/class/peminjaman";
 // import {BukuPinjaman} from "@/app/class/bukupinjaman";
 // import { prisma } from "@/lib";
