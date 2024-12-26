@@ -1,3 +1,5 @@
+// app/components/TableBuku.tsx
+
 import React from "react";
 import { cariBukuType, genreType } from "@/lib";
 import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
