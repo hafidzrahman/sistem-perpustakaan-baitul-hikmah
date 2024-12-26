@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Session } from "next-auth";
 import { peminjamType } from "@/lib";
+import { toast } from "react-toastify";
 
 interface ButtonPinjamProps {
-  session: Session & {user : {role : "murid" | "guru", username : string}} | null;
+  session:
+    | (Session & { user: { role: "murid" | "guru"; username: string } })
+    | null;
   isbn: string;
   judul: string;
 }
@@ -12,20 +15,19 @@ interface ButtonPinjamProps {
 const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handlePinjam = async () => {
     if (!session?.user?.username) {
-      setError("Anda harus login terlebih dahulu!");
+      toast.error("Anda harus login terlebih dahulu!");
       return;
     }
 
     setIsLoading(true);
-    setError(null);
 
     try {
       const requestData = {
-        nis: session!.user!.role === "murid" ? session.user.username : undefined,
+        nis:
+          session!.user!.role === "murid" ? session.user.username : undefined,
         nip: session!.user!.role === "guru" ? session.user.username : undefined,
         keterangan: `Peminjaman buku ${judul}`,
         daftarBukuPinjaman: [
@@ -54,13 +56,15 @@ const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
         );
       }
 
-      alert("Peminjaman berhasil!");
+      toast.success("Buku berhasil dipinjam!");
       router.refresh();
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        toast.error(error.message);
       } else {
-        setError("Terjadi kesalahan yang tidak diketahui saat meminjam buku");
+        toast.error(
+          "Terjadi kesalahan yang tidak diketahui saat meminjam buku"
+        );
       }
     } finally {
       setIsLoading(false);
@@ -71,7 +75,7 @@ const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
     return (
       <div className="w-full">
         <button
-          onClick={() => setError("Silakan login terlebih dahulu")}
+          onClick={() => toast.error("Silakan login terlebih dahulu")}
           className="bg-primary w-full text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal opacity-50"
         >
           Login untuk Pinjam
@@ -94,7 +98,6 @@ const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
       >
         {isLoading ? "Memproses..." : "Pinjam"}
       </button>
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 };

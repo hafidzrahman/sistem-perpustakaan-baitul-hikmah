@@ -85,7 +85,7 @@ const FormBuktiMurid = () => {
 
     fetchData();
     fetchLeaderboardData();
-  }, [session?.user?.username]);
+  }, [session?.user?.username, showFormBuktiModal]);
 
   const calculateProgress = (history: any) => {
     return (history.length / 20) * 100;
@@ -108,6 +108,8 @@ const FormBuktiMurid = () => {
       </div>
     );
   }
+
+  console.log(readingHistory);
 
   return (
     <>

@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { format } from "date-fns";
 import { Search01Icon } from "hugeicons-react";
 import { formBuktiType } from "@/lib";
@@ -8,7 +9,7 @@ interface TableFormBuktiProps {
 }
 
 const TableFormBukti = ({ data = [] }: TableFormBuktiProps) => {
-  const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const filteredData = React.useMemo(() => {
     if (!data) return [];
@@ -49,7 +50,7 @@ const TableFormBukti = ({ data = [] }: TableFormBuktiProps) => {
       <div className="lg:hidden space-y-4">
         {filteredData.map((record, index) => (
           <div
-            key={record.id}
+            key={index}
             className="bg-white p-4 rounded-lg border-2 border-primary"
           >
             <div className="space-y-3">
@@ -107,9 +108,9 @@ const TableFormBukti = ({ data = [] }: TableFormBuktiProps) => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((record) => (
+            {filteredData.map((record, index) => (
               <tr
-                key={record.id}
+                key={index}
                 className="group relative border-t-2 hover:border-y-2 hover:border-black-custom border-dashed transition-all duration-100"
               >
                 <td className="px-4 py-2 text-xs">
