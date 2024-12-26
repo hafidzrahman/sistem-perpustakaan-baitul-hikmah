@@ -12,7 +12,7 @@ export class Kelas{
     }
 
     static async tambahKelas(dataKelas : Omit<kelasType, 'id'>) : Promise<kelasType> {
-        const {nama, tingkat} = dataKelas;
+        const {nama, tingkat, JKMurid} = dataKelas;
 
         if (!nama || !tingkat) {
             throw new Error("Harus mengisi field yang wajib")
@@ -21,7 +21,8 @@ export class Kelas{
         const result = await prisma.kelas.create({
             data: {
               nama,
-              tingkat
+              tingkat,
+              JKMurid
             },
           });
 

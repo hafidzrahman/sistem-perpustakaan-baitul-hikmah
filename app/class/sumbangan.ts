@@ -24,7 +24,7 @@ export class Sumbangan {
     static async tambahSumbangan(data : sumbanganType) : Promise<sumbanganType> {
         const {idKeterangan, nis, nip} = data;
         if (!idKeterangan || ((!nis && !nip) || (nis && nip))) {
-            throw new Error("Harus mengisi field yang wajib")
+            throw new Error("Harus mengisi field yang sesuai")
         }
 
         const dataSumbangan = await prisma.sumbangan.create({
@@ -67,6 +67,12 @@ export class Sumbangan {
         });
 
         return dataSumbangan as unknown as cariSumbanganType[];
+    }
+
+    static async ambilSemuaDataSumbangan() : Promise<sumbanganType[]> {
+        const dataSumbangan = await prisma.sumbangan.findMany({});
+
+        return dataSumbangan;
     }
 
     static async beriSumbangan(data : beriSumbanganType) {

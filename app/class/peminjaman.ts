@@ -27,7 +27,7 @@ export class Peminjaman {
     this.keterangan = data.keterangan;
   }
 
-  static async tambahPeminjaman(dataPeminjam: peminjamType): Promise<void> {
+  static async tambahPeminjaman(dataPeminjam: peminjamType): Promise<{message : string}> {
     const { nis, nip, keterangan, daftarBukuPinjaman } = dataPeminjam;
 
     if (!nis && !nip) {
@@ -42,9 +42,12 @@ export class Peminjaman {
         keterangan,
       },
     });
-
-    for await (const data of daftarBukuPinjaman) {
-      await setDataPeminjaman(data);
+    try {
+      for await (const data of daftarBukuPinjaman) {
+        await setDataPeminjaman(data);
+    } 
+    } catch (error) {
+        return {message : "Buku sedang tidak tersedia"}
     }
 
     async function setDataPeminjaman(bukuPinjaman: {
@@ -54,12 +57,15 @@ export class Peminjaman {
       const { isbn, tenggatWaktu } = bukuPinjaman;
 
       const dataEksemplarBuku = await EksemplarBuku.ketersediaanEksemplarBuku(isbn);
-      if (dataEksemplarBuku) {
+      
+      if (!dataEksemplarBuku) {
+        throw new Error()
+      } else {
         // 31536000000 --> satu tahun ke ms
         // 604800000 --> satu minggu ke ms
         // default peminjaman seminggu, bisa diatur sesuai dengan keinginan petugas perpustakaan
         const date = new Date();
-        const deadline = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const deadline = new Date(tenggatWaktu || date.getTime() + 7 * 24 * 60 * 60 * 1000);
         const result = deadline.getTime() - date.getTime();
         const objectBukuPinjaman = new BukuPinjaman({
           idPeminjaman: peminjaman.id,
@@ -143,6 +149,7 @@ export class Peminjaman {
         }
       }
     }
+    return {message : "Buku berhasil dipinjam"}
   }
 
   static async cariPeminjaman(id: number): Promise<peminjamanType> {

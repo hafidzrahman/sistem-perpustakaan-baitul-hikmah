@@ -33,7 +33,7 @@ export class FormBukti {
                 bukuISBN : bukuISBN,
                 muridNIS : muridNIS,
                 intisari : intisari,
-                tanggal : new Date(),
+                tanggal : new Date(tanggal),
                 halamanAwal : Number(halamanAwal),
                 halamanAkhir : Number(halamanAkhir),
                 status : status

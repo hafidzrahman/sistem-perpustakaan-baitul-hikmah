@@ -156,6 +156,21 @@ export async function GET() {
     ],
   });
 
+  await prisma.kelas.create({
+    data : {
+      id : 10000,
+      nama : "test",
+      tingkat : 8,
+    }
+  })
+
+  await prisma.riwayatKelas.create({
+    data : {
+      tahunAjaran : "2023/2024",
+      idKelas : 10000,
+      muridNIS : "12250120338",
+    }
+  })
 
   // const test = await Sumbangan.cariSumbangan({nis : "12250111794"});
 
