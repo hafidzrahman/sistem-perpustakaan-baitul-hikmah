@@ -208,6 +208,22 @@ export type formBuktiType = {
   status: boolean;
 };
 
+export type formBuktiMuridType = {
+  intisari : string,
+  halamanAwal : number,
+  halamanAkhir : number,
+  tanggal : Date,
+  status : boolean
+  buku : {
+    judul : string
+  }
+}
+
+export type ambilSemuaFormBuktiType = formBuktiMuridType & {
+  kelas? : {nama : string, tingkat : number} | undefined
+  murid : {nis : string, nama : string, riwayatKelas : {tahunAjaran : string}[]}
+}
+
 export type perbaruiFormBuktiType = {
   bukuISBN?: string;
   muridNIS?: string;

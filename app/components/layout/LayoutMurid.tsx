@@ -16,6 +16,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import SidebarLink from "../SidebarLink";
 import Breadcrumb from "../Breadcrumbs";
+import { useSession } from "next-auth/react";
 
 const LayoutMurid = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -23,6 +24,8 @@ const LayoutMurid = ({ children }: { children: React.ReactNode }) => {
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  const { data: session } = useSession();
 
   const navigation = [
     {
@@ -152,11 +155,9 @@ const LayoutMurid = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex flex-col items-end justify-center">
               <h1 className="text-sm sm:text-lg font-source-serif leading-none font-bold truncate">
-                Ustadzah Fulanah, S. Pd., M. Pd
+                {session?.user?.name}
               </h1>
-              <h2 className="text-xs font-source-sans leading-none">
-                Petugas Perpustakaan
-              </h2>
+              <h2 className="text-xs font-source-sans leading-none">Murid</h2>
             </div>
             <UserCircleIcon
               width={32}
