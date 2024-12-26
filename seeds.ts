@@ -279,7 +279,7 @@ export const seeds = {
   ],
   peminjaman: [
     {
-      nis: "12250111791",
+      nis: "12250111048",
       tanggalPinjam: new Date(),
       keterangan: "WOW",
       daftarBukuPinjaman: [

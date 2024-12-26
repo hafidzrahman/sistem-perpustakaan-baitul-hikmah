@@ -15,9 +15,10 @@ const BerandaMurid = () => {
       try {
         // Fetch peminjaman khusus murid yang sedang login
         const responsePeminjaman = await fetch(
-          `/api/peminjaman?userId=${session?.user?.username}`
+          `/api/peminjaman`
         );
         const dataPeminjaman = await responsePeminjaman.json();
+        console.log(dataPeminjaman)
         setPeminjaman(dataPeminjaman);
 
         // Fetch data buku

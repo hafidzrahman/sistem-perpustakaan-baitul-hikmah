@@ -34,6 +34,7 @@ export class Peminjaman {
       throw new Error("Harus mengisi field yang wajib");
     }
 
+
     const peminjaman = await prisma.peminjaman.create({
       data: {
         nis,
@@ -52,29 +53,21 @@ export class Peminjaman {
     }) {
       const { isbn, tenggatWaktu } = bukuPinjaman;
 
-      const dataEksemplarBuku = await EksemplarBuku.ketersediaanEksemplarBuku(
-        isbn
-      );
-
+      const dataEksemplarBuku = await EksemplarBuku.ketersediaanEksemplarBuku(isbn);
       if (dataEksemplarBuku) {
         // 31536000000 --> satu tahun ke ms
         // 604800000 --> satu minggu ke ms
         // default peminjaman seminggu, bisa diatur sesuai dengan keinginan petugas perpustakaan
         const date = new Date();
-        const deadline =
-          tenggatWaktu || new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const deadline = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
         const result = deadline.getTime() - date.getTime();
-
         const objectBukuPinjaman = new BukuPinjaman({
           idPeminjaman: peminjaman.id,
           bukuISBN: dataEksemplarBuku.bukuISBN!,
           bukuId: dataEksemplarBuku.id!,
           tenggatWaktu: deadline,
         });
-
-        const dataBukuPinjaman = await BukuPinjaman.tambahBukuPinjaman(
-          objectBukuPinjaman
-        );
+        const dataBukuPinjaman = await BukuPinjaman.tambahBukuPinjaman(objectBukuPinjaman);
 
         let timer = setTimeout(
           () =>
@@ -85,6 +78,7 @@ export class Peminjaman {
             ),
           result
         );
+
 
         async function setDenda(
           idPeminjaman: number,
@@ -162,6 +156,24 @@ export class Peminjaman {
     })) as peminjamanType;
 
     if (!peminjaman?.id) {
+      throw { message: "Data peminjaman tidak ditemukan" };
+    }
+
+    return peminjaman;
+  }
+
+  static async cariPeminjamanAnggota(anggota : "guru" | "murid", userId : string) : Promise<peminjamanType[]> {
+    const peminjaman = (await prisma.peminjaman.findMany({
+      where: {
+        nip : anggota === "guru" ? userId : undefined,
+        nis : anggota === "murid" ? userId : undefined
+      },
+      include: {
+        bukuPinjaman: true,
+      },
+    })) as peminjamanType[];
+
+    if (!peminjaman?.length || peminjaman.length === 0) {
       throw { message: "Data peminjaman tidak ditemukan" };
     }
 

@@ -2,11 +2,25 @@
 import { Peminjaman } from "@/app/class/peminjaman";
 // import {BukuPinjaman} from "@/app/class/bukupinjaman";
 // import { prisma } from "@/lib";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import {getToken} from 'next-auth/jwt';
 
-export async function GET() {
+export async function GET(req : NextRequest) {
   try {
-    const dataPeminjaman = await Peminjaman.ambilSemuaDataPeminjaman();
+    const token = await getToken({
+      req,
+      secret : process.env.NEXTAUTH_SECRET
+    })
+
+
+    let dataPeminjaman = []
+
+    if (token?.role === "admin") {
+      dataPeminjaman = await Peminjaman.ambilSemuaDataPeminjaman();
+    } else {
+      dataPeminjaman = await Peminjaman.cariPeminjamanAnggota(token?.role as "murid" | "guru", token?.username as string)
+    }
+
     // await BukuPinjaman.perbaruiTenggatWaktuPeminjaman(
     //   dataPeminjaman[0].id,
     //   { isbn: "978-602-06-5192-9", id: 1 },
@@ -26,12 +40,11 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const dataPeminjaman = await Peminjaman.tambahPeminjaman(body);
-
-    return NextResponse.json(dataPeminjaman, { status: 200 });
+    await Peminjaman.tambahPeminjaman(body);
+    return NextResponse.json({message : "aman"}, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { message: "Gagal menambahkan data buku", details: error },
+      { message: "Gagal menambahkan data peminjaman", details: error },
       { status: 500 }
     );
   }
