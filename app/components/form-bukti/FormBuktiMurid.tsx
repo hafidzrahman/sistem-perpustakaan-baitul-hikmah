@@ -188,7 +188,7 @@ const FormBuktiMurid = () => {
           <div className="flex flex-col max-h-96 my-4 gap-2 overflow-y-auto">
             {leaderboardData.map((student, index) => (
               <CardLeaderboardMurid
-                key={student.nis}
+                key={index}
                 name={student.nama}
                 kelas=""
                 booksRead={student.booksRead}

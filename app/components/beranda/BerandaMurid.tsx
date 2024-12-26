@@ -1,63 +1,82 @@
-import React from "react";
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import PeminjamanCalendar from "@/app/components/PeminjamanCalendar";
 import {
   BookOpen01Icon,
   Calendar01Icon,
-  HijabIcon,
   MapPinIcon,
-  MuslimIcon,
-  Search01Icon,
   UserAccountIcon,
 } from "hugeicons-react";
-import { bukuType, muridType, peminjamanType } from "@/lib";
-import PeminjamanCalendar from "@/app/components/PeminjamanCalendar";
-import Image from "next/image";
+import { useSession } from "next-auth/react";
+import TablePeminjaman from "../TablePeminjaman";
+import TablePeminjamanMurid from "../TablePeminjamanMurid";
 
-interface BerandaMuridProps {
-  data: peminjamanType[];
-  bukuList: bukuType[];
-  muridList: muridType[];
-  studentNIS: string;
+interface StudentData {
+  nis: string;
+  nama: string;
+  alamat: string;
+  riwayatKelas: Array<{
+    kelas: {
+      tingkat: string;
+      nama: string;
+    };
+  }>;
+  Peminjaman: Array<{
+    date: string;
+    bookTitle: string;
+  }>;
 }
 
-const BerandaMurid = ({
-  data = [],
-  bukuList = [],
-  muridList = [],
-  studentNIS,
-}: BerandaMuridProps) => {
-  const [searchQuery, setSearchQuery] = React.useState<string>("");
+const BerandaMurid = () => {
+  const [detailMurid, setDetailMurid] = useState<StudentData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
-  const getBukuData = (isbn: string) => {
-    if (!bukuList || !isbn) return null;
-    return bukuList.find((b) => b.isbn === isbn);
-  };
+  const nis = session?.user?.username;
 
-  const studentData = React.useMemo(() => {
-    return muridList.find((m) => m.nis === studentNIS);
-  }, [muridList, studentNIS]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch student details with peminjaman
+        const studentResponse = await fetch(`/api/murid/${nis}`);
+        if (!studentResponse.ok) {
+          throw new Error(
+            `Error ${studentResponse.status}: ${studentResponse.statusText}`
+          );
+        }
+        const studentData = await studentResponse.json();
 
-  const studentPeminjaman = React.useMemo(() => {
-    return data.filter((item) => item.nis === studentNIS);
-  }, [data, studentNIS]);
+        // Fetch book data for the student's loans
+        const bookResponse = await fetch("/api/buku");
+        if (!bookResponse.ok) {
+          throw new Error(
+            `Error ${bookResponse.status}: ${bookResponse.statusText}`
+          );
+        }
+        const bookData = await bookResponse.json();
 
-  const filteredPeminjaman = React.useMemo(() => {
-    if (!studentPeminjaman) return [];
+        // Combine the data
+        const combinedData = {
+          ...studentData,
+          buku: bookData,
+        };
 
-    return studentPeminjaman.filter((item) => {
-      if (!searchQuery) return true;
+        setDetailMurid(combinedData);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        setError("Gagal memuat data. Silakan coba lagi nanti.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-      const bukuInfo = getBukuData(item.bukuPinjaman?.[0]?.bukuISBN || "");
-      const searchLower = searchQuery.toLowerCase();
-
-      return bukuInfo?.judul?.toLowerCase().includes(searchLower);
-    });
-  }, [studentPeminjaman, searchQuery, bukuList]);
-
-  if (!studentData) {
-    return (
-      <div className="w-full p-4 text-center">Data siswa tidak ditemukan</div>
-    );
-  }
+    if (nis) {
+      fetchData();
+    }
+  }, [nis]);
 
   const getClassColor = (kelas: string) => {
     const colors = {
@@ -70,21 +89,53 @@ const BerandaMurid = ({
     return grade ? colors[grade as keyof typeof colors] : colors["9"];
   };
 
-  const kelas = studentData.riwayatKelas[0]?.kelas.tingkat
-    ? `${studentData.riwayatKelas[0].kelas.tingkat} ${studentData.riwayatKelas[0].kelas.nama}`
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 max-w-md">
+          <div className="flex">
+            <div className="flex-1">
+              <p className="text-red-700">{error}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!detailMurid) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600">Data siswa tidak ditemukan</p>
+      </div>
+    );
+  }
+
+  const kelas = detailMurid.riwayatKelas[0]?.kelas.tingkat
+    ? `${detailMurid.riwayatKelas[0].kelas.tingkat} ${detailMurid.riwayatKelas[0].kelas.nama}`
     : "Tidak Diketahui";
 
   const classColors = getClassColor(kelas);
 
+  console.log(detailMurid);
+  console.log(detailMurid?.buku);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 p-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 p-6">
       {/* Profile Card */}
-      <div className="col-span-1 lg:col-span-2 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
+      <div className="col-span-1 sm:col-span-2 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl text-primary font-bold font-source-sans flex items-center gap-2">
-              <UserAccountIcon className="h-6 w-6" />
-              Profil Saya
+              Profil Siswa
             </h2>
             <span
               className={`${classColors.bg} ${classColors.border} px-4 py-2 rounded-full text-white-custom text-sm font-medium border-2`}
@@ -97,24 +148,21 @@ const BerandaMurid = ({
             <div className="relative w-44 h-44 rounded-lg overflow-hidden border-2 border-black-custom">
               <Image
                 src="/img/boy.jpeg"
-                alt={`Foto ${studentData.nama}`}
+                alt={`Foto ${detailMurid.nama}`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-500">Nomor Induk Siswa</p>
-                <p className="text-lg font-medium">{studentData.nis}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Nama Lengkap</p>
-                <h1 className="text-2xl font-bold">{studentData.nama}</h1>
-              </div>
-              <div className="flex items-start gap-2">
-                <MapPinIcon className="h-5 w-5 text-gray-400 mt-1" />
-                <p className="text-sm text-gray-600">{studentData.alamat}</p>
+            <div className="flex flex-col">
+              <p className="text-lg font-medium text-gray-text">
+                {detailMurid.nis}
+              </p>
+              <h1 className="text-2xl text-black-custom font-source-serif font-bold">
+                {detailMurid.nama}
+              </h1>
+              <div className="flex items-start gap-2 my-2">
+                <p className="text-sm text-gray-600">{detailMurid.alamat}</p>
               </div>
             </div>
           </div>
@@ -122,26 +170,19 @@ const BerandaMurid = ({
       </div>
 
       {/* Calendar Card */}
-      <div className="col-span-1 lg:col-span-2 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
+      <div className="col-span-1 sm:col-span-2 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-6">
-            <Calendar01Icon className="h-6 w-6 text-primary" />
             <h2 className="text-2xl text-primary font-bold font-source-sans">
               Kalender Peminjaman
             </h2>
           </div>
-          <PeminjamanCalendar
-            loans={studentPeminjaman.map((p) => ({
-              date: p.tanggalPinjam,
-              bookTitle:
-                getBukuData(p.bukuPinjaman?.[0]?.bukuISBN || "")?.judul || "",
-            }))}
-          />
+          <PeminjamanCalendar loans={detailMurid.Peminjaman} />
         </div>
       </div>
 
-      {/* Peminjaman Table */}
-      <div className="col-span-1 lg:col-span-4 bg-white rounded-lg border-2 border-dark-gray">
+      {/* Book List Card */}
+      <div className="col-span-1 sm:col-span-2 lg:col-span-4 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-6">
             <BookOpen01Icon className="h-6 w-6 text-primary" />
@@ -149,87 +190,11 @@ const BerandaMurid = ({
               Riwayat Peminjaman
             </h2>
           </div>
-
-          <div className="space-y-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Cari berdasarkan judul buku..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-1 pl-10 border-2 border-primary rounded-lg focus:outline-none placeholder:text-xs focus:border-dark-primary"
-              />
-              <Search01Icon
-                className="absolute left-3 top-[30%] transform -translate-y-1/2 text-gray-400"
-                width={12}
-                height={12}
-              />
-            </div>
-
-            <div className="border border-primary rounded-lg max-h-80 overflow-y-auto">
-              <table className="min-w-full bg-white">
-                <thead>
-                  <tr className="bg-light-primary text-white sticky top-0 z-10">
-                    <th className="px-4 py-2 text-left w-4/12">Judul Buku</th>
-                    <th className="px-4 py-2 text-center w-3/12">
-                      Tanggal Pinjam
-                    </th>
-                    <th className="px-4 py-2 text-center w-3/12">Tenggat</th>
-                    <th className="px-4 py-2 text-center w-2/12">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredPeminjaman.map((item, index) => {
-                    const bukuInfo = getBukuData(
-                      item.bukuPinjaman?.[0]?.bukuISBN || ""
-                    );
-
-                    return (
-                      <tr
-                        key={index}
-                        className="border-t-2 hover:border-y-2 hover:border-black-custom border-dashed transition-all duration-100"
-                      >
-                        <td className="px-4 py-2 font-source-serif font-semibold text-sm">
-                          {bukuInfo?.judul || "Judul tidak tersedia"}
-                        </td>
-                        <td className="px-4 py-2 text-sm text-center">
-                          {item.tanggalPinjam
-                            ? new Date(item.tanggalPinjam).toLocaleString(
-                                "id-ID",
-                                {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                }
-                              )
-                            : "Tanggal tidak tersedia"}
-                        </td>
-                        <td className="px-4 py-2 text-sm text-center">
-                          {item.bukuPinjaman?.[0]?.tenggatWaktu
-                            ? new Date(
-                                item.bukuPinjaman[0].tenggatWaktu
-                              ).toLocaleString("id-ID", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })
-                            : "Tidak ada tenggat"}
-                        </td>
-                        <td className="px-4 py-2">
-                          <div className="flex items-center justify-center">
-                            <div className="px-2 py-0.5 border border-jewel-green bg-pastel-green rounded-full flex justify-between items-center text-jewel-green">
-                              <span className="inline-block w-2 h-2 rounded-full bg-jewel-green"></span>
-                              <p className="text-xs ml-1">Masih</p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <TablePeminjamanMurid
+            data={detailMurid?.Peminjaman || []}
+            bukuList={detailMurid?.buku || []}
+            nis={session?.user?.username}
+          />
         </div>
       </div>
     </div>

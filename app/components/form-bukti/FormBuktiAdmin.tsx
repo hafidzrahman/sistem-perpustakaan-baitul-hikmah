@@ -1,56 +1,53 @@
 "use client";
+import DoughnutChartGenreBuku from "@/app/components/charts/DoughnutChartGenreBuku";
+import LineChartPeminjaman from "@/app/components/charts/LineChartPeminjaman";
+import TablePeminjaman from "@/app/components/TablePeminjaman";
+import { bukuType, muridType, guruType } from "@/lib";
 
-import React from "react";
-import { useSession } from "next-auth/react";
-import { format } from "date-fns";
+import {
+  Mortarboard01Icon,
+  TeacherIcon,
+  BookOpen02Icon,
+} from "hugeicons-react";
+import { useEffect, useState } from "react";
+import DoughnutChartFormBukti from "../charts/DoughnutChartFormBukti";
+import LineChartFormBukti from "../charts/LineChartFormBukti";
 
-const FormBuktiAdmin = () => {
-  const { data: session } = useSession();
-  const [readingHistory, setReadingHistory] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+interface FormBuktiAdminProps {}
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      if (session?.user?.username) {
-        try {
-          const response = await fetch(
-            `/api/form-bukti/murid/${session.user.username}`
-          );
-          if (!response.ok) throw new Error("Failed to fetch data");
-          const data = await response.json();
-          setReadingHistory(data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-  }, [session?.user?.username]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-lg">Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-500">Error: {error}</p>
-      </div>
-    );
-  }
-
+const FormBuktiAdmin = ({}: FormBuktiAdminProps) => {
   return (
-    <div className="container mx-auto px-4 py-8">
-      Test {session?.user?.name}
-    </div>
+    <>
+      <div className="mb-4">
+        <h2 className="font-semibold font-source-sans text-[#465b65]">
+          Assalamu'alaikum wr wb., Ustadzah Fulanah, S. Pd., M. Pd. ,
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 auto-rows-[minmax(180px,_auto)] gap-5">
+        <div className="order-1 col-span-1 p-6 bg-white-custom  rounded-lg border-2 border-dark-gray lg:order-none lg:row-span-2 dark-gray sm:col-span-2 lg:col-span-2 xl:col-span-3">
+          <LineChartFormBukti />
+        </div>
+
+        <div className="relative order-4 col-span-1 p-6 bg-white border-2  rounded-lg border-dark-gray sm:col-span-2 lg:row-span-2 lg:order-none xl:col-span-1 lg:col-span-2">
+          <h1 className="font-source-sans md:text-2xl text-xl text-primary font-bold text-center">
+            Status Form Bukti
+          </h1>
+          <DoughnutChartFormBukti />
+        </div>
+        <div className="flex flex-col max-h-[380px] order-last col-span-1 row-span-2 p-6 overflow-y-auto bg-white  rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-2 xl:col-span-4 lg:row-span-2 dark-gray">
+          <h1 className="font-source-sans md:text-2xl text-xl text-primary font-bold mb-4">
+            Riwayat Ajuan Form Bukti
+          </h1>
+          {/* <TablePeminjaman
+            data={peminjaman}
+            bukuList={data.buku}
+            guruList={data.guru}
+            muridList={data.murid}
+          /> */}
+        </div>
+      </div>
+    </>
   );
 };
 
