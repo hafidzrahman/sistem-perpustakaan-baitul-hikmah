@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Session } from "next-auth";
+import { peminjamType } from "@/lib";
 
 interface ButtonPinjamProps {
-  session: Session | null;
+  session: Session & {user : {role : "murid" | "guru", username : string}} | null;
   isbn: string;
   judul: string;
 }
@@ -24,8 +25,8 @@ const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
 
     try {
       const requestData = {
-        nis: session.user.username,
-        nip: null,
+        nis: session!.user!.role === "murid" ? session.user.username : undefined,
+        nip: session!.user!.role === "guru" ? session.user.username : undefined,
         keterangan: `Peminjaman buku ${judul}`,
         daftarBukuPinjaman: [
           {
@@ -33,7 +34,7 @@ const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
             tenggatWaktu: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           },
         ],
-      };
+      } as peminjamType;
 
       const response = await fetch("/api/peminjaman", {
         method: "POST",

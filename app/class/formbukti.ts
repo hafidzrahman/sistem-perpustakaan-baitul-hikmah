@@ -1,4 +1,4 @@
-import { formBuktiType, perbaruiFormBuktiType, prisma } from "@/lib";
+import { ambilSemuaFormBuktiType, formBuktiMuridType, formBuktiType, perbaruiFormBuktiType, prisma } from "@/lib";
 
 export class FormBukti {
     id? : number;
@@ -28,15 +28,14 @@ export class FormBukti {
         if (!bukuISBN || !muridNIS || !intisari || !tanggal || !halamanAwal || !halamanAkhir) {
             throw new Error("Harus mengisi field yang wajib");
         }
-
         const dataFormBukti = await prisma.formBukti.create({
             data : {
                 bukuISBN : bukuISBN,
                 muridNIS : muridNIS,
                 intisari : intisari,
-                tanggal : tanggal,
-                halamanAwal : halamanAwal,
-                halamanAkhir : halamanAkhir,
+                tanggal : new Date(),
+                halamanAwal : Number(halamanAwal),
+                halamanAkhir : Number(halamanAkhir),
                 status : status
             }
         })
@@ -44,14 +43,60 @@ export class FormBukti {
         return dataFormBukti;
     }
 
-    static async ambilSemuaDataFormBukti() : Promise<formBuktiType[]> {
+    static async ambilSemuaDataFormBukti() : Promise<ambilSemuaFormBuktiType[]> {
         const dataFormBukti = await prisma.formBukti.findMany({
-            include : {
-                buku : true,
-                murid : true
+            select : {
+                intisari : true,
+                halamanAwal : true,
+                halamanAkhir : true,
+                tanggal : true,
+                status : true,
+                buku : {
+                    select : {
+                        judul : true
+                    }
+                },
+                murid : {
+                    select : {
+                        nis : true,
+                        nama : true,
+                        riwayatKelas : {
+                            select : {
+                                tahunAjaran : true
+                            }
+                        }
+                    }
+                }
             }
-        });
-
+        }) as ambilSemuaFormBuktiType[];
+        let counter = 0;
+        for await (const data of dataFormBukti) {
+            const tahun = data.tanggal.getFullYear().toString();
+            const bulan = data.tanggal.getMonth();
+            const dataRiwayatKelas = await prisma.riwayatKelas.findMany({
+                where : {
+                    muridNIS : data.murid.nis
+                },
+                select : {
+                    tahunAjaran : true,
+                    kelas : {
+                        select : {
+                            nama : true,
+                            tingkat : true,
+                        }
+                    }
+                }
+            })
+            for (let i = 0; i < dataRiwayatKelas.length; i++) {
+                const tahunAjaran = dataRiwayatKelas[i].tahunAjaran.split("/")
+                if ((bulan >= 1 && bulan <= 6 && tahunAjaran[1] === tahun) && (bulan >= 7 && bulan <= 12 && tahunAjaran[0] === tahun)) {
+                    dataFormBukti[counter].kelas = dataRiwayatKelas[i].kelas;
+                    break;
+                } 
+            }
+            ++counter;
+            
+        }
         return dataFormBukti;
     }
 
@@ -73,16 +118,23 @@ export class FormBukti {
         return dataFormBukti;
     }
 
-    static async cariDataFormBuktiDariMurid(muridNIS : string) : Promise<formBuktiType[]> {
+    static async cariDataFormBuktiDariMurid(muridNIS : string) : Promise<formBuktiMuridType[]> {
         const dataFormBukti = await prisma.formBukti.findMany({
             where : {
                 muridNIS
             },
-
-            include : {
-                buku : true,
-                murid : true,
-            }
+            select : {
+                intisari : true,
+                tanggal : true,
+                halamanAwal : true,
+                halamanAkhir : true,
+                status : true,
+                buku : {
+                    select : {
+                        judul : true
+                    }
+                },
+            }, 
         })
 
         return dataFormBukti;
