@@ -19,10 +19,9 @@ export class Denda {
 
     static async tambahDenda(data : dendaType) : Promise<dendaType> {
         const {idSumbangan, idPeminjaman, bukuISBN, bukuId} = data;
-
-        if (!idSumbangan || (!idPeminjaman && !bukuISBN && !bukuId)) {
+        if (!idSumbangan) {
           throw new Error("Harus mengisi field yang wajib");
-        }
+        } 
 
         const dataDenda = await prisma.denda.create({
                   data: {
@@ -45,6 +44,16 @@ export class Denda {
       if (!dataDenda?.id) {
         throw new Error("Data denda tidak ditemukan")
       }
+
+      return dataDenda;
+    }
+
+    static async ambilSemuaDataDenda() :Promise<dendaType[]> {
+      const dataDenda = await prisma.denda.findMany({
+        include : {
+          sumbangan : true
+        }
+      })
 
       return dataDenda;
     }

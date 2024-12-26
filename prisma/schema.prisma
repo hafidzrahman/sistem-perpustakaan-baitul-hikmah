@@ -128,7 +128,7 @@ model Guru {
 
 model RiwayatKelas {
   tahunAjaran   String
-  nomorPresensi Int?   @default(autoincrement())
+  nomorPresensi Int?
 
   muridNIS String
   murid    Murid  @relation(fields: [muridNIS], references: [nis])
@@ -141,10 +141,10 @@ model RiwayatKelas {
 }
 
 model Kelas {
-  id      Int           @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   nama    String
   tingkat Int
-  JKMurid JenisKelamin?
+  JKMurid String?
 
   RiwayatKelas RiwayatKelas[]
 
