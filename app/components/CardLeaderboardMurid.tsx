@@ -1,13 +1,10 @@
-"use client";
-
+import React from "react";
 import dynamic from "next/dynamic";
 import { Pie, Label, Cell } from "recharts";
 
 const PieChart = dynamic(
   () => import("recharts").then((recharts) => recharts.PieChart),
-  {
-    ssr: false,
-  }
+  { ssr: false }
 );
 
 interface CardLeaderboardMuridProps {
@@ -15,63 +12,90 @@ interface CardLeaderboardMuridProps {
   kelas: string;
   booksRead: number;
   totalBooksToRead: number;
+  rank?: number;
   className?: string;
 }
+
 const CardLeaderboardMurid = ({
   name,
   kelas,
   booksRead,
   totalBooksToRead,
+  rank = 0,
 }: CardLeaderboardMuridProps) => {
-  // Prepare data for donut chart
   const chartData = [
     { name: "Read", value: booksRead },
     { name: "Unread", value: totalBooksToRead - booksRead },
   ];
 
-  // Color scheme
-  const BG_COLORS = ["#055A39", "#064359", "#C50043"];
-  const GRADIENT = ["#adf7b6", "#a0ced9", "#ffc09f"];
-  const COLORS = ["#055A39", "#adf7b6"];
+  // Define color schemes for different ranks
+  const getColorScheme = (rank: number) => {
+    const schemes = {
+      0: {
+        border: "border-amber-500",
+        bg: "bg-amber-50",
+        accent: "text-amber-700",
+        chart: ["#F59E0B", "#FDE68A"],
+      },
+      1: {
+        border: "border-gray-400",
+        bg: "bg-gray-50",
+        accent: "text-gray-700",
+        chart: ["#6B7280", "#E5E7EB"],
+      },
+      2: {
+        border: "border-orange-700",
+        bg: "bg-orange-50",
+        accent: "text-orange-800",
+        chart: ["#C2410C", "#FFEDD5"],
+      },
+    };
+    return schemes[rank as keyof typeof schemes] || schemes[1];
+  };
+
+  const colorScheme = getColorScheme(rank);
+  const percentage = (booksRead / totalBooksToRead) * 100;
 
   return (
     <div
-      className={`rounded-lg bg-white-custom border-jewel-green border-2 px-8 py-1 w-full gap-4 flex items-center`}
+      className={`relative rounded-lg ${colorScheme.bg} border-2 ${colorScheme.border} p-4 duration-200`}
     >
-      {/* Info Section */}
-      <div className="flex flex-col justify-center flex-grow ">
-        <p className="text-xs text-gray-600">{kelas}</p>
-        <h2 className="text-sm font-source-serif leading-none font-bold">
-          {name}
-        </h2>
-      </div>
+      <div className="flex items-center gap-4">
+        {/* Left side - Info */}
+        <div className="flex-grow">
+          <div className="space-y-1">
+            <p className={`text-xs font-medium ${colorScheme.accent}`}>
+              {kelas}
+            </p>
+            <h2 className="text-sm font-bold tracking-tight">{name}</h2>
+            <div className={`text-xs ${colorScheme.accent}`}>
+              <span className="font-medium">{booksRead}</span>
+              <span className="mx-1">/</span>
+              <span>{totalBooksToRead} buku</span>
+            </div>
+          </div>
+        </div>
 
-      {/* Chart Section */}
-      <div className="flex-shrink-0">
-        <PieChart width={48} height={66}>
-          <Pie
-            data={chartData}
-            cx={20}
-            cy={28}
-            innerRadius={8}
-            outerRadius={24}
-            cornerRadius={4}
-            dataKey="value"
-          >
-            {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-            <Label
-              value={`${booksRead}/${totalBooksToRead}`}
-              position="end"
-              className="text-xs font-black"
-              fill="#fff"
-            />
-          </Pie>
-        </PieChart>
+        {/* Right side - Chart */}
+        <div className="flex-shrink-0">
+          <PieChart width={48} height={48}>
+            <Pie
+              data={chartData}
+              cx={24}
+              cy={24}
+              innerRadius={12}
+              outerRadius={20}
+              cornerRadius={2}
+              dataKey="value"
+              startAngle={90}
+              endAngle={-270}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colorScheme.chart[index]} />
+              ))}
+            </Pie>
+          </PieChart>
+        </div>
       </div>
     </div>
   );

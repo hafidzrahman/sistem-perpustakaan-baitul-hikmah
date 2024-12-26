@@ -11,6 +11,7 @@ import {
   SquareArrowExpand01Icon,
   SquareArrowShrink02Icon,
   Menu01Icon,
+  LicenseDraftIcon,
 } from "hugeicons-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -34,7 +35,7 @@ const LayoutAdmin = ({ children }: { children: React.ReactNode }) => {
     { icon: Mortarboard01Icon, href: "/murid", label: "Murid" },
     { icon: TeacherIcon, href: "/guru", label: "Guru" },
     {
-      icon: ChartLineData03Icon,
+      icon: LicenseDraftIcon,
       href: "/form-bukti",
       label: "Form Bukti",
     },

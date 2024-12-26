@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import {SessionProvider} from 'next-auth/react'
+import { SessionProvider } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 const spaceSans = localFont({
@@ -60,9 +60,7 @@ export default function RootLayout({
       <body
         className={`${sourceSerif.variable} ${sourceSans.variable} ${spaceSans.variable} antialiased`}
       >
-        <SessionProvider>
-        {children}
-        </SessionProvider>
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );

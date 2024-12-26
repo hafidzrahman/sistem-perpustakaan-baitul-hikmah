@@ -14,8 +14,17 @@ import TableFormBukti from "../TableFormBukti";
 import ModalFormBukti from "../modal/ModalFormBukti";
 import BtnSecondary from "../BtnSecondary";
 
+interface LeaderboardEntry {
+  nis: string;
+  nama: string;
+  booksRead: number;
+}
+
 const FormBuktiMurid = () => {
   const [readingHistory, setReadingHistory] = useState([]);
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const { data: session } = useSession();
@@ -39,7 +48,43 @@ const FormBuktiMurid = () => {
       }
     };
 
+    const fetchLeaderboardData = async () => {
+      try {
+        const response = await fetch("/api/form-bukti");
+        if (!response.ok) throw new Error("Failed to fetch leaderboard data");
+        const data = await response.json();
+
+        // Process data to create leaderboard
+        const studentReadCounts = data.reduce(
+          (acc: { [key: string]: any }, curr: any) => {
+            const { muridNIS, murid } = curr;
+            if (!acc[muridNIS]) {
+              acc[muridNIS] = {
+                nis: muridNIS,
+                nama: murid.nama,
+                booksRead: 1,
+              };
+            } else {
+              acc[muridNIS].booksRead += 1;
+            }
+            return acc;
+          },
+          {}
+        );
+
+        // Convert to array and sort by books read
+        const leaderboard = Object.values(studentReadCounts)
+          .sort((a: any, b: any) => b.booksRead - a.booksRead)
+          .slice(0, 3); // Get top 3
+
+        setLeaderboardData(leaderboard);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+
     fetchData();
+    fetchLeaderboardData();
   }, [session?.user?.username]);
 
   const calculateProgress = (history: any) => {
@@ -133,35 +178,27 @@ const FormBuktiMurid = () => {
           </div>
         </div>
 
-        {/* Calendar Section - Placeholder */}
+        {/* Leaderboard Section */}
         <div className="relative order-4 col-span-1 p-6 bg-white border-2 rounded-lg overflow-hidden border-dark-gray lg:row-span-2 lg:order-none sm:col-span-2">
           <h1 className="font-source-sans text-2xl text-center text-primary font-bold">
             Papan Peringkat
           </h1>
           <div className="flex flex-col max-h-96 my-4 gap-2 overflow-y-auto">
-            <CardLeaderboardMurid
-              name="Muhammad Faruq"
-              kelas="7 Al-fatih"
-              booksRead={20}
-              totalBooksToRead={20}
-            />
-            <CardLeaderboardMurid
-              name="Muhammad Aditya Rinaldi"
-              kelas="8 Al-fatih"
-              booksRead={16}
-              totalBooksToRead={20}
-            />
-            <CardLeaderboardMurid
-              name="Hafidz Alhadid Rahman"
-              kelas="9 Al-fatih"
-              booksRead={12}
-              totalBooksToRead={20}
-            />
+            {leaderboardData.map((student, index) => (
+              <CardLeaderboardMurid
+                key={student.nis}
+                name={student.nama}
+                kelas=""
+                booksRead={student.booksRead}
+                totalBooksToRead={20}
+                rank={index}
+              />
+            ))}
           </div>
         </div>
 
         {/* Reading History Table */}
-        <div className="col-span-1 sm:col-span-2 lg:col-span-4 bg-white-custom rounded-lg border-2 border-dark-gray ">
+        <div className="col-span-1 sm:col-span-2 lg:col-span-4 bg-white-custom rounded-lg border-2 border-dark-gray">
           <div className="p-6">
             <div className="flex items-center justify-between gap-2 mb-6">
               <h1 className="font-source-sans text-2xl text-left text-primary font-bold">
