@@ -13,9 +13,7 @@ const LoginPage = ({}: LoginPageProps) => {
   const { push } = useRouter();
   const username = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
-  const data = useSession();
-  console.log(data);
-  console.log(data?.data?.user?.name);
+  const { data: session, status } = useSession();
 
   async function handleOnClick() {
     try {
@@ -26,6 +24,7 @@ const LoginPage = ({}: LoginPageProps) => {
           password: password.current.value,
           callbackUrl: "/panel-kontrol",
         });
+
         if (!res?.error) {
           push(`/panel-kontrol`);
         }
