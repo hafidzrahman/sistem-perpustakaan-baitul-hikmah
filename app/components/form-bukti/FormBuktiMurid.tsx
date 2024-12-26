@@ -85,17 +85,17 @@ const FormBuktiMurid = () => {
                 <div className="space-y-4 flex-grow">
                   <div>
                     <p className="text-lg font-medium">
-                      {readingHistory[0].murid.nis}
+                      {readingHistory[0].murid?.nis}
                     </p>
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold">
-                      {readingHistory[0].murid.nama}
+                      {readingHistory[0].murid?.nama}
                     </h1>
                   </div>
                   <div className="flex items-start gap-2">
                     <p className="text-sm text-gray-600">
-                      {readingHistory[0].murid.alamat}
+                      {readingHistory[0].murid?.alamat}
                     </p>
                   </div>
 

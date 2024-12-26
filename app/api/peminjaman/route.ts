@@ -40,7 +40,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const dataPeminjaman = await Peminjaman.tambahPeminjaman(body);
+    await Peminjaman.tambahPeminjaman(body);
     return NextResponse.json({message : "aman"}, { status: 200 });
   } catch (error) {
     return NextResponse.json(

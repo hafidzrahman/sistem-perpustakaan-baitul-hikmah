@@ -28,15 +28,14 @@ export class FormBukti {
         if (!bukuISBN || !muridNIS || !intisari || !tanggal || !halamanAwal || !halamanAkhir) {
             throw new Error("Harus mengisi field yang wajib");
         }
-
         const dataFormBukti = await prisma.formBukti.create({
             data : {
                 bukuISBN : bukuISBN,
                 muridNIS : muridNIS,
                 intisari : intisari,
-                tanggal : tanggal,
-                halamanAwal : halamanAwal,
-                halamanAkhir : halamanAkhir,
+                tanggal : new Date(),
+                halamanAwal : Number(halamanAwal),
+                halamanAkhir : Number(halamanAkhir),
                 status : status
             }
         })

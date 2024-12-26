@@ -59,7 +59,7 @@ export class Peminjaman {
         // 604800000 --> satu minggu ke ms
         // default peminjaman seminggu, bisa diatur sesuai dengan keinginan petugas perpustakaan
         const date = new Date();
-        const deadline = tenggatWaktu || new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const deadline = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
         const result = deadline.getTime() - date.getTime();
         const objectBukuPinjaman = new BukuPinjaman({
           idPeminjaman: peminjaman.id,
@@ -67,7 +67,6 @@ export class Peminjaman {
           bukuId: dataEksemplarBuku.id!,
           tenggatWaktu: deadline,
         });
-
         const dataBukuPinjaman = await BukuPinjaman.tambahBukuPinjaman(objectBukuPinjaman);
 
         let timer = setTimeout(
