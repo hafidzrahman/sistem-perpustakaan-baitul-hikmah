@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import DoughnutChartFormBukti from "../charts/DoughnutChartFormBukti";
 import LineChartFormBukti from "../charts/LineChartFormBukti";
+import TableFormBukti from "../TableFormBukti";
 
 interface FormBuktiAdminProps {}
 
@@ -39,12 +40,7 @@ const FormBuktiAdmin = ({}: FormBuktiAdminProps) => {
           <h1 className="font-source-sans md:text-2xl text-xl text-primary font-bold mb-4">
             Riwayat Ajuan Form Bukti
           </h1>
-          {/* <TablePeminjaman
-            data={peminjaman}
-            bukuList={data.buku}
-            guruList={data.guru}
-            muridList={data.murid}
-          /> */}
+          <TableFormBukti />
         </div>
       </div>
     </>

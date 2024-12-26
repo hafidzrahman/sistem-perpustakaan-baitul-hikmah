@@ -2,45 +2,14 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { Search01Icon } from "hugeicons-react";
+import { formBuktiType } from "@/lib";
 
-interface FormBuktiType {
-  intisari: string;
-  halamanAwal: number;
-  halamanAkhir: number;
-  tanggal: string;
-  status: boolean;
-  buku: {
-    judul: string;
-  };
-  murid: {
-    nis: string;
-    nama: string;
-    riwayatKelas: {
-      tahunAjaran: string;
-    }[];
-  };
+interface TableFormBuktiMuridProps {
+  data: formBuktiType[];
 }
 
-const TableFormBukti = () => {
+const TableFormBuktiMurid = ({ data = [] }: TableFormBuktiMuridProps) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [data, setData] = useState<FormBuktiType[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/form-bukti");
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const filteredData = React.useMemo(() => {
     if (!data) return [];
@@ -50,17 +19,11 @@ const TableFormBukti = () => {
 
       const searchLower = searchQuery.toLowerCase();
       return (
-        item.buku.judul.toLowerCase().includes(searchLower) ||
-        item.murid.nama.toLowerCase().includes(searchLower) ||
-        item.murid.nis.toLowerCase().includes(searchLower) ||
-        item.intisari.toLowerCase().includes(searchLower)
+        item.buku?.judul?.toLowerCase().includes(searchLower) ||
+        item.intisari?.toLowerCase().includes(searchLower)
       );
     });
   }, [data, searchQuery]);
-
-  if (loading) {
-    return <div className="w-full p-4 text-center">Loading...</div>;
-  }
 
   if (!data) {
     return <div className="w-full p-4 text-center">Data tidak tersedia</div>;
@@ -71,7 +34,7 @@ const TableFormBukti = () => {
       <div className="relative">
         <input
           type="text"
-          placeholder="Cari berdasarkan nama siswa, NIS, judul buku, atau intisari..."
+          placeholder="Cari berdasarkan judul buku atau intisari..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-4 py-2 pl-10 border-2 border-primary rounded-lg focus:outline-none focus:border-dark-primary"
@@ -93,16 +56,11 @@ const TableFormBukti = () => {
             <div className="space-y-3">
               <div>
                 <h3 className="font-source-serif font-semibold text-lg">
-                  {record.murid.nama}
+                  {record.buku.judul}
                 </h3>
-                <p className="text-sm text-gray-500">NIS: {record.murid.nis}</p>
                 <p className="text-sm text-gray-500">
-                  Tahun Ajaran: {record.murid.riwayatKelas[0].tahunAjaran}
+                  ISBN: {record.buku.isbn}
                 </p>
-              </div>
-
-              <div>
-                <h4 className="font-semibold">Buku: {record.buku.judul}</h4>
               </div>
 
               <div className="space-y-2 text-sm">
@@ -143,11 +101,10 @@ const TableFormBukti = () => {
           <thead>
             <tr className="bg-light-primary text-white sticky top-0 z-10">
               <th className="px-4 py-2 text-left w-1/12">Tanggal</th>
-              <th className="px-4 py-2 text-left w-2/12">Siswa</th>
-              <th className="px-4 py-2 text-left w-2/12">Buku</th>
+              <th className="px-4 py-2 text-left w-3/12">Buku</th>
               <th className="px-4 py-2 text-center w-1/12">Halaman</th>
               <th className="px-4 py-2 text-center w-1/12">Status</th>
-              <th className="px-4 py-2 text-left w-5/12">Intisari</th>
+              <th className="px-4 py-2 text-left w-6/12">Intisari</th>
             </tr>
           </thead>
           <tbody>
@@ -161,18 +118,10 @@ const TableFormBukti = () => {
                 </td>
                 <td className="px-4 py-2">
                   <div className="text-sm font-source-serif font-semibold">
-                    {record.murid.nama}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    NIS: {record.murid.nis}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    TA: {record.murid.riwayatKelas[0].tahunAjaran}
-                  </div>
-                </td>
-                <td className="px-4 py-2">
-                  <div className="text-sm font-source-serif font-semibold">
                     {record.buku.judul}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {record.buku.isbn}
                   </div>
                 </td>
                 <td className="px-4 py-2 text-sm text-center">
@@ -202,11 +151,11 @@ const TableFormBukti = () => {
 
       {filteredData.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          Tidak ada form bukti yang ditemukan
+          Belum ada riwayat bacaan buku
         </div>
       )}
     </div>
   );
 };
 
-export default TableFormBukti;
+export default TableFormBuktiMurid;
