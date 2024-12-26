@@ -11,9 +11,9 @@ import {
 } from "hugeicons-react";
 import { useEffect, useState } from "react";
 
-interface BerandaPageProps {}
+interface BerandaAdminProps {}
 
-const BerandaPage = ({}: BerandaPageProps) => {
+const BerandaAdmin = ({}: BerandaAdminProps) => {
   const [peminjaman, setPeminjaman] = useState([]);
   const [data, setData] = useState<{
     buku: bukuType[];
@@ -143,4 +143,4 @@ const BerandaPage = ({}: BerandaPageProps) => {
   );
 };
 
-export default BerandaPage;
+export default BerandaAdmin;
