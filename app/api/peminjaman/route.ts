@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     return NextResponse.json(dataPeminjaman, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { message: "Gagal menambahkan data buku", details: error },
+      { message: "Gagal menambahkan data peminjaman", details: error },
       { status: 500 }
     );
   }

@@ -72,7 +72,8 @@ export async function GET() {
   await FormBukti.tambahDataFormBukti(dataFormBukti[1]);
   await FormBukti.tambahDataFormBukti(dataFormBukti[2]);
 
-  await Peminjaman.tambahPeminjaman(dataPeminjaman[0]);
+  for await (const data of dataPeminjaman)
+  await Peminjaman.tambahPeminjaman(data);
 
   await prisma.petugasPerpustakaan.deleteMany({});
 
@@ -217,6 +218,6 @@ async function test(dataUser : userType[]): Promise<void> {
       },
     });
 
-    console.log(data);
+    // console.log(data);
   }
 }
