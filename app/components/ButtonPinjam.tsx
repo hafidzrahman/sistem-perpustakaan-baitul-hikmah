@@ -44,7 +44,7 @@ const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
         body: JSON.stringify(requestData),
       });
 
-      const responseData = await response.json();
+      const responseData = (await response.json()) as any;
 
       if (!response.ok) {
         throw new Error(
@@ -54,7 +54,7 @@ const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
         );
       }
 
-      alert("Peminjaman berhasil!");
+      alert(responseData.message);
       router.refresh();
     } catch (error) {
       if (error instanceof Error) {

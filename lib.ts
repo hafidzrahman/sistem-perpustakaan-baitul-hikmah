@@ -64,6 +64,7 @@ export type kelasType = {
   id: number;
   nama: string;
   tingkat: number;
+  JKMurid? : string | null;
 };
 
 export type riwayatKelasType = {
