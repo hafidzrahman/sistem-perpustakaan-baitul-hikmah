@@ -61,10 +61,6 @@ const TablePeminjaman = ({
   if (!data || !bukuList || !guruList || !muridList) {
     return <div className="w-full p-4 text-center">Data tidak tersedia</div>;
   }
-  console.log(data);
-  console.log(bukuList);
-  console.log(guruList);
-  console.log(muridList);
 
   return (
     <div className="w-full space-y-4">
@@ -83,7 +79,6 @@ const TablePeminjaman = ({
         />
       </div>
 
-      {/* Rest of your component remains the same, just ensure optional chaining is used */}
       {/* Mobile and Tablet View */}
       <div className="lg:hidden space-y-4">
         {filteredData.map((item, index) => {
@@ -101,8 +96,17 @@ const TablePeminjaman = ({
                     <h3 className="font-source-serif font-semibold text-lg">
                       {bukuInfo?.judul || "Judul tidak tersedia"}
                     </h3>
+                    <p className="text-sm">ISBN: {bukuInfo?.isbn}</p>
+                    <p className="text-sm">
+                      Eksemplar: {bukuInfo?._count?.eksemplarBuku}
+                    </p>
                     <p className="text-sm font-source-sans">
                       Peminjam: {peminjam?.nama || "Nama tidak tersedia"}
+                    </p>
+                    <p className="text-sm font-source-sans">
+                      {item.nis
+                        ? `NIS: ${peminjam?.nis}`
+                        : `NIP: ${peminjam?.nip}`}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -151,13 +155,6 @@ const TablePeminjaman = ({
                       : "Tidak ada tenggat"}
                   </p>
                 </div>
-
-                <button
-                  onClick={() => router.push(`/peminjaman/${item.id}`)}
-                  className="w-full bg-dark-primary text-white-custom font-source-sans py-2 px-4 rounded-lg border-2 border-black text-sm hover:shadow-sm transition-all duration-300"
-                >
-                  Detail
-                </button>
               </div>
             </div>
           );
@@ -171,11 +168,10 @@ const TablePeminjaman = ({
             <tr className="bg-light-primary text-white sticky top-0 z-10">
               <th className="px-4 py-2 text-left w-1/12">ID</th>
               <th className="px-4 py-2 text-left w-3/12">Judul Buku</th>
-              <th className="px-4 py-2 text-left w-2/12">Peminjam</th>
+              <th className="px-4 py-2 text-center w-3/12">Peminjam</th>
               <th className="px-4 py-2 text-center w-2/12">Tanggal Pinjam</th>
               <th className="px-4 py-2 text-center w-2/12">Tenggat</th>
               <th className="px-4 py-2 text-center w-1/12">Status</th>
-              <th className="px-4 py-2 text-center w-1/12">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -193,27 +189,44 @@ const TablePeminjaman = ({
                   <td className="px-4 py-2 font-source-sans font-semibold text-sm">
                     {item.id}
                   </td>
-                  <td className="px-4 py-2 font-source-serif font-semibold text-sm">
-                    {bukuInfo?.judul || "Judul tidak tersedia"}
+                  <td className="px-4 py-2 font-source-serif font-semibold">
+                    <div className="flex flex-col">
+                      <p className="text-sm">
+                        {bukuInfo?.judul || "Judul tidak tersedia"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        ISBN: {bukuInfo?.isbn}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Eksemplar: {bukuInfo?._count?.eksemplarBuku}
+                      </p>
+                    </div>
                   </td>
                   <td className="px-4 py-2 font-source-sans">
                     <div className="flex items-center gap-2">
                       {peminjam?.jenisKelamin === "PEREMPUAN" ? (
                         <HijabIcon
-                          className="text-jewel-red"
+                          className="text-jewel-red flex-shrink-0"
                           width={20}
                           height={20}
                         />
                       ) : (
                         <MuslimIcon
-                          className="text-jewel-blue"
+                          className="text-jewel-blue flex-shrink-0"
                           width={20}
                           height={20}
                         />
                       )}
-                      <span className="text-sm">
-                        {peminjam?.nama || "Nama tidak tersedia"}
-                      </span>
+                      <div>
+                        <h3 className="font-source-serif font-semibold text-sm">
+                          {peminjam?.nama}
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          {item.nis
+                            ? `NIS: ${peminjam?.nis}`
+                            : `NIP: ${peminjam?.nip}`}
+                        </p>
+                      </div>
                     </div>
                   </td>
                   <td className="px-4 py-2 text-sm text-center">
@@ -242,12 +255,6 @@ const TablePeminjaman = ({
                         <span className="inline-block w-2 h-2 rounded-full bg-jewel-green"></span>
                         <p className="text-xs ml-1">Masih</p>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2">
-                    <div className="flex items-center justify-center gap-2">
-                      <Delete02Icon className="w-5 h-5 text-jewel-red cursor-pointer" />
-                      <PencilEdit01Icon className="w-5 h-5 text-jewel-blue cursor-pointer" />
                     </div>
                   </td>
                 </tr>
