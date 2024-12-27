@@ -1,18 +1,17 @@
-// TablePeminjamanMurid.tsx
 import React from "react";
-import { BookOpen01Icon, Search01Icon } from "hugeicons-react";
+import { PencilEdit01Icon, Search01Icon } from "hugeicons-react";
 import { bukuType, peminjamanType } from "@/lib";
 
 interface TablePeminjamanMuridProps {
   data: peminjamanType[];
   bukuList: bukuType[];
-  studentNIS: string;
+  nis?: string;
 }
 
 const TablePeminjamanMurid = ({
   data = [],
   bukuList = [],
-  studentNIS,
+  nis,
 }: TablePeminjamanMuridProps) => {
   const [searchQuery, setSearchQuery] = React.useState<string>("");
 
@@ -24,9 +23,9 @@ const TablePeminjamanMurid = ({
   const filteredData = React.useMemo(() => {
     if (!data) return [];
 
-    const studentLoans = data.filter((item) => item.nis === studentNIS);
-
-    return studentLoans.filter((item) => {
+    // Filter loans for current student and by search query
+    return data.filter((item) => {
+      if (item.nis !== nis) return false;
       if (!searchQuery) return true;
 
       const bukuInfo = getBukuData(item.bukuPinjaman?.[0]?.bukuISBN || "");
@@ -34,11 +33,14 @@ const TablePeminjamanMurid = ({
 
       return bukuInfo?.judul?.toLowerCase().includes(searchLower);
     });
-  }, [data, searchQuery, bukuList, studentNIS]);
+  }, [data, searchQuery, bukuList, nis]);
 
   if (!data || !bukuList) {
     return <div className="w-full p-4 text-center">Data tidak tersedia</div>;
   }
+
+  console.log(bukuList);
+  console.log(data);
 
   return (
     <div className="w-full space-y-4">
@@ -68,9 +70,13 @@ const TablePeminjamanMurid = ({
               className="bg-white p-4 rounded-lg border-2 border-primary"
             >
               <div className="space-y-2">
-                <h3 className="font-source-serif font-semibold text-lg">
-                  {bukuInfo?.judul || "Judul tidak tersedia"}
-                </h3>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-source-serif font-semibold text-lg">
+                      {bukuInfo?.judul || "Judul tidak tersedia"}
+                    </h3>
+                  </div>
+                </div>
 
                 <div className="space-y-1 text-sm">
                   <p>
@@ -95,12 +101,10 @@ const TablePeminjamanMurid = ({
                         })
                       : "Tidak ada tenggat"}
                   </p>
-                  <div className="mt-2 flex justify-end">
-                    <div className="px-2 py-0.5 border border-jewel-green bg-pastel-green rounded-full flex justify-between items-center text-jewel-green">
-                      <span className="inline-block w-2 h-2 rounded-full bg-jewel-green"></span>
-                      <p className="text-xs ml-1">Masih Dipinjam</p>
-                    </div>
-                  </div>
+                  <p>
+                    <span className="font-semibold">Status:</span>{" "}
+                    <span className="text-jewel-green">Masih Dipinjam</span>
+                  </p>
                 </div>
               </div>
             </div>
@@ -113,11 +117,10 @@ const TablePeminjamanMurid = ({
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-light-primary text-white sticky top-0 z-10">
-              <th className="px-4 py-2 text-left w-1/12">ID</th>
               <th className="px-4 py-2 text-left w-4/12">Judul Buku</th>
               <th className="px-4 py-2 text-center w-3/12">Tanggal Pinjam</th>
               <th className="px-4 py-2 text-center w-3/12">Tenggat</th>
-              <th className="px-4 py-2 text-center w-1/12">Status</th>
+              <th className="px-4 py-2 text-center w-2/12">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -131,9 +134,6 @@ const TablePeminjamanMurid = ({
                   key={index}
                   className="group relative border-t-2 hover:border-y-2 hover:border-black-custom border-dashed transition-all duration-100"
                 >
-                  <td className="px-4 py-2 font-source-sans font-semibold text-sm">
-                    {item.id}
-                  </td>
                   <td className="px-4 py-2 font-source-serif font-semibold text-sm">
                     {bukuInfo?.judul || "Judul tidak tersedia"}
                   </td>

@@ -13,6 +13,7 @@ import CardLeaderboardMurid from "../CardLeaderboardMurid";
 import TableFormBukti from "../TableFormBukti";
 import ModalFormBukti from "../modal/ModalFormBukti";
 import BtnSecondary from "../BtnSecondary";
+import TableFormBuktiMurid from "../TableFormBuktiMurid";
 
 interface LeaderboardEntry {
   nis: string;
@@ -188,7 +189,7 @@ const FormBuktiMurid = () => {
           <div className="flex flex-col max-h-96 my-4 gap-2 overflow-y-auto">
             {leaderboardData.map((student, index) => (
               <CardLeaderboardMurid
-                key={student.nis}
+                key={index}
                 name={student.nama}
                 kelas=""
                 booksRead={student.booksRead}
@@ -213,7 +214,7 @@ const FormBuktiMurid = () => {
               />
             </div>
 
-            <TableFormBukti data={readingHistory} />
+            <TableFormBuktiMurid data={readingHistory} />
           </div>
         </div>
       </div>

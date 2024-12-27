@@ -1,3 +1,5 @@
+// app/buku/page.tsx
+
 "use client";
 
 import BtnSecondary from "@/app/components/BtnSecondary";
