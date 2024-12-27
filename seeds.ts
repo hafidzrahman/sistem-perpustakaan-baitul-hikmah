@@ -179,20 +179,87 @@ export const seeds = {
       posisi: "D1",
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
+    {
+      isbn: "978-602-033-295-6",
+      judul: "Bumi",
+      penerbit: "Gramedia Pustaka Utama",
+      genre: [Genre.FIKSI.toString()],
+      penulis: ["Tere Liye"],
+      halaman: 440,
+      sinopsis:
+        "Cerita ini bermula dari seorang gadis berusia 15 tahun, bernama Raib. Sebenarnya, Raib layaknya remaja pada umumnya, tetap dirinya memiliki satu kemampuan, yakni bisa menghilang. Bagaimana caranya? Hanya dengan meletakkan telapak tangan di wajahnya dan gadis itu bisa langsung tidak tampak di penglihatan.Sebenarnya, kemampuan aneh itu telah melekat padanya sejak dirinya masih berusia sekitar 2 tahun. Dahulu, Raib gemar bermain petak umpet dengan kedua orang tuanya, kemudian Raib yang sedang meletakkan kedua telapak tangan ke wajahnya tiba-tiba menghilang. Raib merasa bingung sekaligus heran. Ia merahasiakan kemampuan yang dimilikinya itu ke semua orang, termasuk ke orang tuanya.",
+      tanggalMasuk: new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A1",
+      linkGambar:
+        "https://cdn.gramedia.com/uploads/items/9786020332956_Bumi-New-Cover.jpg",
+    },
+    {
+      isbn: "978–979–22–5780-9",
+      judul: "Daun yang jatuh tak pernah membenci angin ",
+      penerbit: "Gramedia Pustaka Utama",
+      genre: [Genre.FIKSI.toString()],
+      penulis: ["Tere Liye"],
+      halaman: 264,
+      sinopsis:
+        "menceritakan tentang gadis berumur 12 tahun bernama Tania. Gadis kecil yang harus putus sekolah dan mengamen bersama adiknya sepanjang hari setelah 3 tahun lalu ayahnya pergi untuk selamanya. Tania, Dede (adiknya), dan ibunya tinggal di sebuah rumah kardus di pinggir kota akibat kesulitan ekonomi. Sampai akhirnya mereka bertemu dengan seorang malaikat.Siapa yang tidak senang bertemu dengan malaikat? Jelas ini adalah sebuah cahaya masa depan bagi Tania. Danar namanya. Danar bagai malaikat di kehidupan Tania dan keluarganya yang serba kekurangan. Pertemuan yang tidak disengaja antara mereka di suatu malam membawa cahaya indah bagi kehidupan Tania kedepannya. Perbedaan umur yang berjarak 14 tahun membuat Tania seperti bertemu dengan sosok kakak yang selama ini tidak pernah ia rasakan.",
+      tanggalMasuk: new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A2",
+      linkGambar:
+        "https://cdn.gramedia.com/uploads/picture_meta/2023/4/10/keptpseujhk7alng3chxo3.jpg",
+    },
   ],
-  eksemplarBuku : [
-    {id : 999, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 3), posisi : "A1"},
-    {id : 1000, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 4), posisi : "A2"},
-    {id : 1001, bukuISBN : "978-602-06-5192-7", tanggalRusak : new Date(Date.now() - hariKeMiliDetik * 5), posisi : "A3"},
-    {id : 1002, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 3), posisi : "B5"},
-    {id : 1003, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 4), posisi : "C1"},
-    {id : 1004, bukuISBN : "978-602-06-5192-7", tanggalHilang : new Date(Date.now() - hariKeMiliDetik * 5), posisi : "C5"},
-    {id : 1005, bukuISBN : "978-602-06-5192-7", tanggalMasuk : new Date(Date.now() - hariKeMiliDetik * 5), posisi : "C7"},
+  eksemplarBuku: [
+    {
+      id: 999,
+      bukuISBN: "978-602-06-5192-7",
+      tanggalRusak: new Date(Date.now() - hariKeMiliDetik * 3),
+      posisi: "A1",
+    },
+    {
+      id: 1000,
+      bukuISBN: "978-602-06-5192-7",
+      tanggalRusak: new Date(Date.now() - hariKeMiliDetik * 4),
+      posisi: "A2",
+    },
+    {
+      id: 1001,
+      bukuISBN: "978-602-06-5192-7",
+      tanggalRusak: new Date(Date.now() - hariKeMiliDetik * 5),
+      posisi: "A3",
+    },
+    {
+      id: 1002,
+      bukuISBN: "978-602-06-5192-7",
+      tanggalHilang: new Date(Date.now() - hariKeMiliDetik * 3),
+      posisi: "B5",
+    },
+    {
+      id: 1003,
+      bukuISBN: "978-602-06-5192-7",
+      tanggalHilang: new Date(Date.now() - hariKeMiliDetik * 4),
+      posisi: "C1",
+    },
+    {
+      id: 1004,
+      bukuISBN: "978-602-06-5192-7",
+      tanggalHilang: new Date(Date.now() - hariKeMiliDetik * 5),
+      posisi: "C5",
+    },
+    {
+      id: 1005,
+      bukuISBN: "978-602-06-5192-7",
+      tanggalMasuk: new Date(Date.now() - hariKeMiliDetik * 5),
+      posisi: "C7",
+    },
   ],
   kelas: [
-    { id: 1, nama: "Al Fatih", tingkat: 7, JKMurid : JenisKelamin.PEREMPUAN },
-    { id: 2, nama: "Al Muttaqin", tingkat: 8, JKMurid : JenisKelamin.LAKI },
-    { id: 3, nama: "Al Falah", tingkat: 9, JKMurid : JenisKelamin.LAKI },
+    { id: 1, nama: "Al Fatih", tingkat: 7, JKMurid: JenisKelamin.PEREMPUAN },
+    { id: 2, nama: "Al Muttaqin", tingkat: 8, JKMurid: JenisKelamin.LAKI },
+    { id: 3, nama: "Al Falah", tingkat: 9, JKMurid: JenisKelamin.LAKI },
   ],
   murid: [
     {
@@ -260,9 +327,7 @@ export const seeds = {
       alamat: "Jl. Soebrantas",
     },
   ],
-  petugasPerpustakaan : [
-    {id : "10000", nama : "Good One"}
-  ],
+  petugasPerpustakaan: [{ id: "10000", nama: "Good One" }],
   keterangan: [
     {
       id: 1,
@@ -369,24 +434,24 @@ export const seeds = {
       status: false,
     },
   ],
-  user : [
+  user: [
     {
-      username : "12250111048",
-      password : "test123",
-      role : "murid",
-      muridNIS : "12250111048"
+      username: "12250111048",
+      password: "test123",
+      role: "murid",
+      muridNIS: "12250111048",
     },
     {
-      username : "122331",
-      password : "test123",
-      role : "guru",
-      guruNIP : "122331"
+      username: "122331",
+      password: "test123",
+      role: "guru",
+      guruNIP: "122331",
     },
     {
-      username : "admin",
-      password : "admin",
-      role : "admin",
-      petugasPerpustakaanId : "10000"
-    }
-  ]
+      username: "admin",
+      password: "admin",
+      role: "admin",
+      petugasPerpustakaanId: "10000",
+    },
+  ],
 };

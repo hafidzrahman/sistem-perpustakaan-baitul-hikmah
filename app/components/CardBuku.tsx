@@ -32,11 +32,7 @@ const CardBuku = ({ data }: { data: cariBukuType }) => {
           {penulis.map((d) => d.nama).join(", ")}
         </h2>
       </div>
-      {session?.user?.role === "admin" ? (
-        <ButtonDetail isbn={isbn} />
-      ) : (
-        <ButtonPinjam session={session} isbn={isbn} judul={judul} />
-      )}
+      <ButtonDetail isbn={isbn} />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import BtnSecondary from "@/app/components/BtnSecondary";
+import ModalTambahGuru from "@/app/components/modal/ModalTambahGuru";
 import TableGuru from "@/app/components/TableGuru";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 import { useEffect, useState } from "react";
@@ -29,6 +30,7 @@ const GuruPage = ({}: GuruPageProps) => {
 
   return (
     <>
+      <ModalTambahGuru handle={handleTambahGuru} status={tambahGuru} />
       <div className="mb-4">
         <h2 className="font-semibold font-source-sans text-[#465b65]">
           Selamat datang di Halaman Guru

@@ -3,6 +3,7 @@
 import React from "react";
 import { cariBukuType, genreType } from "@/lib";
 import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
+import ButtonDetail from "./ButtonDetail";
 
 const bg = [
   "bg-jewel-purple",
@@ -21,6 +22,13 @@ const border = [
 ];
 
 const TableBuku = ({ data }: { data: cariBukuType[] }) => {
+  console.log(data);
+  console.log(data[0]?.isbn);
+
+  if (!data) {
+    return null;
+  }
+
   return (
     <div className="w-full">
       {/* Mobile and Tablet View (Card Layout) */}
@@ -136,12 +144,7 @@ const TableBuku = ({ data }: { data: cariBukuType[] }) => {
                   </div>
                 </td>
                 <td className="px-4 py-2">
-                  <button
-                    type="submit"
-                    className="bg-dark-primary text-white-custom font-source-sans py-1 px-2 w-full rounded-lg border-2 border-black text-xs hover:shadow-sm transition-all duration-300"
-                  >
-                    Detail
-                  </button>
+                  <ButtonDetail isbn={data?.isbn} />
                 </td>
               </tr>
             ))}

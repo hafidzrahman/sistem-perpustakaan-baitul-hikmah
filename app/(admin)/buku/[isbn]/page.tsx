@@ -3,10 +3,13 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { detailsBukuType, eksemplarBukuType } from "@/lib";
+import { useSession } from "next-auth/react";
+import ButtonPinjam from "@/app/components/ButtonPinjam";
 
 const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
   const [detailBuku, setDetailBuku] = useState<detailsBukuType>();
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchDetailBuku = async () => {
@@ -76,6 +79,9 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
     return { text: "Tersedia", color: "text-emerald-500" };
   };
 
+  console.log(detailBuku.isbn);
+  console.log(session?.user.username);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary to-dark-primary p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
@@ -115,6 +121,11 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
                       {detailBuku._count.eksemplarBuku}
                     </div>
                   </div>
+                  <ButtonPinjam
+                    isbn={detailBuku.isbn}
+                    judul={detailBuku.judul}
+                    session={session?.user.username}
+                  />
                 </div>
               </div>
             </div>
@@ -166,7 +177,7 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
             {/* Posisi Rak dengan Visual Enhancement */}
             <div className="space-y-4">
               <h2 className="text-2xl font-source-serif font-bold text-yellow-custom flex items-center">
-                <span className="mr-2">📚</span> Posisi di Rak
+                Posisi di Rak
               </h2>
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-yellow-custom to-primary rounded-xl blur opacity-30"></div>
@@ -209,7 +220,7 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
             {/* Sinopsis dengan Read More */}
             <div className="space-y-3">
               <h2 className="text-2xl font-source-serif font-bold text-yellow-custom flex items-center">
-                <span className="mr-2">📖</span> Sinopsis
+                Sinopsis
               </h2>
               <div
                 className={`relative text-white-custom/90 text-justify leading-relaxed overflow-hidden
@@ -231,7 +242,7 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
             {/* Detail Eksemplar dengan Animasi */}
             <div className="space-y-4">
               <h2 className="text-2xl font-source-serif font-bold text-yellow-custom flex items-center">
-                <span className="mr-2">📚</span> Detail Eksemplar
+                Detail Eksemplar
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {detailBuku.eksemplarBuku.map((eksemplar, index) => {
