@@ -12,6 +12,10 @@ import {
 import { useSession } from "next-auth/react";
 import TablePeminjaman from "../TablePeminjaman";
 import TablePeminjamanMurid from "../TablePeminjamanMurid";
+import {
+  DoughnutChartFormBuktiMurid,
+  LineChartPeminjamanMurid,
+} from "../charts/LinePeminjamanMurid";
 
 interface StudentData {
   nis: string;
