@@ -141,7 +141,11 @@ const TableFormBuktiMurid = ({ data = [] }: TableFormBuktiMuridProps) => {
                   </div>
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-600">
-                  {record.intisari}
+                  <div>
+                    <p className="line-clamp-1 transition-all duration-300">
+                      {record.intisari}
+                    </p>
+                  </div>
                 </td>
               </tr>
             ))}
