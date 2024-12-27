@@ -249,11 +249,31 @@ export type userType = {
   username : string,
   password : string,
   role : string,
-  muridNIS? : string,
-  guruNIP? : string,
-  petugasPerpustakaanId? : string
+  muridNIS? : string | null,
+  guruNIP? : string | null,
+  petugasPerpustakaanId? : string | null
 
 };
+
+export type ambilSemuaDataSumbanganType = {
+    id?: number;
+    idKeterangan: number;
+    nis?: string | null;
+    nip?: string | null;
+    tanggalSelesai?: Date | null;
+    berlebih?: boolean | null;
+    riwayatBantuan : riwayatBantuanType[]
+    pembayaranTunai : pembayaranTunaiType[];
+    murid? : muridType | null;
+    guru? : guruType | null;
+    keterangan : keteranganType;
+    denda? : dendaType | null;
+}
+
+export type petugasPerpustakaanType = {
+  id : number,
+  nama : string
+}
 
 export type sumbanganType = {
   id?: number;

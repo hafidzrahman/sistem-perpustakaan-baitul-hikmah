@@ -46,6 +46,7 @@ export class FormBukti {
     static async ambilSemuaDataFormBukti() : Promise<ambilSemuaFormBuktiType[]> {
         const dataFormBukti = await prisma.formBukti.findMany({
             select : {
+                id: true,
                 intisari : true,
                 halamanAwal : true,
                 halamanAkhir : true,

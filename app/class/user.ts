@@ -1,4 +1,4 @@
-import { prisma, userType } from "@/lib";
+import { guruType, muridType, petugasPerpustakaanType, prisma, userType } from "@/lib";
 
 
 export class User {
@@ -29,5 +29,19 @@ export class User {
             }
         })
         return dataUser;
+    }
+    static async cariUser(username : string) : Promise<userType | null & guruType | null & muridType | null & petugasPerpustakaanType | null> {
+        const user = await prisma.user.findUnique({
+            where: {
+              username: username,
+            },
+            include: {
+              guru: true,
+              murid: true,
+              petugasPerpustakaan: true,
+            },
+          });
+
+          return user;
     }
 }

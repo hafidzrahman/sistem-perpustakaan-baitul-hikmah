@@ -30,6 +30,7 @@ import { Penerbit } from "../class/penerbit";
 import { Sumbangan } from "../class/sumbangan";
 import { PembayaranTunai } from "../class/pembayarantunai";
 import { RiwayatBantuan } from "../class/riwayatbantuan";
+import { User } from "../class/user";
 
 export async function GET() {
   const {
@@ -218,20 +219,22 @@ export async function GET() {
 }
 
 async function test(dataUser : userType[]): Promise<void> {
+
   await prisma.user.deleteMany({});
+  
   for await (const user of dataUser) {
     const {username, password, role, muridNIS, guruNIP, petugasPerpustakaanId} = user;
     const hashedPassword = await hash(password, 12);
-    const data = await prisma.user.create({
-      data: {
+    const dataUser = new User({
         username,
         password : hashedPassword,
         role,
         muridNIS,
         guruNIP,
         petugasPerpustakaanId
-      },
-    });
+    })
+
+    await User.tambahUser(dataUser);
 
     // console.log(data);
   }
