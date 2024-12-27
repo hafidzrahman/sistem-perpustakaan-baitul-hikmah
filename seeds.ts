@@ -209,7 +209,7 @@ export const seeds = {
       tanggalHilang: new Date(),
       posisi: "A2",
       linkGambar:
-        "https://cdn.gramedia.com/uploads/picture_meta/2023/4/10/keptpseujhk7alng3chxo3.jpg",
+        "https://drive.google.com/file/d/1Ww60hFiHxXsnQxST1HdOV2j_pCgQWzPY/view?usp=sharing",
     },
   ],
   eksemplarBuku: [
