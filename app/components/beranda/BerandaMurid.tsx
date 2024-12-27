@@ -15,7 +15,7 @@ import TablePeminjamanMurid from "../TablePeminjamanMurid";
 import {
   DoughnutChartFormBuktiMurid,
   LineChartPeminjamanMurid,
-} from "../charts/LinePeminjamanMurid";
+} from "../charts/LineChartPeminjamanMurid";
 
 interface StudentData {
   nis: string;

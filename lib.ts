@@ -40,14 +40,14 @@ export type ambilSemuaDataPeminjamanType = peminjamanType & {
 };
 
 export type detailsBukuType = bukuType & {
-  _count : {
-    eksemplarBuku : number
-  },
-  eksemplarBuku : eksemplarBukuType[], 
-  penulis : penulisType[],
-  penerbitDetails : penerbitType,
-  genre : genreType[]  
-}
+  _count: {
+    eksemplarBuku: number;
+  };
+  eksemplarBuku: eksemplarBukuType[];
+  penulis: penulisType[];
+  penerbitDetails: penerbitType;
+  genre: genreType[];
+};
 
 export type perbaruiKelasType = {
   nama?: string;
@@ -55,16 +55,16 @@ export type perbaruiKelasType = {
 };
 
 export type ambilSemuaDataKelasType = kelasType & {
-  _count : {
-    RiwayatKelas : number
-  }
-}
+  _count: {
+    RiwayatKelas: number;
+  };
+};
 
 export type kelasType = {
   id: number;
   nama: string;
   tingkat: number;
-  JKMurid? : string | null;
+  JKMurid?: string | null;
 };
 
 export type riwayatKelasType = {
@@ -210,20 +210,20 @@ export type formBuktiType = {
 };
 
 export type formBuktiMuridType = {
-  intisari : string,
-  halamanAwal : number,
-  halamanAkhir : number,
-  tanggal : Date,
-  status : boolean
-  buku : {
-    judul : string
-  }
-}
+  intisari: string;
+  halamanAwal: number;
+  halamanAkhir: number;
+  tanggal: Date;
+  status: boolean;
+  buku: {
+    judul: string;
+  };
+};
 
 export type ambilSemuaFormBuktiType = formBuktiMuridType & {
-  kelas? : {nama : string, tingkat : number} | undefined
-  murid : {nis : string, nama : string, riwayatKelas : {tahunAjaran : string}[]}
-}
+  kelas?: { nama: string; tingkat: number } | undefined;
+  murid: { nis: string; nama: string; riwayatKelas: { tahunAjaran: string }[] };
+};
 
 export type perbaruiFormBuktiType = {
   bukuISBN?: string;
@@ -245,14 +245,13 @@ export type dendaType = {
 };
 
 export type userType = {
-  id? : string,
-  username : string,
-  password : string,
-  role : string,
-  muridNIS? : string,
-  guruNIP? : string,
-  petugasPerpustakaanId? : string
-
+  id?: string;
+  username: string;
+  password: string;
+  role: string;
+  muridNIS?: string;
+  guruNIP?: string;
+  petugasPerpustakaanId?: string;
 };
 
 export type sumbanganType = {

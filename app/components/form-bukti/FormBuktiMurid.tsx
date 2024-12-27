@@ -18,6 +18,7 @@ import TableFormBuktiMurid from "../TableFormBuktiMurid";
 interface LeaderboardEntry {
   nis: string;
   nama: string;
+  kelas: string;
   booksRead: number;
 }
 
@@ -57,17 +58,38 @@ const FormBuktiMurid = () => {
 
         // Process data to create leaderboard
         const studentReadCounts = data.reduce(
-          (acc: { [key: string]: any }, curr: any) => {
-            const { muridNIS, murid } = curr;
-            if (!acc[muridNIS]) {
+          (acc: { [key: string]: LeaderboardEntry }, curr: any) => {
+            const { murid } = curr;
+            const muridNIS = murid.nis; // Get NIS directly from murid object
+
+            // Get the current class info
+            const currentClass = murid.riwayatKelas[0]?.kelas;
+            const classInfo = currentClass
+              ? `${currentClass.tingkat}-${currentClass.nama}`
+              : "";
+
+            // Only count approved submissions (status === true)
+            if (curr.status === true) {
+              if (!acc[muridNIS]) {
+                acc[muridNIS] = {
+                  nis: muridNIS,
+                  nama: murid.nama,
+                  kelas: classInfo,
+                  booksRead: 1,
+                };
+              } else {
+                acc[muridNIS].booksRead += 1;
+              }
+            } else if (!acc[muridNIS]) {
+              // Initialize student even if they have no approved submissions
               acc[muridNIS] = {
                 nis: muridNIS,
                 nama: murid.nama,
-                booksRead: 1,
+                kelas: classInfo,
+                booksRead: 0,
               };
-            } else {
-              acc[muridNIS].booksRead += 1;
             }
+
             return acc;
           },
           {}
@@ -75,11 +97,21 @@ const FormBuktiMurid = () => {
 
         // Convert to array and sort by books read
         const leaderboard = Object.values(studentReadCounts)
-          .sort((a: any, b: any) => b.booksRead - a.booksRead)
+          .sort((a, b) => {
+            // Sort by books read (descending)
+            const booksComparison = b.booksRead - a.booksRead;
+            // If books read are equal, sort alphabetically by name
+            if (booksComparison === 0) {
+              return a.nama.localeCompare(b.nama);
+            }
+            return booksComparison;
+          })
           .slice(0, 3); // Get top 3
 
+        console.log("Processed leaderboard data:", leaderboard); // For debugging
         setLeaderboardData(leaderboard);
       } catch (err: any) {
+        console.error("Error fetching leaderboard:", err);
         setError(err.message);
       }
     };
@@ -111,6 +143,7 @@ const FormBuktiMurid = () => {
   }
 
   console.log(readingHistory);
+  console.log(leaderboardData);
 
   return (
     <>
@@ -181,7 +214,6 @@ const FormBuktiMurid = () => {
           </div>
         </div>
 
-        {/* Leaderboard Section */}
         <div className="relative order-4 col-span-1 p-6 bg-white border-2 rounded-lg overflow-hidden border-dark-gray lg:row-span-2 lg:order-none sm:col-span-2">
           <h1 className="font-source-sans text-2xl text-center text-primary font-bold">
             Papan Peringkat
@@ -191,7 +223,7 @@ const FormBuktiMurid = () => {
               <CardLeaderboardMurid
                 key={index}
                 name={student.nama}
-                kelas=""
+                kelas={student.kelas}
                 booksRead={student.booksRead}
                 totalBooksToRead={20}
                 rank={index}

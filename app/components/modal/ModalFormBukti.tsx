@@ -172,10 +172,12 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
                     name="bukuISBN"
                     value={formData.bukuISBN}
                     onChange={handleChange}
-                    className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                    className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
                     required
                   >
-                    <option value="">Pilih Buku</option>
+                    <option value="" className="text-xs">
+                      Pilih Buku
+                    </option>
                     {bukuList.map((buku: { isbn: string; judul: string }) => (
                       <option key={buku.isbn} value={buku.isbn}>
                         {buku.judul}
@@ -201,7 +203,7 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
                   name="tanggal"
                   value={formData.tanggal}
                   onChange={handleChange}
-                  className="py-2 px-6 w-full border border-black rounded-md font-source-sans"
+                  className="py-3 px-6 text-xs w-full border border-black rounded-md font-source-sans"
                   required
                 />
               </div>
