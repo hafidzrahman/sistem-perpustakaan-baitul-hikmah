@@ -2,17 +2,25 @@ import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 import { formBuktiType } from "@/lib";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 interface ModalFormBuktiProps {
   status: boolean;
   handle: () => void;
 }
 
+// Tambahkan tipe untuk buku
+interface Buku {
+  isbn: string;
+  judul: string;
+  halaman: number;
+}
 const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
   const { data: session } = useSession();
   const [bukuList, setBukuList] = useState([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedBookPages, setSelectedBookPages] = useState<number>(0);
   const [formData, setFormData] = useState({
     bukuISBN: "",
     muridNIS: "",
@@ -22,6 +30,25 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
     halamanAkhir: "",
     status: false,
   });
+
+  const handleBookChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const isbn = e.target.value;
+    const selectedBook = bukuList.find((buku: Buku) => buku.isbn === isbn);
+
+    setFormData((prev) => ({
+      ...prev,
+      bukuISBN: isbn,
+      // Reset halaman ketika buku baru dipilih
+      halamanAwal: "",
+      halamanAkhir: "",
+    }));
+
+    if (selectedBook) {
+      setSelectedBookPages(selectedBook.halaman);
+    } else {
+      setSelectedBookPages(0);
+    }
+  };
 
   useEffect(() => {
     const fetchBuku = async () => {
@@ -43,32 +70,55 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
     if (session?.user?.username) {
       setFormData((prev) => ({
         ...prev,
-        muridNIS: session.user.username,
+        muridNIS: session!.user?.username,
       }));
     }
   }, [session?.user?.username]);
 
   const validateForm = () => {
     if (!formData.bukuISBN) {
-      setErrorMessage("Silakan pilih buku terlebih dahulu");
+      toast.error("Silakan pilih buku terlebih dahulu", {
+        autoClose: 5000,
+      });
       return false;
     }
     if (!formData.tanggal) {
-      setErrorMessage("Silakan isi tanggal baca");
+      toast.error("Silakan isi tanggal baca", {
+        autoClose: 5000,
+      });
       return false;
     }
     if (!formData.halamanAwal || !formData.halamanAkhir) {
-      setErrorMessage("Silakan isi halaman awal dan akhir");
+      toast.error("Silakan isi halaman awal dan akhir", {
+        autoClose: 5000,
+      });
       return false;
     }
     if (Number(formData.halamanAwal) > Number(formData.halamanAkhir)) {
-      setErrorMessage(
-        "Halaman awal tidak boleh lebih besar dari halaman akhir"
-      );
+      toast.error("Halaman awal tidak boleh lebih besar dari halaman akhir", {
+        autoClose: 5000,
+      });
+      return false;
+    }
+    if (Number(formData.halamanAkhir) > selectedBookPages) {
+      toast.error(`Total halaman di buku ini berjumlah ${selectedBookPages}`, {
+        autoClose: 5000,
+      });
       return false;
     }
     if (!formData.intisari.trim()) {
-      setErrorMessage("Silakan isi intisari bacaan");
+      toast.error("Silakan isi intisari bacaan", {
+        autoClose: 5000,
+      });
+      return false;
+    }
+    // Validasi tanggal tidak boleh lebih dari hari ini
+    const selectedDate = new Date(formData.tanggal);
+    const today = new Date();
+    if (selectedDate > today) {
+      toast.error("Tanggal tidak boleh lebih dari hari ini", {
+        autoClose: 5000,
+      });
       return false;
     }
     return true;
@@ -80,11 +130,30 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
     >
   ) => {
     const { name, value } = e.target;
+
+    if (name === "bukuISBN") {
+      handleBookChange(e);
+      return;
+    }
+
+    if (name === "halamanAkhir") {
+      const numValue = Number(value);
+      if (numValue > selectedBookPages) {
+        toast.error(
+          `Total halaman di buku ini berjumlah ${selectedBookPages}`,
+          {
+            autoClose: 5000,
+          }
+        );
+        return;
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    setErrorMessage(""); // Clear error message when user makes changes
+    setErrorMessage("");
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -122,6 +191,8 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
         halamanAkhir: "",
         status: false,
       });
+      toast.success(`Form Bukti ${data.id} berhasil diajukan!`);
+
       handle();
     } catch (error: any) {
       setErrorMessage(
@@ -172,10 +243,12 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
                     name="bukuISBN"
                     value={formData.bukuISBN}
                     onChange={handleChange}
-                    className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                    className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
                     required
                   >
-                    <option value="">Pilih Buku</option>
+                    <option value="" className="text-xs">
+                      Pilih Buku
+                    </option>
                     {bukuList.map((buku: { isbn: string; judul: string }) => (
                       <option key={buku.isbn} value={buku.isbn}>
                         {buku.judul}
@@ -201,7 +274,8 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
                   name="tanggal"
                   value={formData.tanggal}
                   onChange={handleChange}
-                  className="py-2 px-6 w-full border border-black rounded-md font-source-sans"
+                  max={new Date().toISOString().split("T")[0]}
+                  className="py-3 px-6 text-xs w-full border border-black rounded-md font-source-sans"
                   required
                 />
               </div>
@@ -238,6 +312,7 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
                 <input
                   type="number"
                   min="1"
+                  max={selectedBookPages}
                   id="halamanAkhir"
                   name="halamanAkhir"
                   value={formData.halamanAkhir}

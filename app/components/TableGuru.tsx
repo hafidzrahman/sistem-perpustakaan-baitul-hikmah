@@ -60,11 +60,6 @@ const TableGuru = ({ data }: { data: any }) => {
               </div>
 
               <div className="flex items-center gap-2">
-                <SmartPhone01Icon
-                  className="text-jewel-green"
-                  width={20}
-                  height={20}
-                />
                 <span className="text-sm">{item.kontak}</span>
                 {item.jenisKelamin === "PEREMPUAN" ? (
                   <HijabIcon
@@ -126,11 +121,6 @@ const TableGuru = ({ data }: { data: any }) => {
                 </td>
                 <td className="px-4 py-2 text-left">
                   <div className="flex items-center gap-2">
-                    <SmartPhone01Icon
-                      className="text-jewel-green"
-                      width={20}
-                      height={20}
-                    />
                     <span className="text-sm">{item.kontak}</span>
                   </div>
                 </td>
