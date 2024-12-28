@@ -16,13 +16,13 @@ const DoughnutChartFormBukti = () => {
 
   // Function to generate colors dynamically
   const generateColor = (index: number) => {
-    const colors = ["#064359", "#6D275D", "#055A39", "#C50043", "#F3A51A"];
+    const colors = ["#064359", "#C50043"];
     return colors[index % colors.length];
   };
 
   // Function to generate stroke colors dynamically
   const generateStroke = (index: number) => {
-    const strokes = ["#a0ced9", "#a594f9", "#adf7b6", "#ffc09f", "#ffee93"];
+    const strokes = ["#a0ced9", "#ffc09f"];
     return strokes[index % strokes.length];
   };
 

@@ -3,40 +3,85 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { detailsBukuType, eksemplarBukuType } from "@/lib";
+import { useSession } from "next-auth/react";
+import ButtonPinjam from "@/app/components/ButtonPinjam";
 
-const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
+const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
   const [detailBuku, setDetailBuku] = useState<detailsBukuType>();
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
+  const [peminjamanData, setPeminjamanData] = useState([]);
+  const { data: session } = useSession();
 
   useEffect(() => {
-    const fetchDetailBuku = async () => {
+    const fetchData = async () => {
       const { isbn } = await params;
       try {
-        const response = await fetch(`/api/buku/${isbn}`);
-        const data = await response.json();
-        setDetailBuku(data);
+        const responseBook = await fetch(`/api/buku/${isbn}`);
+        const dataBook = await responseBook.json();
+        setDetailBuku(dataBook);
+
+        const responsePeminjaman = await fetch("/api/peminjaman");
+        const dataPeminjaman = await responsePeminjaman.json();
+        setPeminjamanData(dataPeminjaman);
       } catch (error) {
-        console.error("Gagal mengambil detail buku:", error);
+        console.error("Gagal mengambil data:", error);
       }
     };
 
-    fetchDetailBuku();
+    fetchData();
   }, [params]);
+
+  const getBookStatus = (isbn: string) => {
+    if (!detailBuku) return { dipinjam: 0, tersedia: 0, total: 0 };
+
+    const totalEksemplar = detailBuku._count.eksemplarBuku;
+    const dipinjam = peminjamanData.reduce((count, peminjaman) => {
+      return (
+        count +
+        peminjaman.bukuPinjaman.filter(
+          (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
+        ).length
+      );
+    }, 0);
+
+    return {
+      dipinjam,
+      tersedia: totalEksemplar - dipinjam,
+      total: totalEksemplar,
+    };
+  };
+
+  const getEksemplarStatus = (eksemplar: eksemplarBukuType) => {
+    const isBorrowed = peminjamanData.some((peminjaman) =>
+      peminjaman.bukuPinjaman.some(
+        (bp: any) =>
+          bp.bukuISBN === detailBuku?.isbn &&
+          bp.eksemplarId === eksemplar.id &&
+          bp.tanggalKembali === null
+      )
+    );
+
+    if (isBorrowed)
+      return { text: "Sedang Dipinjam", color: "text-yellow-500" };
+    if (eksemplar?.tanggalHilang)
+      return { text: "Hilang", color: "text-jewel-red" };
+    return { text: "Tersedia", color: "text-jewel-green" };
+  };
 
   if (!detailBuku) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary to-dark-primary p-6">
+      <div className="min-h-screen bg-gray-100 p-4">
         <div className="max-w-7xl mx-auto animate-pulse">
-          <div className="grid md:grid-cols-12 gap-8">
+          <div className="grid md:grid-cols-12 gap-4">
             <div className="md:col-span-4 lg:col-span-3">
-              <div className="aspect-[2/3] bg-white/20 rounded-xl"></div>
+              <div className="aspect-[2/3] bg-gray-200 rounded"></div>
             </div>
-            <div className="md:col-span-8 lg:col-span-9 space-y-6">
-              <div className="h-8 bg-white/20 rounded w-3/4"></div>
-              <div className="h-6 bg-white/20 rounded w-1/2"></div>
+            <div className="md:col-span-8 lg:col-span-9 space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-6 bg-gray-200 rounded w-1/2"></div>
               <div className="flex gap-2">
-                <div className="h-6 bg-white/20 rounded w-20"></div>
-                <div className="h-6 bg-white/20 rounded w-20"></div>
+                <div className="h-6 bg-gray-200 rounded w-20"></div>
+                <div className="h-6 bg-gray-200 rounded w-20"></div>
               </div>
             </div>
           </div>
@@ -45,20 +90,7 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
     );
   }
 
-  const bg = [
-    "bg-jewel-purple",
-    "bg-jewel-red",
-    "bg-jewel-green",
-    "bg-jewel-yellow",
-    "bg-jewel-blue",
-  ];
-  const border = [
-    "border-pastel-purple",
-    "border-pastel-red",
-    "border-pastel-green",
-    "border-pastel-yellow",
-    "border-pastel-blue",
-  ];
+  const bookStatus = getBookStatus(detailBuku.isbn);
 
   const shelfPositions = [
     ["A1", "A2", "", "", ""],
@@ -68,201 +100,192 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
     ["E1", "E2", "E3", "E4", "E5"],
   ];
 
-  const getBookStatus = (eksemplar: eksemplarBukuType) => {
-    if (eksemplar?.tanggalHilang)
-      return { text: "Hilang", color: "text-red-500" };
-    if (eksemplar?.tanggalRusak)
-      return { text: "Rusak", color: "text-orange-500" };
-    return { text: "Tersedia", color: "text-emerald-500" };
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary to-dark-primary p-4 md:p-8">
+    <div className="min-h-screen p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-12 gap-8 md:gap-12">
-          {/* Gambar Buku */}
+        <div className="grid md:grid-cols-12 gap-6">
+          {/* Book Image */}
           <div className="md:col-span-4 lg:col-span-3">
-            <div className="sticky top-8">
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-custom via-primary to-dark-primary rounded-xl blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative overflow-hidden rounded-xl">
-                  <Image
-                    alt={`Cover buku ${detailBuku.judul}`}
-                    src={detailBuku.linkGambar || "/img/book-2.png"}
-                    width={400}
-                    height={600}
-                    className="w-full object-cover transform transition duration-500 group-hover:scale-110"
-                  />
-                </div>
+            <div className="sticky top-4">
+              <div className="rounded-lg border-black-custom border-2 overflow-hidden shadow-md">
+                <Image
+                  alt={`Cover buku ${detailBuku.judul}`}
+                  src={detailBuku.linkGambar || "/img/book-2.png"}
+                  width={400}
+                  height={600}
+                  className="w-full"
+                />
               </div>
 
               {/* Quick Info Card */}
-              <div className="mt-6 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+              <div className="p-4 bg-white-custom rounded-lg border-jewel-green border-2 mt-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-white/5 rounded-lg">
-                    <div className="text-yellow-custom text-sm font-medium">
-                      Halaman
-                    </div>
-                    <div className="text-white-custom text-lg">
-                      {detailBuku.halaman}
+                  <div className="text-center p-2 bg-gray-50 rounded">
+                    <div className="text-gray-600 text-sm">Total</div>
+                    <div className="text-gray-800 text-lg">
+                      {bookStatus.total}
                     </div>
                   </div>
-                  <div className="text-center p-3 bg-white/5 rounded-lg">
-                    <div className="text-yellow-custom text-sm font-medium">
-                      Stok
-                    </div>
-                    <div className="text-white-custom text-lg">
-                      {detailBuku._count.eksemplarBuku}
+                  <div className="text-center p-2 bg-gray-50 rounded">
+                    <div className="text-gray-600 text-sm">Status</div>
+                    <div className="flex flex-col gap-1 items-center">
+                      {bookStatus.dipinjam > 0 && (
+                        <div className="px-2 py-0.5 bg-pastel-red text-jewel-red rounded-full text-xs">
+                          {bookStatus.dipinjam} Dipinjam
+                        </div>
+                      )}
+                      {bookStatus.tersedia > 0 && (
+                        <div className="px-2 py-0.5 bg-pastel-green text-jewel-green rounded-full text-xs">
+                          {bookStatus.tersedia} Tersedia
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
+                <ButtonPinjam
+                  isbn={detailBuku.isbn}
+                  judul={detailBuku.judul}
+                  session={session}
+                />
               </div>
             </div>
           </div>
 
-          {/* Konten */}
-          <div className="md:col-span-8 lg:col-span-9 space-y-8">
-            {/* Header dengan efek gradient */}
+          {/* Content */}
+          <div className="md:col-span-8 lg:col-span-9 space-y-6">
+            {/* Header */}
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-6xl font-bold font-source-serif bg-gradient-to-r from-yellow-custom to-white-custom bg-clip-text text-transparent">
+              <h1 className="text-4xl lg:text-6xl font-source-serif leading-none font-black text-jewel-green">
                 {detailBuku.judul}
               </h1>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-1 bg-yellow-custom rounded"></div>
-                <h2 className="text-xl text-yellow-custom font-medium">
+              <div className="flex gap-2 items-center">
+                <div className="h-2 w-8 bg-primary rounded-full"></div>
+                <h2 className="text-2xl text-black-custom font-bold leading-none">
                   {detailBuku.penulis.map((p) => p.nama).join(", ")}
                 </h2>
               </div>
               <div className="flex flex-wrap gap-2">
                 {detailBuku.genre.map((item, index) => (
-                  <div
+                  <span
                     key={index}
-                    className={`${bg[index]} ${border[index]} font-medium text-white-custom border-2 text-sm rounded-full py-2 px-6 transform hover:scale-105 transition-transform duration-200`}
+                    className="bg-blue-100 text-blue-800 text-sm rounded-full px-3 py-1"
                   >
                     {item.nama}
-                  </div>
+                  </span>
                 ))}
               </div>
             </div>
 
             {/* Info Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-6 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 hover:bg-white/20 transition duration-300">
-                <h3 className="text-yellow-custom font-medium mb-2">ISBN</h3>
-                <p className="text-lg text-white-custom font-mono">
-                  {detailBuku.isbn}
-                </p>
+              <div className="p-4 bg-pastel-green rounded-lg border-jewel-green border-2 ">
+                <h3 className="text-primary font-bold mb-1">ISBN</h3>
+                <p className="text-black-custom font-mono">{detailBuku.isbn}</p>
               </div>
-              <div className="p-6 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 hover:bg-white/20 transition duration-300">
-                <h3 className="text-yellow-custom font-medium mb-2">
-                  Penerbit
-                </h3>
-                <p className="text-lg text-white-custom">
+              <div className="p-4 bg-pastel-green rounded-lg border-jewel-green border-2 ">
+                <h3 className="text-primary font-bold mb-1">Penerbit</h3>
+                <p className="text-black-custom">
                   {detailBuku.penerbitDetails.nama}
                 </p>
               </div>
             </div>
 
-            {/* Posisi Rak dengan Visual Enhancement */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-source-serif font-bold text-yellow-custom flex items-center">
-                <span className="mr-2">📚</span> Posisi di Rak
-              </h2>
-              <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-custom to-primary rounded-xl blur opacity-30"></div>
-                <div className="relative border-2 border-white/20 p-6 rounded-xl bg-white/10 backdrop-blur-md">
-                  <div className="absolute top-8 -left-3 w-3 h-12 bg-gradient-to-br from-yellow-custom to-primary rounded-r-full"></div>
-                  <div className="grid grid-rows-5 gap-3">
-                    {shelfPositions.map((row, rowIndex) => (
-                      <div key={rowIndex} className="grid grid-cols-5 gap-2">
-                        {row.map((position, colIndex) => (
-                          <div key={`${rowIndex}-${colIndex}`}>
-                            {position && (
-                              <div
-                                className={`
-                                  text-sm p-4 font-medium rounded-lg border-2 w-full text-center
-                                  transform transition-all duration-300
-                                  ${
-                                    detailBuku.eksemplarBuku.some(
-                                      (ex) => ex?.posisi === position
-                                    )
-                                      ? "bg-primary text-white border-yellow-custom shadow-lg hover:scale-105"
-                                      : "bg-white/5 text-white/50 border-white/20 hover:bg-white/10"
-                                  }
-                                `}
-                              >
-                                {position}
-                              </div>
-                            )}
-                            {!position && (
-                              <div className="w-full aspect-square"></div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sinopsis dengan Read More */}
-            <div className="space-y-3">
-              <h2 className="text-2xl font-source-serif font-bold text-yellow-custom flex items-center">
-                <span className="mr-2">📖</span> Sinopsis
-              </h2>
+            {/* Synopsis */}
+            <div className="rounded-lg p-4">
+              <h2 className="text-xl font-bold text-primary mb-2">Sinopsis</h2>
               <div
-                className={`relative text-white-custom/90 text-justify leading-relaxed overflow-hidden
-                  ${!showFullSynopsis && "max-h-32"}`}
+                className={
+                  !showFullSynopsis
+                    ? "max-h-[6.5rem] overflow-hidden relative"
+                    : ""
+                }
               >
-                <p className="indent-8">{detailBuku.sinopsis}</p>
+                <p className="text-black-custom font-source-serif tracking-tight leading-relaxed">
+                  {detailBuku.sinopsis}
+                </p>
                 {!showFullSynopsis && (
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-primary to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#F5F5DC] to-transparent"></div>
                 )}
               </div>
               <button
                 onClick={() => setShowFullSynopsis(!showFullSynopsis)}
-                className="text-yellow-custom hover:text-yellow-300 transition duration-300"
+                className="text-primary font-bold underline hover:text-dark-primary mt-2"
               >
                 {showFullSynopsis ? "Tutup" : "Baca Selengkapnya"}
               </button>
             </div>
+            <div className="p-4 bg-white-custom rounded-lg border-jewel-green border-2">
+              <h2 className="text-xl text-primary font-bold mb-4">
+                Posisi di Rak
+              </h2>
+              <div className="border-jewel-green ">
+                <div className="grid grid-rows-5 gap-3">
+                  {shelfPositions.map((row, rowIndex) => (
+                    <div key={rowIndex} className="grid grid-cols-5 gap-2">
+                      {row.map((position, colIndex) => (
+                        <div key={`${rowIndex}-${colIndex}`}>
+                          {position && (
+                            <div
+                              className={`
+                                text-sm p-4 font-medium rounded-lg border w-full text-center
+                                transition-colors duration-200
+                                ${
+                                  detailBuku.eksemplarBuku.some(
+                                    (ex) => ex?.posisi === position
+                                  )
+                                    ? "bg-jewel-green text-white-custom border-pastel-green border-2"
+                                    : "bg-pastel-green text-black-custom border-jewel-green"
+                                }
+                              `}
+                            >
+                              {position}
+                            </div>
+                          )}
+                          {!position && (
+                            <div className="w-full aspect-square lg:aspect-auto"></div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-            {/* Detail Eksemplar dengan Animasi */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-source-serif font-bold text-yellow-custom flex items-center">
-                <span className="mr-2">📚</span> Detail Eksemplar
+            {/* Specimen Details */}
+            <div className="p-4 bg-white-custom rounded-lg border-jewel-green border-2">
+              <h2 className="text-xl text-primary font-bold mb-4">
+                Detail Eksemplar
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {detailBuku.eksemplarBuku.map((eksemplar, index) => {
-                  const status = getBookStatus(eksemplar);
+                {detailBuku.eksemplarBuku.map((eksemplar) => {
+                  const status = getEksemplarStatus(eksemplar);
                   return (
-                    <div
-                      key={eksemplar?.id}
-                      className="group p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-[1.02]"
-                    >
-                      <div className="flex justify-between items-start">
+                    <div key={eksemplar?.id} className="p-4 border rounded-lg">
+                      <div className="flex justify-between">
                         <div>
-                          <p className="text-white-custom font-medium group-hover:text-yellow-custom transition-colors duration-300">
+                          <p className="font-semibold text-black-custom font-source-serif">
                             Eksemplar #{eksemplar?.id}
                           </p>
-                          <p className="text-sm text-yellow-custom/80">
+                          <p className="text-sm text-gray-600">
                             {eksemplar?.tanggalRusak
                               ? "Kondisi: Rusak"
                               : "Kondisi: Baik"}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className={`text-sm font-medium ${status.color}`}>
+                          <p
+                            className={`text-sm font-semibold ${status.color}`}
+                          >
                             {status.text}
                           </p>
-                          <p className="text-xs text-yellow-custom">
+                          <p className="text-xs text-black-custom font-bold">
                             {eksemplar?.posisi || "Belum ditempatkan"}
                           </p>
                         </div>
                       </div>
                       {eksemplar?.tanggalMasuk && (
-                        <div className="mt-2 text-xs text-white-custom/60">
+                        <div className="mt-2 text-xs text-gray-500">
                           Masuk:{" "}
                           {new Date(eksemplar?.tanggalMasuk).toLocaleDateString(
                             "id-ID"
@@ -281,4 +304,4 @@ const Page = ({ params }: { params: Promise<{ isbn: string }> }) => {
   );
 };
 
-export default Page;
+export default PageDetailBuku;

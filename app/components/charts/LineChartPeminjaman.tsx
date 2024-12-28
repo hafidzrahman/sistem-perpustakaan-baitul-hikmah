@@ -80,7 +80,6 @@ const LineChartPeminjaman: React.FC = () => {
             });
           }
         } else {
-          // Kelompokkan data bulanan (4 minggu)
           const today = new Date();
           const startOfMonth = new Date(
             today.getFullYear(),

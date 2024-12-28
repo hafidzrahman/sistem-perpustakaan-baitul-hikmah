@@ -1,8 +1,8 @@
-// app/components/TableBuku.tsx
-
 import React from "react";
 import { cariBukuType, genreType } from "@/lib";
 import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
+import ButtonDetail from "./ButtonDetail";
+import { useRouter } from "next/navigation";
 
 const bg = [
   "bg-jewel-purple",
@@ -20,7 +20,61 @@ const border = [
   "border-pastel-blue",
 ];
 
-const TableBuku = ({ data }: { data: cariBukuType[] }) => {
+const TableBukuUser = ({
+  data,
+  peminjamanData,
+  bukuDetails,
+}: {
+  data: cariBukuType[];
+  peminjamanData: any[];
+  bukuDetails: Record<string, any>;
+}) => {
+  const getBookStatus = (isbn: string) => {
+    const bookDetail = bukuDetails[isbn];
+    if (!bookDetail) return { dipinjam: 0, tersedia: 0, total: 0 };
+
+    const totalEksemplar = bookDetail._count.eksemplarBuku;
+    const dipinjam = peminjamanData.reduce((count, peminjaman) => {
+      return (
+        count +
+        peminjaman.bukuPinjaman.filter(
+          (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
+        ).length
+      );
+    }, 0);
+
+    return {
+      dipinjam,
+      tersedia: totalEksemplar - dipinjam,
+      total: totalEksemplar,
+    };
+  };
+
+  if (!data) return null;
+
+  const router = useRouter();
+
+  const StatusBadge = ({ isbn }: { isbn: string }) => {
+    const status = getBookStatus(isbn);
+
+    return (
+      <div className="flex flex-col gap-1">
+        {status.dipinjam > 0 && (
+          <div className="px-2 py-0.5 border border-jewel-red bg-pastel-red rounded-full flex items-center gap-1 text-jewel-red">
+            <span className="inline-block w-2 h-2 rounded-full bg-jewel-red"></span>
+            <p className="text-xs">{status.dipinjam} Dipinjam</p>
+          </div>
+        )}
+        {status.tersedia > 0 && (
+          <div className="px-2 py-0.5 border border-jewel-green bg-pastel-green rounded-full flex items-center gap-1 text-jewel-green">
+            <span className="inline-block w-2 h-2 rounded-full bg-jewel-green"></span>
+            <p className="text-xs">{status.tersedia} Tersedia</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="w-full">
       {/* Mobile and Tablet View (Card Layout) */}
@@ -65,11 +119,11 @@ const TableBuku = ({ data }: { data: cariBukuType[] }) => {
               </div>
 
               <div className="flex justify-between items-center">
-                <div className="px-2 py-0.5 border border-jewel-green bg-pastel-green rounded-full flex items-center gap-1 text-jewel-green">
-                  <span className="inline-block w-2 h-2 rounded-full bg-jewel-green"></span>
-                  <p className="text-xs">Tersedia</p>
-                </div>
-                <button className="bg-dark-primary text-white-custom font-source-sans py-1 px-4 rounded-lg border-2 border-black text-xs hover:shadow-sm transition-all duration-300">
+                <StatusBadge isbn={item?.isbn} />
+                <button
+                  onClick={() => router.push(`/buku/${item?.isbn}`)}
+                  className="bg-primary w-3/12 text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal transition-all duration-300 hover:font-bold hover:shadow-sm hover:transition-all hover:duration-300"
+                >
                   Detail
                 </button>
               </div>
@@ -87,9 +141,8 @@ const TableBuku = ({ data }: { data: cariBukuType[] }) => {
               <th className="px-4 py-2 text-left w-3/12">Judul</th>
               <th className="px-4 py-2 text-left w-2/12">Penulis</th>
               <th className="px-4 py-2 text-center w-2/12">Genre</th>
-              <th className="px-4 py-2 text-center w-1/12">Status</th>
+              <th className="px-4 py-2 text-center w-2/12">Status</th>
               <th className="px-4 py-2 text-center w-1/12">Aksi</th>
-              <th className="px-4 py-2 text-center w-1/12">Detail</th>
             </tr>
           </thead>
           <tbody>
@@ -123,25 +176,11 @@ const TableBuku = ({ data }: { data: cariBukuType[] }) => {
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex items-center justify-center">
-                    <div className="px-2 gap-1 py-0.5 border border-jewel-green bg-pastel-green rounded-full flex justify-between items-center text-jewel-green">
-                      <span className="inline-block w-2 h-2 rounded-full bg-jewel-green"></span>
-                      <p className="text-xs">Tersedia</p>
-                    </div>
+                    <StatusBadge isbn={item?.isbn} />
                   </div>
                 </td>
                 <td className="px-4 py-2">
-                  <div className="flex items-center justify-center gap-2">
-                    <Delete02Icon className="w-5 h-5 text-jewel-red" />
-                    <PencilEdit01Icon className="w-5 h-5 text-jewel-blue" />
-                  </div>
-                </td>
-                <td className="px-4 py-2">
-                  <button
-                    type="submit"
-                    className="bg-dark-primary text-white-custom font-source-sans py-1 px-2 w-full rounded-lg border-2 border-black text-xs hover:shadow-sm transition-all duration-300"
-                  >
-                    Detail
-                  </button>
+                  <ButtonDetail isbn={item?.isbn} />
                 </td>
               </tr>
             ))}
@@ -152,4 +191,4 @@ const TableBuku = ({ data }: { data: cariBukuType[] }) => {
   );
 };
 
-export default TableBuku;
+export default TableBukuUser;

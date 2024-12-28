@@ -71,19 +71,6 @@ const ButtonPinjam = ({ session, isbn, judul }: ButtonPinjamProps) => {
     }
   };
 
-  if (!session?.user) {
-    return (
-      <div className="w-full">
-        <button
-          onClick={() => toast.error("Silakan login terlebih dahulu")}
-          className="bg-primary w-full text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal opacity-50"
-        >
-          Login untuk Pinjam
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full">
       <button

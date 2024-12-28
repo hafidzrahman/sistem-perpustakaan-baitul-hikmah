@@ -13,13 +13,20 @@ interface MuridPageProps {
   onclick: () => void;
 }
 
+interface LeaderboardEntry {
+  nis: string;
+  nama: string;
+  kelas: string;
+  booksRead: number;
+}
+
 const MuridPage = ({}: MuridPageProps) => {
   const [murid, setMurid] = useState();
   const [tambahKelas, setTambahKelas] = useState(false);
   const [tambahMurid, setTambahMurid] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Filter data berdasarkan pencarian
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>(
+    []
+  );
 
   const handleTambahKelas = () => {
     setTambahKelas(!tambahKelas);
@@ -47,6 +54,75 @@ const MuridPage = ({}: MuridPageProps) => {
     fetchKelas();
   }, [tambahKelas]);
 
+  useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      try {
+        const response = await fetch("/api/form-bukti");
+        if (!response.ok) throw new Error("Failed to fetch leaderboard data");
+        const data = await response.json();
+
+        // Process data to create leaderboard
+        const studentReadCounts = data.reduce(
+          (acc: { [key: string]: LeaderboardEntry }, curr: any) => {
+            const { murid } = curr;
+            const muridNIS = murid.nis; // Get NIS directly from murid object
+
+            // Get the current class info
+            const currentClass = murid.riwayatKelas[0]?.kelas;
+            const classInfo = currentClass
+              ? `${currentClass.tingkat}-${currentClass.nama}`
+              : "";
+
+            // Only count approved submissions (status === true)
+            if (curr.status === true) {
+              if (!acc[muridNIS]) {
+                acc[muridNIS] = {
+                  nis: muridNIS,
+                  nama: murid.nama,
+                  kelas: classInfo,
+                  booksRead: 1,
+                };
+              } else {
+                acc[muridNIS].booksRead += 1;
+              }
+            } else if (!acc[muridNIS]) {
+              // Initialize student even if they have no approved submissions
+              acc[muridNIS] = {
+                nis: muridNIS,
+                nama: murid.nama,
+                kelas: classInfo,
+                booksRead: 0,
+              };
+            }
+
+            return acc;
+          },
+          {}
+        );
+
+        // Convert to array and sort by books read
+        const leaderboard = Object.values(studentReadCounts)
+          .sort((a, b) => {
+            // Sort by books read (descending)
+            const booksComparison = b.booksRead - a.booksRead;
+            // If books read are equal, sort alphabetically by name
+            if (booksComparison === 0) {
+              return a.nama.localeCompare(b.nama);
+            }
+            return booksComparison;
+          })
+          .slice(0, 3); // Get top 3
+
+        console.log("Processed leaderboard data:", leaderboard); // For debugging
+        setLeaderboardData(leaderboard);
+      } catch (err: any) {
+        console.error("Error fetching leaderboard:", err);
+        setError(err.message);
+      }
+    };
+    fetchLeaderboardData();
+  }, []);
+
   return (
     <>
       <ModalTambahKelas status={tambahKelas} handle={handleTambahKelas} />
@@ -69,24 +145,16 @@ const MuridPage = ({}: MuridPageProps) => {
             Papan Peringkat
           </h1>
           <div className="flex flex-col max-h-96 my-4 gap-2 overflow-y-auto">
-            <CardLeaderboardMurid
-              name="Muhammad Faruq"
-              kelas="7 Al-fatih"
-              booksRead={20}
-              totalBooksToRead={20}
-            />
-            <CardLeaderboardMurid
-              name="Muhammad Aditya Rinaldi"
-              kelas="8 Al-fatih"
-              booksRead={16}
-              totalBooksToRead={20}
-            />
-            <CardLeaderboardMurid
-              name="Hafidz Alhadid Rahman"
-              kelas="9 Al-fatih"
-              booksRead={12}
-              totalBooksToRead={20}
-            />
+            {leaderboardData.map((student, index) => (
+              <CardLeaderboardMurid
+                key={index}
+                name={student.nama}
+                kelas={student.kelas}
+                booksRead={student.booksRead}
+                totalBooksToRead={20}
+                rank={index}
+              />
+            ))}
           </div>
         </div>
         <div className="flex flex-col gap-4 order-last col-span-1 row-span-2 p-6 bg-white  rounded-lg border-2 border-dark-gray lg:order-none sm:col-span-2 lg:col-span-4 lg:row-span-2 dark-gray">

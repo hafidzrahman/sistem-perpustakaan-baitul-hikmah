@@ -34,15 +34,15 @@ const TableFormBuktiMurid = ({ data = [] }: TableFormBuktiMuridProps) => {
       <div className="relative">
         <input
           type="text"
-          placeholder="Cari berdasarkan judul buku atau intisari..."
+          placeholder="Cari berdasarkan judul buku atau nama peminjam..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 pl-10 border-2 border-primary rounded-lg focus:outline-none focus:border-dark-primary"
+          className="w-full px-4 py-1 pl-10 border-2 border-primary rounded-lg focus:outline-none placeholder:text-xs focus:border-dark-primary"
         />
         <Search01Icon
           className="absolute left-3 top-[30%] transform -translate-y-1/2 text-gray-400"
-          width={20}
-          height={20}
+          width={12}
+          height={12}
         />
       </div>
 
@@ -141,7 +141,11 @@ const TableFormBuktiMurid = ({ data = [] }: TableFormBuktiMuridProps) => {
                   </div>
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-600">
-                  {record.intisari}
+                  <div>
+                    <p className="line-clamp-1 transition-all duration-300">
+                      {record.intisari}
+                    </p>
+                  </div>
                 </td>
               </tr>
             ))}

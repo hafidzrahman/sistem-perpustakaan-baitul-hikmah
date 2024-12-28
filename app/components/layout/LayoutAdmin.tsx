@@ -12,6 +12,7 @@ import {
   SquareArrowShrink02Icon,
   Menu01Icon,
   LicenseDraftIcon,
+  MoneyNotFound04Icon,
 } from "hugeicons-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -40,6 +41,7 @@ const LayoutAdmin = ({ children }: { children: React.ReactNode }) => {
       label: "Form Bukti",
     },
     { icon: ChartLineData03Icon, href: "/laporan", label: "Laporan" },
+    { icon: MoneyNotFound04Icon, href: "/denda", label: "Denda" },
   ];
 
   const pathname = usePathname();

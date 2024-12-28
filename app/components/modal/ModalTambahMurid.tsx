@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
-import {muridType} from "@/lib";
+import { muridType } from "@/lib";
+import { hash } from "bcryptjs";
 
 interface ModalTambahMuridProps {
   status: boolean;
@@ -13,8 +14,9 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
   const [jenisKelamin, setJenisKelamin] = useState("");
   const [kontakOrtu, setKontakOrtu] = useState("");
   const [alamat, setAlamat] = useState("");
-  const [idKelas, setIdKelas] = useState<number>(0); // State untuk menyimpan ID kelas
-  const [kelas, setKelas] = useState([]); // State untuk menyimpan daftar kelas
+  const [idKelas, setIdKelas] = useState<number>(0);
+  const [kelas, setKelas] = useState([]);
+  const [password, setPassword] = useState("");
 
   // Fetch data kelas
   useEffect(() => {
@@ -34,7 +36,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("/api/murid", {
+      let response = await fetch("/api/murid", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,10 +45,22 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
           nis,
           nama,
           jenisKelamin,
-          kontak : kontakOrtu,
+          kontak: kontakOrtu,
           alamat,
           idKelas: Number(idKelas),
         } as muridType),
+      });
+
+      response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: nis,
+          password: await hash(password, 12),
+          role: "murid",
+        }),
       });
 
       const data = await response.json();
@@ -57,6 +71,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         setKontakOrtu("");
         setAlamat("");
         setIdKelas(0);
+        setPassword("");
       } else {
         console.log(data.error);
       }
@@ -71,23 +86,23 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         status ? "block" : "hidden"
       }`}
     >
-      <div className="w-1/2 relative flex flex-col items-center gap-4 p-8 bg-white-custom border-black-custom rounded-lg border-2">
+      <div className="w-11/12 md:w-3/5 max-h-[90vh] overflow-y-auto relative flex flex-col items-center gap-4 p-4 md:p-8 bg-white-custom border-black-custom rounded-lg border-2">
         <button
           onClick={handle}
-          className="absolute top-6 p-2 right-6 text-red-600 hover:text-red-400"
+          className="absolute top-4 md:top-6 p-2 right-4 md:right-6 text-red-600 hover:text-red-400"
         >
           <CancelCircleHalfDotIcon width={32} height={32} strokeWidth={4} />
         </button>
 
-        <h1 className="text-3xl font-extrabold font-source-serif sm:text-3xl text-light-primary">
+        <h1 className="text-2xl md:text-3xl font-extrabold font-source-serif text-light-primary">
           Tambah Murid
         </h1>
         <form
           onSubmit={onSubmit}
           className="w-full flex flex-col gap-4 justify-center items-stretch"
         >
-          <div className="w-full flex gap-6">
-            <div className="flex w-1/2 flex-col gap-4 items-stretch">
+          <div className="w-full flex flex-col md:flex-row gap-6">
+            <div className="flex w-full md:w-1/2 flex-col gap-4 items-stretch">
               <div className="flex flex-col gap-1">
                 <label
                   htmlFor="nis"
@@ -116,7 +131,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                     id="jenisKelamin"
                     value={jenisKelamin}
                     onChange={(e) => setJenisKelamin(e.target.value)}
-                    className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                    className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
                   >
                     <option value="" disabled>
                       Pilih Jenis Kelamin
@@ -141,7 +156,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                     id="idKelas"
                     value={idKelas}
                     onChange={(e) => setIdKelas(Number(e.target.value))}
-                    className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                    className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
                   >
                     <option value={0} disabled>
                       Pilih Kelas
@@ -160,17 +175,17 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                 </div>
               </div>
             </div>
-            <div className="flex w-1/2 flex-col gap-4 items-stretch">
+            <div className="flex w-full md:w-1/2 flex-col gap-4 items-stretch">
               <div className="flex flex-col gap-1">
                 <label
-                  htmlFor="isbn"
+                  htmlFor="nama"
                   className="font-source-serif text-lg font-bold"
                 >
                   Nama
                 </label>
                 <input
                   type="text"
-                  id="isbn"
+                  id="nama"
                   value={nama}
                   onChange={(e) => setNama(e.target.value)}
                   placeholder="Masukkan nama murid"
@@ -195,6 +210,22 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
               </div>
               <div className="flex flex-col gap-1">
                 <label
+                  htmlFor="password"
+                  className="font-source-serif text-lg font-bold"
+                >
+                  Kata Sandi Akun
+                </label>
+                <input
+                  type="text"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Masukkan kata sandi akun murid"
+                  className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label
                   htmlFor="alamat"
                   className="font-source-serif text-lg font-bold"
                 >
@@ -211,12 +242,12 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
             </div>
           </div>
 
-          <p className="text-gray-text italic text-sm">
+          <p className="text-gray-text italic text-sm mt-4">
             *Data tetap akan bisa diubah di lain waktu
           </p>
           <button
             type="submit"
-            className="bg-dark-primary text-white-custom font-source-sans text-sm py-2 w-full rounded-lg border-2 border-black hover:shadow-md transition-all duration-300 hover:transition-all hover:duration-300"
+            className="bg-dark-primary text-white-custom font-source-sans text-sm py-2 w-full rounded-lg border-2 border-black hover:shadow-md transition-all duration-300"
           >
             Tambahkan Murid
           </button>
