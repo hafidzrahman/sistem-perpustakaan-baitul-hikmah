@@ -221,7 +221,7 @@ const TableFormBukti = () => {
                   <td className="px-4 py-2 text-center">
                     <button
                       onClick={() => handleOpenDetail(record.id)}
-                      className="px-3 py-1 text-sm bg-light-primary text-white rounded-lg hover:bg-opacity-90 transition-all duration-300"
+                      className="bg-primary w-full text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal transition-all duration-300 hover:font-bold hover:shadow-sm hover:transition-all hover:duration-300"
                     >
                       Detail
                     </button>
