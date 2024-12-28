@@ -11,7 +11,7 @@ export default function PanelKontrolPage() {
   }
 
   if (session?.user?.role === "murid") {
-    return <BerandaMurid />;
+    return <BerandaMurid data={[]} bukuList={[]} muridList={[]} studentNIS={""} />;
   }
 
   return <BerandaAdmin />;

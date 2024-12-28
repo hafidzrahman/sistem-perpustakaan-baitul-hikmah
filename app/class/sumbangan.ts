@@ -1,7 +1,8 @@
-import { beriSumbanganType, cariSumbanganType, hariKeMiliDetik, prisma, sumbanganType } from "@/lib";
+import { ambilSemuaDataPeminjamanType, ambilSemuaDataSumbanganType, beriSumbanganType, cariSumbanganType, hariKeMiliDetik, prisma, sumbanganType } from "@/lib";
 import { RiwayatBantuan } from "./riwayatbantuan";
 import { PembayaranTunai } from "./pembayarantunai";
 import { Denda } from "./denda";
+import { Buku } from "./buku";
 
 
 export class Sumbangan {
@@ -69,8 +70,22 @@ export class Sumbangan {
         return dataSumbangan as unknown as cariSumbanganType[];
     }
 
-    static async ambilSemuaDataSumbangan() : Promise<sumbanganType[]> {
-        const dataSumbangan = await prisma.sumbangan.findMany({});
+    static async ambilSemuaDataSumbangan() : Promise<ambilSemuaDataSumbanganType[]> {
+        const dataSumbangan = await prisma.sumbangan.findMany({
+            include : {
+                pembayaranTunai : {
+                    include : {
+                        riwayatBantuan : true
+                    },
+                },
+                murid : true,
+                guru : true,
+                riwayatBantuan : true,
+                sumbanganBuku : true,
+                keterangan : true,
+                denda : true
+            }
+        });
 
         return dataSumbangan;
     }
@@ -81,7 +96,7 @@ export class Sumbangan {
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        const {nip, nis, pilihan} = data;
+        const {nip, nis, nominalTotal, buku} = data;
 
         if (data?.idSumbangan) {
             const arrayDataSumbangan = await Sumbangan.cariSumbangan({nip, nis});
@@ -95,54 +110,14 @@ export class Sumbangan {
                 if (dataSumbangan.keterangan.nominalPerHari) {
                     targetTunai = ((Date.now() - dataSumbangan.denda.tanggal!.getTime()) / hariKeMiliDetik) * dataSumbangan.keterangan.nominalPerHari
                 }
-                const jumlahBuku = dataSumbangan._count.sumbanganBuku + dataSumbangan._count.sumbanganBukuBantuan;
+                const jumlahBuku = (dataSumbangan._count.sumbanganBuku || 0) + (dataSumbangan._count.sumbanganBukuBantuan || 0);
                 const totalPembayaranTunai = await PembayaranTunai.totalkanPembayaranTunai(dataSumbangan.id);
                 const totalRiwayatBantuan = await RiwayatBantuan.totalkanRiwayatBantuan(dataSumbangan.id);
-                const totalTunai = totalPembayaranTunai + totalRiwayatBantuan;
+                const totalTunai = (totalPembayaranTunai || 0) + (totalRiwayatBantuan || 0) + (nominalTotal || 0);
 
                 if ((jumlahBuku + data.buku.length) === targetBuku) {
+                    // jika jumlah buku sudah terpenuhi dan uang lebih dari 0, maka status murid berlebih
                     if (totalTunai > 0) {
-                        if (data.pilihan === 'Hibah' || data.pilihan === 'Sesuaikan') {
-                        await prisma.sumbangan.update({
-                            where : {
-                                id : dataSumbangan.id
-                            },
-                            data : {
-                                tanggalSelesai : new Date(Date.now()),
-                                berlebih : false
-                            }
-                        })
-                        if (data.pilihan === 'Sesuaikan') {
-                            console.log(`Kembalikan kepada murid Rp.${totalPembayaranTunai}`)
-                            await prisma.pembayaranTunai.deleteMany({
-                                where : {
-                                    idSumbangan : dataSumbangan.id
-                                }
-                            });
-                            const arrayDataRiwayatBantuan = await prisma.riwayatBantuan.findMany({
-                                where : {
-                                    idSumbangan : dataSumbangan.id
-                                },
-                                include : {
-                                    pembayaranTunai : {
-                                        include : {
-                                            sumbangan : true
-                                        }
-                                    }
-                                }
-                            });
-                            for await (const dataRiwayatBantuan of arrayDataRiwayatBantuan) {
-                                if (dataRiwayatBantuan.pembayaranTunai?.idSumbangan){
-                                await prisma.sumbangan.update({
-                                    where : {
-                                        id : dataRiwayatBantuan.pembayaranTunai?.idSumbangan
-                                    }, data : {
-                                        berlebih : true
-                                    }
-                                })}
-                            }
-                        }
-                    } else if (data.pilihan === 'Bantuan') {
                         await prisma.sumbangan.update({
                             where : {
                                 id : dataSumbangan.id
@@ -152,8 +127,131 @@ export class Sumbangan {
                                 berlebih : true
                             }
                         })
+                    } else {
+                        await prisma.sumbangan.update({
+                            where : {
+                                id : dataSumbangan.id
+                            },
+                            data : {
+                                tanggalSelesai : new Date(Date.now()),
+                                berlebih : false
+                            }
+                        })
                     }
+
+                    for await (const dataBuku of buku) {
+                    await Buku.tambahBuku(dataBuku)
                     }
+
+                } else if ((jumlahBuku + data.buku.length) > targetBuku!) {
+                    await prisma.sumbangan.update({
+                        where : {
+                            id : dataSumbangan.id
+                        },
+                        data : {
+                            tanggalSelesai : new Date(Date.now()),
+                            berlebih : true
+                        }
+                    })
+
+                    for await (const dataBuku of buku) {
+                        await Buku.tambahBuku(dataBuku)
+                        }
+
+                } else if ((jumlahBuku + data.buku.length) < targetBuku!) {
+                    for await (const dataBuku of buku) {
+                        await Buku.tambahBuku(dataBuku)
+                        }
+                } else if (totalTunai === targetTunai) {
+                    await PembayaranTunai.tambahPembayaranTunai({
+                        idSumbangan : dataSumbangan.id,
+                        tanggal : new Date(),
+                        jumlah : (nominalTotal || 0)
+                    })
+                    await prisma.sumbangan.update({
+                        where : {
+                            id : dataSumbangan.id
+                        },
+                        data : {
+                            tanggalSelesai : new Date(Date.now()),
+                            berlebih : false
+                        }
+                    })
+
+                } else if (totalTunai > targetTunai!) {
+
+                    await PembayaranTunai.tambahPembayaranTunai({
+                        idSumbangan : dataSumbangan.id,
+                        tanggal : new Date(),
+                        jumlah : (nominalTotal || 0)
+                    })
+
+                    await prisma.sumbangan.update({
+                        where : {
+                            id : dataSumbangan.id
+                        },
+                        data : {
+                            tanggalSelesai : new Date(Date.now()),
+                            berlebih : true
+                        }
+                    })
+
+                } else if (totalTunai < targetTunai!) {
+                    await PembayaranTunai.tambahPembayaranTunai({
+                        idSumbangan : dataSumbangan.id,
+                        tanggal : new Date(),
+                        jumlah : (nominalTotal || 0)
+                    })
+
+                    const kekurangan = dataSumbangan.keterangan.totalNominal! - totalTunai;
+
+                    const arraySumbangan = await prisma.sumbangan.findMany({
+                        where : {
+                            berlebih : true
+                        },
+                        include : {
+                            pembayaranTunai : true,
+                            keterangan : true
+                        }
+                    });
+
+                    for await (const data of arraySumbangan) {
+                        const jumlahBuku = await prisma.eksemplarBuku.count({
+                            where : {
+                                idSumbangan : dataSumbangan.id
+                            }
+                        });
+
+                        let jumlah = jumlahBuku * (data.keterangan.totalNominal! / data.keterangan.jumlahBuku!) - data.keterangan.totalNominal!;
+
+                        for (const tunai of data.pembayaranTunai) {
+
+                            jumlah += tunai.jumlah
+
+                            if (jumlah >= kekurangan) {
+                                await prisma.riwayatBantuan.create({
+                                    data : {
+                                        idPembayaranTunai : tunai.id,
+                                        idSumbangan : dataSumbangan.id,
+                                        jumlah : kekurangan
+                                    }
+                                })
+                                await prisma.sumbangan.update({
+                                    where : {
+                                        id : dataSumbangan.id
+                                    }, data : {
+                                        tanggalSelesai : new Date(),
+                                        berlebih : false
+                                    }
+                                })
+                                break;
+                            }
+                        }
+
+                        
+
+                    }
+
                 }
 
 

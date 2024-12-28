@@ -17,8 +17,10 @@ export async function GET(req : NextRequest) {
 
     if (token?.role === "admin") {
       dataPeminjaman = await Peminjaman.ambilSemuaDataPeminjaman();
-    } else {
+    } else if (token?.role === "guru" || token?.role === "murid") {
       dataPeminjaman = await Peminjaman.cariPeminjamanAnggota(token?.role as "murid" | "guru", token?.username as string)
+    } else {
+      throw new Error("Terjadi kesalahan pada pengkondisian role")
     }
 
     // await BukuPinjaman.perbaruiTenggatWaktuPeminjaman(

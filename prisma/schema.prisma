@@ -19,7 +19,7 @@ datasource db {
 }
 
 model PetugasPerpustakaan {
-  id   String @id
+  id   String @id @default(uuid())
   nama String
 
   user User?
@@ -207,6 +207,7 @@ model Keterangan {
   jumlahBuku     Int?
   totalNominal   Int?
   nominalPerHari Int?
+  denda          Boolean     @default(false)
   sumbangan      Sumbangan[]
 
   @@index([id])
