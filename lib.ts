@@ -255,19 +255,38 @@ export type userType = {
 
 };
 
-export type ambilSemuaDataSumbanganType = {
+export type detailSumbanganType = {
     id?: number;
     idKeterangan: number;
     nis?: string | null;
     nip?: string | null;
     tanggalSelesai?: Date | null;
     berlebih?: boolean | null;
-    riwayatBantuan : riwayatBantuanType[]
+    riwayatBantuan : {
+      idPembayaranTunai: number;
+      idSumbangan: number;
+      jumlah: number;
+      pembayaranTunai : {
+        sumbangan : { murid: { nama: string; } | null; } | null
+      } 
+    }[]
     pembayaranTunai : pembayaranTunaiType[];
     murid? : muridType | null;
     guru? : guruType | null;
     keterangan : keteranganType;
     denda? : dendaType | null;
+    _count : {
+      sumbanganBuku : number,
+      sumbanganBukuBantuan : number
+    }
+}
+
+
+export type ambilSemuaDataSumbanganType = sumbanganType & 
+{keterangan : {keterangan : string}, 
+murid? : {nama : string} | null,
+guru? : {nama : string} | null,
+denda? : {id : number} | null
 }
 
 export type petugasPerpustakaanType = {
@@ -284,7 +303,7 @@ export type sumbanganType = {
   berlebih?: boolean | null;
 };
 
-export type cariSumbanganType = sumbanganType & {
+export type cariSumbanganAnggotaType = sumbanganType & {
   keterangan: keteranganType;
   pembayaranTunai: pembayaranTunaiType;
   _count: {
@@ -309,13 +328,9 @@ export type pembayaranTunaiType = {
 
 export type beriSumbanganType = {
   idSumbangan?: number;
-  nis?: string;
-  nip?: string;
-  pilihan: "Hibah" | "Bantuan" | "Sesuaikan";
-  jumlahBuku?: number;
   nominalTotal?: number;
   buku: tambahBukuType[];
-} | null;
+};
 
 export const hariKeMiliDetik = 1000 * 60 * 60 * 24;
 

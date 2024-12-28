@@ -2,7 +2,7 @@
 
 import TableSumbangan from '@/app/components/TableSumbangan'
 import {useState, useEffect} from 'react'
-import ModalBayarSumbangan from "@/app/components/modal/ModalBayarSumbangan"
+
 
 export default function Home() {
     const [dataSumbangan, setDataSumbangan] = useState([]);
@@ -29,7 +29,6 @@ export default function Home() {
     }, [])
 
     return <div>
-        <ModalBayarSumbangan status={openModal} handle={handle}/>
         <TableSumbangan data={dataSumbangan} handleDetails={handleDetails}/>
     </div>
 }

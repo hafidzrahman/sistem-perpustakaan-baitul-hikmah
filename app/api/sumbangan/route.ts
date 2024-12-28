@@ -8,6 +8,17 @@ export async function GET() {
 
         return NextResponse.json(dataSumbangan, {status : 200})
     } catch (error) {
-        return NextResponse.json({message : "Gagal mendapatkan data sumbangan"}, {status : 500})
+        return NextResponse.json({message : "Gagal mendapatkan data sumbangan", details : error}, {status : 500})
+    }
+}
+
+export async function POST(req : Request) {
+    try {
+       const body = await req.json();
+       await Sumbangan.tambahSumbangan(body);
+
+       return NextResponse.json({message : "Berhasil menambahkan data sumbangan"}, {status : 200})
+    } catch (error) {
+        return NextResponse.json({message : "Gagal menambahkan data sumbangan", details : error}, {status : 500})
     }
 }

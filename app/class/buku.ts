@@ -33,7 +33,7 @@ export class Buku{
     }
 
     static async tambahBuku(dataBuku: tambahBukuType) : Promise<eksemplarDenganBukuType> {
-        const { judul, isbn, linkGambar, sinopsis, halaman, tanggalMasuk, tanggalRusak, tanggalHilang, posisi } = dataBuku;
+        const { judul, isbn, linkGambar, sinopsis, halaman, tanggalMasuk, tanggalRusak, tanggalHilang, posisi, idSumbangan } = dataBuku;
         let {penulis, penerbit, genre} = dataBuku;
         
         if (!isbn || !judul  || !genre ) {
@@ -79,6 +79,7 @@ export class Buku{
         const dataEksemplarBuku = new EksemplarBuku({
             id : count + 1,
             bukuISBN : isbn,
+            idSumbangan : idSumbangan,
             tanggalMasuk,
             tanggalRusak,
             tanggalHilang,

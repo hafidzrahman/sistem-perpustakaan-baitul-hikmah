@@ -19,6 +19,7 @@ export class PembayaranTunai {
             throw new Error("Harus mengisi field yang wajib");
         }
 
+        // angka jangan lebih dari 10 digit (batas integer)
         const dataPembayaranTunai = await prisma.pembayaranTunai.create({
             data : {
                 idSumbangan,
@@ -43,11 +44,11 @@ export class PembayaranTunai {
             }
         })
 
-        if (!total?._sum?.jumlah) {
+        if (!total?._sum?.jumlah === undefined || !total?._sum?.jumlah === null) {
             throw new Error("Gagal menghitung total pembayaran");
         }
 
-        return total._sum.jumlah
+        return total._sum.jumlah!
     }
 
 

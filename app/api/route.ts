@@ -90,6 +90,8 @@ export async function GET() {
         id: 1000,
         nis: "12250111794",
         idKeterangan: 2,
+        tanggalSelesai: new Date(),
+        berlebih : true
       },
       {
         id: 1001,
@@ -101,8 +103,26 @@ export async function GET() {
         nis: "12250111794",
         idKeterangan: 4,
       },
+      {
+        id: 1003,
+        nis: "12250111794",
+        idKeterangan: 4,
+      },
+      {
+        id: 1004,
+        nis: "12250111794",
+        idKeterangan: 4,
+      },
     ],
   });
+
+  await prisma.denda.create({
+    data : {
+      id : 10000,
+      idSumbangan : 1000,
+      tanggal : new Date(),
+    }
+  })
 
     await prisma.eksemplarBuku.createMany({
       data : dataEksemplarBuku
@@ -116,46 +136,16 @@ export async function GET() {
         jumlah: 50000,
         idSumbangan: 1000,
       },
-      {
-        id: 3001,
-        tanggal: new Date(Date.now()),
-        jumlah: 50000,
-        idSumbangan: 1000,
-      },
-      {
-        id: 3002,
-        tanggal: new Date(Date.now()),
-        jumlah: 50000,
-        idSumbangan: 1000,
-      },
-      {
-        id: 3003,
-        tanggal: new Date(Date.now()),
-        jumlah: 50000,
-        idSumbangan: 1001,
-      },
-      {
-        id: 3004,
-        tanggal: new Date(Date.now()),
-        jumlah: 50000,
-        idSumbangan: 1002,
-      },
-      {
-        id: 3005,
-        tanggal: new Date(Date.now()),
-        jumlah: 50000,
-        idSumbangan: 1002,
-      },
     ],
   });
 
-  await prisma.riwayatBantuan.createMany({
-    data: [
-      { idPembayaranTunai: 3003, idSumbangan: 1000, jumlah: 50000 },
-      { idPembayaranTunai: 3004, idSumbangan: 1000, jumlah: 50000 },
-      { idPembayaranTunai: 3005, idSumbangan: 1000, jumlah: 50000 },
-    ],
-  });
+  // await prisma.riwayatBantuan.createMany({
+  //   data: [
+  //     { idPembayaranTunai: 3003, idSumbangan: 1000, jumlah: 50000 },
+  //     { idPembayaranTunai: 3004, idSumbangan: 1000, jumlah: 50000 },
+  //     { idPembayaranTunai: 3005, idSumbangan: 1000, jumlah: 50000 },
+  //   ],
+  // });
 
   await prisma.kelas.create({
     data : {

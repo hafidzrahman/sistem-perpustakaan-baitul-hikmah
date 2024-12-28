@@ -73,7 +73,7 @@ const ModalDetailFormBukti: React.FC<DetailFormBuktiProps> = ({
 
     try {
       const response = await fetch(`/api/form-bukti/${formBukti.id}`, {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },

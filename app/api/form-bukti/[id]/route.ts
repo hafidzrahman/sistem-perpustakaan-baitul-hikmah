@@ -18,7 +18,7 @@ export async function GET(req : Request, {params} : paramsType) {
     }
 }
 
-export async function PUT(req : Request, {params} : paramsType) {
+export async function POST(req : Request, {params} : paramsType) {
     try {
         const body = await req.json()
         const {id} = await params;

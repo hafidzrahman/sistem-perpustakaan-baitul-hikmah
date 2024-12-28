@@ -8,15 +8,24 @@ import {
   Search01Icon,
 } from "hugeicons-react";
 import {ambilSemuaDataSumbanganType } from "@/lib";
+import ModalDetailSumbangan from "@/app/components/modal/ModalDetailBayarSumbangan"
 
-const TableSumbangan = ({ data, handleDetails }: { data: ambilSemuaDataSumbanganType[], handleDetails : () => void }) => {
+const TableSumbangan = ({ data }: { data: ambilSemuaDataSumbanganType[] }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [sumbanganId, setSumbanganId] = useState<number | null | undefined>(null)
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   // Filter data berdasarkan pencarian
 
+  function handleOnClick(id : number) {
+      setSumbanganId(id)
+      setIsOpen(true)
+  }
 
-  return (
+
+  return <>
+  <ModalDetailSumbangan key={sumbanganId} isOpen={isOpen} onClose={() => setIsOpen(prev => !prev)} sumbanganId={sumbanganId} />
     <div className="w-full space-y-4">
       {/* Search Bar */}
       <div className="relative">
@@ -68,11 +77,11 @@ const TableSumbangan = ({ data, handleDetails }: { data: ambilSemuaDataSumbangan
                 </div>
 
                 <p className="text-sm font-semibold">
-                  <span >Jenis: </span> {item.denda?.id ? "Denda" : "Sumbangan"}
+                  <span >Jenis: </span> {item.denda ? "Denda" : "Sumbangan"}
                 </p>
 
                 <p className="text-sm font-semibold">
-                  <span >Tanggal Selesai: </span> {item.tanggalSelesai?.toISOString() || '-'}
+                  <span >Tanggal Selesai: </span> {item.tanggalSelesai?.toLocaleString() || '-'}
                 </p>
 
                 <button
@@ -130,14 +139,14 @@ const TableSumbangan = ({ data, handleDetails }: { data: ambilSemuaDataSumbangan
                   <td className="px-4 py-2">{item.denda?.id ? "Denda" : "Sumbangan"}</td>
                   <td className="px-4 py-2 text-center">
                     <div className="flex items-center justify-center">
-                    {item.tanggalSelesai?.toISOString()}
+                    {item.tanggalSelesai?.toLocaleString()}
                     </div>
                   </td>
                   <td className="px-4 py-2 text-center">
                   </td>
                   <td className="px-4 py-2">
                     <button
-                      onClick={() => {}
+                      onClick={() => handleOnClick(item.id!)
                       }
                       type="submit"
                       className="bg-dark-primary text-white-custom font-source-sans py-1 px-2 w-full rounded-lg border-2 border-black text-xs hover:shadow-sm transition-all duration-300"
@@ -152,7 +161,7 @@ const TableSumbangan = ({ data, handleDetails }: { data: ambilSemuaDataSumbangan
         </table>
       </div>
     </div>
-  );
+    </>;
 };
 
 export default TableSumbangan;
