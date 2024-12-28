@@ -3,12 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import PeminjamanCalendar from "@/app/components/PeminjamanCalendar";
-import {
-  BookOpen01Icon,
-  Calendar01Icon,
-  MapPinIcon,
-  UserAccountIcon,
-} from "hugeicons-react";
 
 interface StudentData {
   nis: string;
@@ -108,7 +102,6 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl text-primary font-bold font-source-sans flex items-center gap-2">
-              <UserAccountIcon className="h-6 w-6" />
               Profil Siswa
             </h2>
             <span
@@ -138,7 +131,6 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
                 <h1 className="text-2xl font-bold">{detailMurid.nama}</h1>
               </div>
               <div className="flex items-start gap-2">
-                <MapPinIcon className="h-5 w-5 text-gray-400 mt-1" />
                 <p className="text-sm text-gray-600">{detailMurid.alamat}</p>
               </div>
             </div>
@@ -150,7 +142,6 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
       <div className="col-span-1 sm:col-span-2 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-6">
-            <Calendar01Icon className="h-6 w-6 text-primary" />
             <h2 className="text-2xl text-primary font-bold font-source-sans">
               Kalender Peminjaman
             </h2>
@@ -163,7 +154,6 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
       <div className="col-span-1 sm:col-span-2 lg:col-span-4 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-6">
-            <BookOpen01Icon className="h-6 w-6 text-primary" />
             <h2 className="text-2xl text-primary font-bold font-source-sans">
               Daftar Bukti Bacaan
             </h2>

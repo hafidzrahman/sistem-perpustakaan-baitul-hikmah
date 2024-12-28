@@ -173,7 +173,7 @@ const LayoutMurid = ({ children }: { children: React.ReactNode }) => {
           </div>
         </header>
 
-        <main className="flex-grow overflow-y-auto bg-white-custom p-4 bg-noise bg-repeat">
+        <main className="flex-grow overflow-y-auto bg-[#F5F5DC] p-4 bg-noise bg-repeat">
           {children}
         </main>
       </div>
