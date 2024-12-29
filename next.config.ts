@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
       "images-na.ssl-images-amazon.com",
       "www.gramedia.com",
       "cdn.gramedia.com",
-      "drive.google.com/drive/folders/11nxsoTAx2c7LclbHKx53frBTDmnG0BBp",
+      "drive.google.com",
      
     ],
   },
