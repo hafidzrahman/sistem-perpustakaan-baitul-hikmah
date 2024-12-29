@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
-import { muridType } from "@/lib";
+import { muridType, userType } from "@/lib";
 import { toast } from "react-toastify";
 
 interface ModalTambahMuridProps {
@@ -101,10 +101,10 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         },
         body: JSON.stringify({
           username: nis,
-          name: nama,
+          muridNIS: nis,
           password: password,
           role: "murid",
-        }),
+        } as userType),
       });
 
       if (!response.ok) {

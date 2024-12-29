@@ -206,13 +206,17 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
                     </div>
                   </div>
                 </div>
-                <ButtonPinjam
-                  isbn={detailBuku.isbn}
-                  judul={detailBuku.judul}
-                  session={session}
-                  peminjamanData={peminjamanData}
-                  eksemplarCount={detailBuku._count.eksemplarBuku}
-                />
+                {session?.user?.role === "admin" ? (
+                  ""
+                ) : (
+                  <ButtonPinjam
+                    isbn={detailBuku.isbn}
+                    judul={detailBuku.judul}
+                    session={session}
+                    peminjamanData={peminjamanData}
+                    eksemplarCount={detailBuku._count.eksemplarBuku}
+                  />
+                )}
               </div>
             </div>
           </div>

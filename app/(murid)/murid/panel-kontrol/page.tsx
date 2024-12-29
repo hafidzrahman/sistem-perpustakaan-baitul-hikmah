@@ -25,7 +25,6 @@ const BerandaPage = ({}: BerandaPageProps) => {
 
   useEffect(() => {
     const fetchPeminjaman = async () => {
-      console.log(session)
       const response = await fetch("/api/peminjaman");
       const data = await response.json();
       setPeminjaman(data);

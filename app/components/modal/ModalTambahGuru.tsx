@@ -8,44 +8,45 @@ interface ModalTambahGuruProps {
 }
 
 const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
-  const [formData, setFormData] = useState({
-    nip: "",
-    nama: "",
-    jenisKelamin: "",
-    kontak: "",
-    alamat: "",
-    password: "",
-  });
+  const [nip, setNIP] = useState("");
+  const [nama, setNama] = useState("");
+  const [jenisKelamin, setJenisKelamin] = useState("");
+  const [kontak, setKontak] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
-    setFormData({
-      nip: "",
-      nama: "",
-      jenisKelamin: "",
-      kontak: "",
-      alamat: "",
-      password: "",
-    });
+    setNIP("");
+    setNama("");
+    setJenisKelamin("");
+    setKontak("");
+    setAlamat("");
+    setPassword("");
+  };
+
+  const getFormattedName = (name: string, gender: string) => {
+    const title = gender === "LAKI" ? "Ustadz" : "Ustadzah";
+    return `${title} ${name}`;
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validation
-    if (!formData.nip.trim()) {
+    if (!nip.trim()) {
       toast.error("NIP tidak boleh kosong!");
       return;
     }
-    if (!formData.nama.trim()) {
+    if (!nama.trim()) {
       toast.error("Nama tidak boleh kosong!");
       return;
     }
-    if (!formData.jenisKelamin) {
+    if (!jenisKelamin) {
       toast.error("Jenis kelamin harus dipilih!");
       return;
     }
-    if (!formData.password.trim()) {
+    if (!password.trim()) {
       toast.error("Kata sandi tidak boleh kosong!");
       return;
     }
@@ -53,6 +54,9 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
     setIsSubmitting(true);
 
     try {
+      // Format the name with the appropriate title
+      const formattedName = getFormattedName(nama.trim(), jenisKelamin);
+
       // Add teacher data
       let response = await fetch("/api/guru", {
         method: "POST",
@@ -60,11 +64,11 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nip: formData.nip,
-          nama: formData.nama,
-          jenisKelamin: formData.jenisKelamin,
-          kontak: formData.kontak,
-          alamat: formData.alamat,
+          nip,
+          nama: formattedName, // Use the formatted name here
+          jenisKelamin,
+          kontak,
+          alamat,
         }),
       });
 
@@ -80,9 +84,9 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: formData.nip,
-          name: formData.nama,
-          password: formData.password,
+          username: nip,
+          guruNIP: nip,
+          password: password,
           role: "guru",
         }),
       });
@@ -93,7 +97,7 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
       }
 
       toast.success(
-        `Berhasil menambahkan akun dan data guru dengan nip ${formData.nip}`
+        `Berhasil menambahkan akun dan data guru dengan nip ${nip}`
       );
       resetForm();
       handle(); // Close modal after success
@@ -142,10 +146,8 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
                   autoComplete="off"
                   type="text"
                   id="nip"
-                  value={formData.nip}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, nip: e.target.value }))
-                  }
+                  value={nip}
+                  onChange={(e) => setNIP(e.target.value)}
                   placeholder="Masukkan NIP"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
                   disabled={isSubmitting}
@@ -162,13 +164,8 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
                 <div className="relative">
                   <select
                     id="jenisKelamin"
-                    value={formData.jenisKelamin}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        jenisKelamin: e.target.value,
-                      }))
-                    }
+                    value={jenisKelamin}
+                    onChange={(e) => setJenisKelamin(e.target.value)}
                     className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
                     disabled={isSubmitting}
                   >
@@ -195,10 +192,8 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
                   autoComplete="off"
                   type="text"
                   id="kontak"
-                  value={formData.kontak}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, kontak: e.target.value }))
-                  }
+                  value={kontak}
+                  onChange={(e) => setKontak(e.target.value)}
                   placeholder="Masukkan nomor telepon"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
                   disabled={isSubmitting}
@@ -218,11 +213,9 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
                   autoComplete="off"
                   type="text"
                   id="nama"
-                  value={formData.nama}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, nama: e.target.value }))
-                  }
-                  placeholder="Masukkan nama lengkap"
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
+                  placeholder="Masukkan nama lengkap (tanpa Ustadz/Ustadzah)"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
                   disabled={isSubmitting}
                 />
@@ -239,13 +232,8 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
                   autoComplete="off"
                   type="text"
                   id="password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }))
-                  }
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Masukkan kata sandi akun"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
                   disabled={isSubmitting}
@@ -261,10 +249,8 @@ const ModalTambahGuru = ({ status, handle }: ModalTambahGuruProps) => {
                 </label>
                 <textarea
                   id="alamat"
-                  value={formData.alamat}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, alamat: e.target.value }))
-                  }
+                  value={alamat}
+                  onChange={(e) => setAlamat(e.target.value)}
                   placeholder="Masukkan alamat lengkap"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans resize-none h-24"
                   disabled={isSubmitting}

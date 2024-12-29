@@ -39,7 +39,7 @@ const TableGuru = ({ data }: { data: any }) => {
       </div>
 
       {/* Mobile and Tablet View (Card Layout) */}
-      <div className="lg:hidden space-y-4">
+      <div className="lg:hidden space-y-4 h-full">
         {filteredData?.map((item: any, index: number) => (
           <div
             key={index}
@@ -94,7 +94,7 @@ const TableGuru = ({ data }: { data: any }) => {
       </div>
 
       {/* Desktop View (Table Layout) */}
-      <div className="hidden lg:block border border-primary rounded-lg max-h-80 overflow-y-auto">
+      <div className="hidden lg:block border border-primary rounded-lg max-h-[28rem] overflow-y-auto">
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-light-primary text-white sticky top-0 z-10">
