@@ -15,7 +15,7 @@ import {
 } from "date-fns";
 import { id } from "date-fns/locale";
 
-const PeminjamanCalendar = ({ loans }: { loans: any }) => {
+const CalendarPeminjaman = ({ loans }: { loans: any }) => {
   const today = new Date();
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
@@ -72,34 +72,34 @@ const PeminjamanCalendar = ({ loans }: { loans: any }) => {
   );
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="w-full lg:w-2/3 border-b lg:border-b-0 lg:border-r border-dark-gray pb-6 lg:pb-0 lg:pr-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-primary">
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="flex flex-col lg:flex-row gap-2 md:gap-6 lg:gap-4">
+        <div className="w-full lg:w-3/5 border-b lg:border-b-0 lg:border-r border-dark-gray pb-2 md:pb-6 lg:pb-4 lg:pr-4">
+          <div className="flex items-center justify-between mb-2 md:mb-6 lg:mb-4">
+            <h2 className="text-sm md:text-xl lg:text-base font-bold text-primary">
               {format(firstDayCurrentMonth, "MMMM yyyy", { locale: id })}
             </h2>
-            <div className="flex gap-2">
+            <div className="flex gap-1 md:gap-2 lg:gap-1">
               <button
                 onClick={previousMonth}
-                className="p-2 hover:bg-primary hover:text-white-custom rounded-full transition-colors duration-200"
+                className="p-0.5 md:p-2 lg:p-1 hover:bg-primary hover:text-white-custom rounded-full transition-colors duration-200 text-xs md:text-base lg:text-sm"
               >
                 ←
               </button>
               <button
                 onClick={nextMonth}
-                className="p-2 hover:bg-primary hover:text-white-custom rounded-full transition-colors duration-200"
+                className="p-0.5 md:p-2 lg:p-1 hover:bg-primary hover:text-white-custom rounded-full transition-colors duration-200 text-xs md:text-base lg:text-sm"
               >
                 →
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-7 gap-px md:gap-1 lg:gap-px">
             {["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"].map((day) => (
               <div
                 key={day}
-                className="text-center text-sm font-medium text-gray-text py-2"
+                className="text-center text-[10px] md:text-sm lg:text-xs font-medium text-gray-text py-0.5 md:py-2 lg:py-1"
               >
                 {day}
               </div>
@@ -114,8 +114,8 @@ const PeminjamanCalendar = ({ loans }: { loans: any }) => {
                   key={day.toString()}
                   onClick={() => setSelectedDay(day)}
                   className={`
-                    relative p-2 w-full h-10 flex items-center justify-center
-                    rounded-lg transition-colors duration-200
+                    relative p-0.5 md:p-2 lg:p-1 w-full h-6 md:h-10 lg:h-8 flex items-center justify-center
+                    rounded-sm md:rounded-lg lg:rounded-md transition-colors duration-200 text-[10px] md:text-base lg:text-xs
                     ${
                       !isSameMonth(day, firstDayCurrentMonth)
                         ? "text-gray-text"
@@ -143,7 +143,7 @@ const PeminjamanCalendar = ({ loans }: { loans: any }) => {
                   </time>
                   {hasLoan && (
                     <span
-                      className={`absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 
+                      className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 h-0.5 md:w-1 md:h-1 lg:w-0.5 lg:h-0.5
                       ${
                         isEqual(day, selectedDay)
                           ? "bg-white-custom"
@@ -158,21 +158,21 @@ const PeminjamanCalendar = ({ loans }: { loans: any }) => {
           </div>
         </div>
 
-        <div className="w-full lg:w-1/3">
-          <h3 className="text-lg font-bold text-primary mb-4">
+        <div className="w-full lg:w-2/5">
+          <h3 className="text-xs md:text-lg lg:text-sm font-bold text-primary mb-2 md:mb-4 lg:mb-3">
             Peminjaman {format(selectedDay, "dd MMMM yyyy", { locale: id })}
           </h3>
-          <div className="space-y-4 max-h-64 overflow-y-auto">
+          <div className="space-y-2 md:space-y-4 lg:space-y-3 max-h-40 md:max-h-64 lg:max-h-56 overflow-y-auto">
             {selectedDayLoans.length > 0 ? (
               selectedDayLoans.map((loan: any) => (
                 <div
                   key={loan.id}
-                  className="border-2 border-dark-gray rounded-lg p-4 hover:border-primary transition-colors duration-200"
+                  className="border border-dark-gray rounded-sm md:rounded-lg lg:rounded-md p-2 md:p-4 lg:p-3 hover:border-primary transition-colors duration-200"
                 >
-                  <p className="font-medium text-primary">
+                  <p className="font-medium text-primary text-[10px] md:text-base lg:text-xs">
                     ID Peminjaman: {loan.id}
                   </p>
-                  <p className="text-sm text-gray-text mt-2">
+                  <p className="text-[10px] md:text-sm lg:text-xs text-gray-text mt-0.5 md:mt-2 lg:mt-1">
                     Tanggal:{" "}
                     {format(parseISO(loan.tanggalPinjam), "dd MMM yyyy", {
                       locale: id,
@@ -181,18 +181,20 @@ const PeminjamanCalendar = ({ loans }: { loans: any }) => {
                   {loan.bukuPinjaman.map((buku: any, index: number) => (
                     <div
                       key={index}
-                      className="mt-2 p-2 bg-pastel-green bg-opacity-20 rounded-lg"
+                      className="mt-1 md:mt-2 lg:mt-1.5 p-1 md:p-2 lg:p-1.5 bg-pastel-green bg-opacity-20 rounded-sm md:rounded-lg lg:rounded-md"
                     >
-                      <p className="text-sm">ISBN: {buku.bukuISBN}</p>
-                      <p className="text-sm text-gray-text">
+                      <p className="text-[10px] md:text-sm lg:text-xs">
+                        ISBN: {buku.bukuISBN}
+                      </p>
+                      <p className="text-[10px] md:text-sm lg:text-xs text-gray-text">
                         Tenggat:{" "}
                         {format(parseISO(buku.tenggatWaktu), "dd MMM yyyy", {
                           locale: id,
                         })}
                       </p>
-                      <p className="text-sm mt-1">
+                      <p className="text-[10px] md:text-sm lg:text-xs mt-0.5 md:mt-1 lg:mt-0.5">
                         <span
-                          className={`px-2 py-1 rounded-full text-xs ${
+                          className={`px-1 md:px-2 lg:px-1.5 py-0.5 rounded-full text-[8px] md:text-sm lg:text-[10px] ${
                             buku.tanggalKembali
                               ? "bg-pastel-green text-jewel-green"
                               : "bg-pastel-red text-jewel-red"
@@ -204,16 +206,20 @@ const PeminjamanCalendar = ({ loans }: { loans: any }) => {
                     </div>
                   ))}
                   {loan.keterangan && (
-                    <p className="text-sm text-gray-text mt-2">
+                    <p className="text-[10px] md:text-sm lg:text-xs text-gray-text mt-1 md:mt-2 lg:mt-1.5">
                       Keterangan: {loan.keterangan}
                     </p>
                   )}
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-text">
-                <p>Tidak ada peminjaman</p>
-                <p className="text-sm mt-2">pada tanggal ini</p>
+              <div className="text-center py-4 md:py-8 lg:py-6 text-gray-text">
+                <p className="text-xs md:text-base lg:text-sm">
+                  Tidak ada peminjaman
+                </p>
+                <p className="text-[10px] md:text-sm lg:text-xs mt-0.5 md:mt-2 lg:mt-1">
+                  pada tanggal ini
+                </p>
               </div>
             )}
           </div>
@@ -223,4 +229,4 @@ const PeminjamanCalendar = ({ loans }: { loans: any }) => {
   );
 };
 
-export default PeminjamanCalendar;
+export default CalendarPeminjaman;

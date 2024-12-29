@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import PeminjamanCalendar from "@/app/components/PeminjamanCalendar";
+import { BookOpen01Icon, HijabIcon, MuslimIcon } from "hugeicons-react";
+import LineChartPeminjamanMurid from "@/app/components/charts/LineChartPeminjamanMurid";
+import TablePeminjamanMurid from "@/app/components/TablePeminjamanMurid";
+import CalendarPeminjaman from "@/app/components/CalendarPeminjaman";
 
 interface StudentData {
   nis: string;
   nama: string;
   alamat: string;
+  jenisKelamin: "LAKI" | "PEREMPUAN";
+  kontak: string;
   riwayatKelas: Array<{
     kelas: {
       tingkat: string;
@@ -18,35 +23,69 @@ interface StudentData {
     date: string;
     bookTitle: string;
   }>;
+  buku?: Array<any>;
 }
 
-const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
+interface ReadingHistory {
+  intisari: string;
+  tanggal: string;
+  halamanAwal: number;
+  halamanAkhir: number;
+  status: boolean;
+  buku: {
+    judul: string;
+  };
+}
+
+const PageDetailMurid = ({ params }: { params: Promise<{ nis: string }> }) => {
   const [detailMurid, setDetailMurid] = useState<StudentData | null>(null);
+  const [readingHistory, setReadingHistory] = useState<ReadingHistory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchDetailMurid = async () => {
+    const fetchData = async () => {
+      const { nis } = await params;
       try {
-        const { nis } = await params;
-        const response = await fetch(`/api/murid/${nis}`);
+        // Fetch student details and book data
+        const [studentResponse, bookResponse, readingResponse] =
+          await Promise.all([
+            fetch(`/api/murid/${nis}`),
+            fetch("/api/buku"),
+            fetch(`/api/form-bukti/murid/${nis}`),
+          ]);
 
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        if (!studentResponse.ok || !bookResponse.ok || !readingResponse.ok) {
+          throw new Error("Failed to fetch data");
         }
 
-        const data = await response.json();
-        setDetailMurid(data);
+        const [studentData, bookData, readingData] = await Promise.all([
+          studentResponse.json(),
+          bookResponse.json(),
+          readingResponse.json(),
+        ]);
+
+        setDetailMurid({
+          ...studentData,
+          buku: bookData,
+        });
+        setReadingHistory(readingData);
       } catch (error) {
-        console.error("Failed to fetch student details:", error);
-        setError("Gagal memuat data siswa. Silakan coba lagi nanti.");
+        console.error("Failed to fetch data:", error);
+        setError("Gagal memuat data. Silakan coba lagi nanti.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchDetailMurid();
+    fetchData();
   }, [params]);
+
+  const calculateProgress = (history: ReadingHistory[]) => {
+    // Only count approved submissions (status === true)
+    const approvedReadings = history.filter((item) => item.status === true);
+    return (approvedReadings.length / 20) * 100;
+  };
 
   const getClassColor = (kelas: string) => {
     const colors = {
@@ -95,6 +134,10 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
 
   const classColors = getClassColor(kelas);
 
+  const approvedReadings = readingHistory.filter(
+    (item) => item.status === true
+  );
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 p-6">
       {/* Profile Card */}
@@ -111,33 +154,84 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
             </span>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="relative w-44 h-44 rounded-lg overflow-hidden border-2 border-black-custom">
+          <div className="flex flex-col md:flex-row gap-6 md:px-2">
+            <div className="relative flex-shrink-0 flex w-24 h-24 rounded-full overflow-hidden border-2 border-black-custom">
               <Image
                 src="/img/boy.jpeg"
                 alt={`Foto ${detailMurid.nama}`}
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-500">Nomor Induk Siswa</p>
-                <p className="text-lg font-medium">{detailMurid.nis}</p>
+            <div className="flex w-full flex-col">
+              <p className="text-base sm:text-xl lg:text-sm font-bold text-black-custom -mb-1">
+                {detailMurid.nis}
+              </p>
+              <div className="flex justify-between w-full items-center gap-2">
+                <h1 className="text-xl sm:text-2xl lg:text-xl text-black-custom font-source-serif font-bold">
+                  {detailMurid.nama}
+                </h1>
+                {detailMurid.jenisKelamin === "PEREMPUAN" ? (
+                  <HijabIcon
+                    className="text-jewel-red"
+                    width={24}
+                    height={24}
+                  />
+                ) : (
+                  <MuslimIcon
+                    className="text-jewel-blue"
+                    width={24}
+                    height={24}
+                  />
+                )}
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Nama Lengkap</p>
-                <h1 className="text-2xl font-bold">{detailMurid.nama}</h1>
+              <p className="text-sm text-gray-600 -mt-1">
+                {detailMurid.alamat}
+              </p>
+              <div className="flex flex-col items-start mt-2">
+                <h3 className="text-xs -mb-1">Kontak Orang Tua:</h3>
+                <p className="font-bold">{detailMurid.kontak}</p>
               </div>
-              <div className="flex items-start gap-2">
-                <p className="text-sm text-gray-600">{detailMurid.alamat}</p>
+            </div>
+          </div>
+
+          <LineChartPeminjamanMurid
+            data={detailMurid?.Peminjaman}
+            nis={detailMurid.nis}
+          />
+
+          {/* Reading Progress Section */}
+          <div className="mt-6">
+            <h3 className="text-lg font-bold">
+              Perkembangan Membaca Semester Ini
+            </h3>
+            <div className="relative pt-1">
+              <div className="flex mb-2 items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold inline-block text-primary">
+                    {approvedReadings.length}/20 Buku
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-semibold inline-block text-primary">
+                    {calculateProgress(readingHistory).toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+              <div className="flex h-2 mb-4 overflow-hidden rounded bg-gray-100">
+                <div
+                  style={{
+                    width: `${calculateProgress(readingHistory)}%`,
+                  }}
+                  className="flex flex-col justify-center rounded bg-primary transition-all duration-300"
+                ></div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Rest of the component remains the same */}
       {/* Calendar Card */}
       <div className="col-span-1 sm:col-span-2 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
         <div className="p-6">
@@ -146,7 +240,7 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
               Kalender Peminjaman
             </h2>
           </div>
-          <PeminjamanCalendar loans={detailMurid.Peminjaman} />
+          <CalendarPeminjaman loans={detailMurid.Peminjaman} />
         </div>
       </div>
 
@@ -154,40 +248,20 @@ const Page = ({ params }: { params: Promise<{ nis: string }> }) => {
       <div className="col-span-1 sm:col-span-2 lg:col-span-4 lg:row-span-2 bg-white rounded-lg border-2 border-dark-gray">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-6">
+            <BookOpen01Icon className="h-6 w-6 text-primary" />
             <h2 className="text-2xl text-primary font-bold font-source-sans">
-              Daftar Bukti Bacaan
+              Riwayat Peminjaman
             </h2>
           </div>
-
-          {detailMurid.Peminjaman.length > 0 ? (
-            <div className="space-y-4">
-              {detailMurid.Peminjaman.map((pinjam, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-lg border-2 border-gray-200 hover:border-primary transition-all duration-200"
-                >
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-medium">{pinjam.bookTitle}</h3>
-                    <span className="text-sm text-gray-500">
-                      {new Date(pinjam.date).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              Belum ada riwayat peminjaman buku
-            </div>
-          )}
+          <TablePeminjamanMurid
+            data={detailMurid?.Peminjaman || []}
+            bukuList={detailMurid?.buku || []}
+            nis={detailMurid.nis}
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default PageDetailMurid;

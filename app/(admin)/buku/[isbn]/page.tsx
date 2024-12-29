@@ -31,16 +31,28 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
     fetchData();
   }, [params]);
 
+  const bgColor = ["bg-jewel-blue"];
+
   const getBookStatus = (isbn: string) => {
     if (!detailBuku) return { dipinjam: 0, tersedia: 0, total: 0 };
 
     const totalEksemplar = detailBuku._count.eksemplarBuku;
+
+    // Tambahkan pengecekan array
+    if (!Array.isArray(peminjamanData)) {
+      return {
+        dipinjam: 0,
+        tersedia: totalEksemplar,
+        total: totalEksemplar,
+      };
+    }
+
     const dipinjam = peminjamanData.reduce((count, peminjaman) => {
       return (
         count +
-        peminjaman.bukuPinjaman.filter(
+        (peminjaman.bukuPinjaman?.filter(
           (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
-        ).length
+        ).length || 0)
       );
     }, 0);
 
@@ -51,12 +63,63 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
     };
   };
 
+  const getBorrowButtonStatus = () => {
+    if (!detailBuku || !session?.user?.username)
+      return {
+        text: "Pinjam",
+        disabled: true,
+      };
+
+    // Tambahkan pengecekan array
+    if (!Array.isArray(peminjamanData)) {
+      return {
+        text: "Pinjam",
+        disabled: false,
+      };
+    }
+
+    const userHasBorrowed = peminjamanData.some(
+      (peminjaman) =>
+        peminjaman.nisUser === session.user.username &&
+        peminjaman.bukuPinjaman?.some(
+          (bp: any) =>
+            bp.bukuISBN === detailBuku.isbn && bp.tanggalKembali === null
+        )
+    );
+
+    if (userHasBorrowed) {
+      return {
+        text: "Sudah dipinjam",
+        disabled: true,
+      };
+    }
+
+    const status = getBookStatus(detailBuku.isbn);
+
+    if (status.tersedia === 0) {
+      return {
+        text: "Sedang dipinjam",
+        disabled: true,
+      };
+    }
+
+    return {
+      text: "Pinjam",
+      disabled: false,
+    };
+  };
+
   const getEksemplarStatus = (eksemplar: eksemplarBukuType) => {
+    // Tambahkan pengecekan array
+    if (!Array.isArray(peminjamanData)) {
+      return { text: "Tersedia", color: "text-jewel-green" };
+    }
+
     const isBorrowed = peminjamanData.some((peminjaman) =>
-      peminjaman.bukuPinjaman.some(
+      peminjaman.bukuPinjaman?.some(
         (bp: any) =>
           bp.bukuISBN === detailBuku?.isbn &&
-          bp.eksemplarId === eksemplar.id &&
+          bp.eksemplarId === eksemplar?.id &&
           bp.tanggalKembali === null
       )
     );
@@ -91,6 +154,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
   }
 
   const bookStatus = getBookStatus(detailBuku.isbn);
+  const buttonStatus = getBorrowButtonStatus();
 
   const shelfPositions = [
     ["A1", "A2", "", "", ""],
@@ -121,7 +185,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
               <div className="p-4 bg-white-custom rounded-lg border-jewel-green border-2 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="text-gray-600 text-sm">Total</div>
+                    <div className="text-gray-600 text-sm">Sisa</div>
                     <div className="text-gray-800 text-lg">
                       {bookStatus.total}
                     </div>
@@ -146,6 +210,8 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
                   isbn={detailBuku.isbn}
                   judul={detailBuku.judul}
                   session={session}
+                  peminjamanData={peminjamanData}
+                  eksemplarCount={detailBuku._count.eksemplarBuku}
                 />
               </div>
             </div>
@@ -180,7 +246,9 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 bg-pastel-green rounded-lg border-jewel-green border-2 ">
                 <h3 className="text-primary font-bold mb-1">ISBN</h3>
-                <p className="text-black-custom font-mono">{detailBuku.isbn}</p>
+                <p className="text-black-custom font-source-serif">
+                  {detailBuku.isbn}
+                </p>
               </div>
               <div className="p-4 bg-pastel-green rounded-lg border-jewel-green border-2 ">
                 <h3 className="text-primary font-bold mb-1">Penerbit</h3>
@@ -242,7 +310,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
                             </div>
                           )}
                           {!position && (
-                            <div className="w-full aspect-square lg:aspect-auto"></div>
+                            <div className="w-full aspect-square md:aspect-auto"></div>
                           )}
                         </div>
                       ))}

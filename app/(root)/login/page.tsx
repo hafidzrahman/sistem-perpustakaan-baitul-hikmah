@@ -28,9 +28,6 @@ const LoginPage = ({}: LoginPageProps) => {
     if (!password.trim()) {
       tempErrors.password = "Kata sandi harus diisi";
       isValid = false;
-    } else if (password.length < 6) {
-      tempErrors.password = "Kata sandi minimal 6 karakter";
-      isValid = false;
     }
 
     setErrors(tempErrors);

@@ -34,14 +34,18 @@ const TableBukuUser = ({
     if (!bookDetail) return { dipinjam: 0, tersedia: 0, total: 0 };
 
     const totalEksemplar = bookDetail._count.eksemplarBuku;
-    const dipinjam = peminjamanData.reduce((count, peminjaman) => {
-      return (
-        count +
-        peminjaman.bukuPinjaman.filter(
-          (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
-        ).length
-      );
-    }, 0);
+
+    // Tambahkan pengecekan array
+    const dipinjam = Array.isArray(peminjamanData)
+      ? peminjamanData.reduce((count, peminjaman) => {
+          return (
+            count +
+            peminjaman.bukuPinjaman.filter(
+              (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
+            ).length
+          );
+        }, 0)
+      : 0;
 
     return {
       dipinjam,

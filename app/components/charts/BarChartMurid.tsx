@@ -14,6 +14,7 @@ interface KelasData {
   id: number;
   nama: string;
   tingkat: number;
+  JKMurid: "LAKI" | "PEREMPUAN";
   _count: {
     RiwayatKelas: number;
   };
@@ -21,7 +22,8 @@ interface KelasData {
 
 interface ChartData {
   name: string;
-  total: number;
+  LAKI?: number;
+  PEREMPUAN?: number;
 }
 
 const BarChartMurid: React.FC = () => {
@@ -47,13 +49,18 @@ const BarChartMurid: React.FC = () => {
         }
         const data: KelasData[] = await response.json();
 
-        // Transform the data for the chart
-        const transformedData = data.map((kelas) => ({
-          name: `${kelas.tingkat} ${kelas.nama}`,
-          total: kelas._count.RiwayatKelas,
-        }));
+        // Transform the data to group by class and gender
+        const transformedData: { [key: string]: ChartData } = {};
 
-        setChartData(transformedData);
+        data.forEach((kelas) => {
+          const name = `${kelas.tingkat} ${kelas.nama}`;
+          if (!transformedData[name]) {
+            transformedData[name] = { name };
+          }
+          transformedData[name][kelas.JKMurid] = kelas._count.RiwayatKelas;
+        });
+
+        setChartData(Object.values(transformedData));
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -111,6 +118,23 @@ const BarChartMurid: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 border-2 border-primary rounded-lg">
+          <p className="font-bold mb-2">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              {entry.name === "Ikhwan" ? "Ikhwan: " : "Akhwat: "}
+              {entry.value} murid
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">Loading...</div>
@@ -133,6 +157,7 @@ const BarChartMurid: React.FC = () => {
             bottom: chartConfig.bottomMargin,
           }}
         >
+          <Legend />
           <CartesianGrid
             strokeDasharray="3 3"
             vertical={false}
@@ -158,21 +183,23 @@ const BarChartMurid: React.FC = () => {
             tickMargin={8}
             domain={[0, "dataMax + 2"]}
           />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: "#fff",
-              borderRadius: "8px",
-              border: "2px solid #145A32",
-              fontSize: chartConfig.fontSize,
-            }}
-            cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
-          />
+          <Tooltip content={<CustomTooltip />} />
           <Bar
-            dataKey="total"
+            dataKey="LAKI"
+            name="Ikhwan"
             fill="#064359"
             stroke="#a0ced9"
             strokeWidth={1}
-            name="Total Siswa"
+            barSize={chartConfig.barSize}
+            radius={[4, 4, 0, 0]}
+            className="transition-all duration-300 hover:opacity-80"
+          />
+          <Bar
+            dataKey="PEREMPUAN"
+            name="Akhwat"
+            fill="#C50043"
+            stroke="#ffc09f"
+            strokeWidth={1}
             barSize={chartConfig.barSize}
             radius={[4, 4, 0, 0]}
             className="transition-all duration-300 hover:opacity-80"

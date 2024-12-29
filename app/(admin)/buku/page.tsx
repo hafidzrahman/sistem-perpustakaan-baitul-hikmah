@@ -173,11 +173,15 @@ const BukuPage = () => {
             <h1 className="font-source-sans text-2xl text-primary font-bold">
               Daftar Buku
             </h1>
-            <BtnSecondary
-              label="Tambah Buku"
-              onClick={handleTambahBuku}
-              icon={AddCircleHalfDotIcon}
-            />
+            {session?.user?.username === "admin" ? (
+              <BtnSecondary
+                label="Tambah Buku"
+                onClick={handleTambahBuku}
+                icon={AddCircleHalfDotIcon}
+              />
+            ) : (
+              ""
+            )}
           </div>
 
           {buku.length > 0 &&

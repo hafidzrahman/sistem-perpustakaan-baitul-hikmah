@@ -2,25 +2,25 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import PeminjamanCalendar from "@/app/components/PeminjamanCalendar";
+import PeminjamanCalendar from "@/app/components/CalendarPeminjaman";
 import {
   BookOpen01Icon,
   Calendar01Icon,
   MapPinIcon,
   UserAccountIcon,
+  HijabIcon,
+  MuslimIcon,
 } from "hugeicons-react";
 import { useSession } from "next-auth/react";
 import TablePeminjaman from "../TablePeminjaman";
 import TablePeminjamanMurid from "../TablePeminjamanMurid";
-import {
-  DoughnutChartFormBuktiMurid,
-  LineChartPeminjamanMurid,
-} from "../charts/LineChartPeminjamanMurid";
+import LineChartPeminjamanMurid from "../charts/LineChartPeminjamanMurid";
 
 interface StudentData {
   nis: string;
   nama: string;
   alamat: string;
+  jenisKelamin: "LAKI" | "PEREMPUAN";
   riwayatKelas: Array<{
     kelas: {
       tingkat: string;
@@ -33,42 +33,52 @@ interface StudentData {
   }>;
 }
 
+interface ReadingHistory {
+  intisari: string;
+  tanggal: string;
+  halamanAwal: number;
+  halamanAkhir: number;
+  status: boolean;
+  buku: {
+    judul: string;
+  };
+}
+
 const BerandaMurid = () => {
   const [detailMurid, setDetailMurid] = useState<StudentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
+  const [readingHistory, setReadingHistory] = useState<ReadingHistory[]>([]);
 
   const nis = session?.user?.username;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch student details with peminjaman
-        const studentResponse = await fetch(`/api/murid/${nis}`);
-        if (!studentResponse.ok) {
-          throw new Error(
-            `Error ${studentResponse.status}: ${studentResponse.statusText}`
-          );
-        }
-        const studentData = await studentResponse.json();
+        // Fetch student details, book data, and reading history concurrently
+        const [studentResponse, bookResponse, readingResponse] =
+          await Promise.all([
+            fetch(`/api/murid/${nis}`),
+            fetch("/api/buku"),
+            fetch(`/api/form-bukti/murid/${nis}`),
+          ]);
 
-        // Fetch book data for the student's loans
-        const bookResponse = await fetch("/api/buku");
-        if (!bookResponse.ok) {
-          throw new Error(
-            `Error ${bookResponse.status}: ${bookResponse.statusText}`
-          );
+        if (!studentResponse.ok || !bookResponse.ok || !readingResponse.ok) {
+          throw new Error("Failed to fetch data");
         }
-        const bookData = await bookResponse.json();
 
-        // Combine the data
-        const combinedData = {
+        const [studentData, bookData, readingData] = await Promise.all([
+          studentResponse.json(),
+          bookResponse.json(),
+          readingResponse.json(),
+        ]);
+
+        setDetailMurid({
           ...studentData,
           buku: bookData,
-        };
-
-        setDetailMurid(combinedData);
+        });
+        setReadingHistory(readingData);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         setError("Gagal memuat data. Silakan coba lagi nanti.");
@@ -81,6 +91,12 @@ const BerandaMurid = () => {
       fetchData();
     }
   }, [nis]);
+
+  const calculateProgress = (history: ReadingHistory[]) => {
+    // Only count approved submissions (status === true)
+    const approvedReadings = history.filter((item) => item.status === true);
+    return (approvedReadings.length / 20) * 100;
+  };
 
   const getClassColor = (kelas: string) => {
     const colors = {
@@ -128,9 +144,9 @@ const BerandaMurid = () => {
     : "Tidak Diketahui";
 
   const classColors = getClassColor(kelas);
-
-  console.log(detailMurid);
-  console.log(detailMurid?.buku);
+  const approvedReadings = readingHistory.filter(
+    (item) => item.status === true
+  );
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 p-6">
@@ -148,25 +164,71 @@ const BerandaMurid = () => {
             </span>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="relative w-44 h-44 rounded-lg overflow-hidden border-2 border-black-custom">
+          <div className="flex flex-col md:flex-row gap-6 md:px-2">
+            <div className="relative flex-shrink-0 flex w-24 h-24 rounded-full overflow-hidden border-2 border-black-custom">
               <Image
                 src="/img/boy.jpeg"
                 alt={`Foto ${detailMurid.nama}`}
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
-            <div className="flex flex-col">
-              <p className="text-lg font-medium text-gray-text">
+            <div className="flex w-full flex-col">
+              <p className="text-base sm:text-xl lg:text-sm font-bold text-black-custom -mb-1">
                 {detailMurid.nis}
               </p>
-              <h1 className="text-2xl text-black-custom font-source-serif font-bold">
-                {detailMurid.nama}
-              </h1>
-              <div className="flex items-start gap-2 my-2">
-                <p className="text-sm text-gray-600">{detailMurid.alamat}</p>
+              <div className="flex  justify-between w-full items-center gap-2">
+                <h1 className="text-xl sm:text-2xl lg:text-xl text-black-custom font-source-serif font-bold">
+                  {detailMurid.nama}
+                </h1>
+                {detailMurid.jenisKelamin === "PEREMPUAN" ? (
+                  <HijabIcon
+                    className="text-jewel-red"
+                    width={24}
+                    height={24}
+                  />
+                ) : (
+                  <MuslimIcon
+                    className="text-jewel-blue"
+                    width={24}
+                    height={24}
+                  />
+                )}
+              </div>
+              <p className="text-sm text-gray-600 -mt-1">
+                {detailMurid.alamat}
+              </p>
+              <div className="flex flex-col items-start mt-2">
+                <h3 className="text-xs -mb-1">Kontak Orang Tua:</h3>
+                <p className="font-bold">{detailMurid.kontak}</p>
+              </div>
+            </div>
+          </div>
+          <LineChartPeminjamanMurid data={detailMurid?.Peminjaman} nis={nis} />
+          <div className="mt-6">
+            <h3 className="text-lg font-bold">
+              Perkembangan Membaca Semester Ini
+            </h3>
+            <div className="relative pt-1">
+              <div className="flex mb-2 items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold inline-block text-primary">
+                    {approvedReadings.length}/20 Buku
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-semibold inline-block text-primary">
+                    {calculateProgress(readingHistory).toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+              <div className="flex h-2 mb-4 overflow-hidden rounded bg-gray-100">
+                <div
+                  style={{
+                    width: `${calculateProgress(readingHistory)}%`,
+                  }}
+                  className="flex flex-col justify-center rounded bg-primary transition-all duration-300"
+                ></div>
               </div>
             </div>
           </div>

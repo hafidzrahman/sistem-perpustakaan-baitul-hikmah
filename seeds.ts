@@ -242,22 +242,7 @@ export const seeds = {
       linkGambar:
         "https://cdn.gramedia.com/uploads/items/9786020332956_Bumi-New-Cover.jpg",
     },
-    {
-      isbn: "978–979–22–5780–9",
-      judul: "Daun yang jatuh tak pernah membenci angin ",
-      penerbit: "Gramedia Pustaka Utama",
-      genre: [Genre.FIKSI.toString()],
-      penulis: ["Tere Liye"],
-      halaman: 264,
-      sinopsis:
-        "menceritakan tentang gadis berumur 12 tahun bernama Tania. Gadis kecil yang harus putus sekolah dan mengamen bersama adiknya sepanjang hari setelah 3 tahun lalu ayahnya pergi untuk selamanya. Tania, Dede (adiknya), dan ibunya tinggal di sebuah rumah kardus di pinggir kota akibat kesulitan ekonomi. Sampai akhirnya mereka bertemu dengan seorang malaikat.Siapa yang tidak senang bertemu dengan malaikat? Jelas ini adalah sebuah cahaya masa depan bagi Tania. Danar namanya. Danar bagai malaikat di kehidupan Tania dan keluarganya yang serba kekurangan. Pertemuan yang tidak disengaja antara mereka di suatu malam membawa cahaya indah bagi kehidupan Tania kedepannya. Perbedaan umur yang berjarak 14 tahun membuat Tania seperti bertemu dengan sosok kakak yang selama ini tidak pernah ia rasakan.",
-      tanggalMasuk: new Date(),
-      tanggalRusak: new Date(),
-      tanggalHilang: new Date(),
-      posisi: "A2",
-      linkGambar:
-        "https://cdn.gramedia.com/uploads/picture_meta/2023/4/10/keptpseujhk7alng3chxo3.jpg",
-    },
+
     {
       isbn: "9786239554569",
       judul: "Tentang kamu ",
@@ -321,22 +306,7 @@ export const seeds = {
       linkGambar:
         "https://cdn.gramedia.com/uploads/items/9786020332956_Bumi-New-Cover.jpg",
     },
-    {
-      isbn: "978-979-22-5780-9",
-      judul: "Daun yang jatuh tak pernah membenci angin ",
-      penerbit: "Gramedia Pustaka Utama",
-      genre: [Genre.FIKSI.toString()],
-      penulis: ["Tere Liye"],
-      halaman: 264,
-      sinopsis:
-        "menceritakan tentang gadis berumur 12 tahun bernama Tania. Gadis kecil yang harus putus sekolah dan mengamen bersama adiknya sepanjang hari setelah 3 tahun lalu ayahnya pergi untuk selamanya. Tania, Dede (adiknya), dan ibunya tinggal di sebuah rumah kardus di pinggir kota akibat kesulitan ekonomi. Sampai akhirnya mereka bertemu dengan seorang malaikat.Siapa yang tidak senang bertemu dengan malaikat? Jelas ini adalah sebuah cahaya masa depan bagi Tania. Danar namanya. Danar bagai malaikat di kehidupan Tania dan keluarganya yang serba kekurangan. Pertemuan yang tidak disengaja antara mereka di suatu malam membawa cahaya indah bagi kehidupan Tania kedepannya. Perbedaan umur yang berjarak 14 tahun membuat Tania seperti bertemu dengan sosok kakak yang selama ini tidak pernah ia rasakan.",
-      tanggalMasuk: new Date(),
-      tanggalRusak: new Date(),
-      tanggalHilang: new Date(),
-      posisi: "A2",
-      linkGambar:
-        "https://cdn.gramedia.com/uploads/picture_meta/2023/4/10/keptpseujhk7alng3chxo3.jpg",
-    },
+
     {
       isbn: "9786239554569",
       judul: "Tentang kamu ",
