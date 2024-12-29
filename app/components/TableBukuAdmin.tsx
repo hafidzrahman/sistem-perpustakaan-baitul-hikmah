@@ -22,9 +22,6 @@ const border = [
 ];
 
 const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
-  console.log(data);
-  console.log(data[0]?.isbn);
-
   if (!data) {
     return null;
   }
@@ -144,7 +141,7 @@ const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
                   </div>
                 </td>
                 <td className="px-4 py-2">
-                  <ButtonDetail isbn={data?.isbn} />
+                  <ButtonDetail isbn={item?.isbn} />
                 </td>
               </tr>
             ))}
