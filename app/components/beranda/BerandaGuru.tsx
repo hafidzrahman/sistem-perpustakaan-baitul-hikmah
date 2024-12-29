@@ -118,12 +118,21 @@ const BerandaGuru = () => {
 
           <div className="flex flex-col md:flex-row gap-6 md:px-2">
             <div className="relative flex-shrink-0 flex w-24 h-24 rounded-full overflow-hidden border-2 border-black-custom">
-              <Image
-                src="/img/boy.jpeg"
-                alt={`Foto ${detailGuru.nama}`}
-                fill
-                className="object-cover"
-              />
+              {detailGuru.jenisKelamin === "PEREMPUAN" ? (
+                <Image
+                  src="/img/girl.png"
+                  alt={`Foto ${detailGuru.nama}`}
+                  fill
+                  className="object-cover object-bottom mt-3"
+                />
+              ) : (
+                <Image
+                  src="/img/man.png"
+                  alt={`Foto ${detailGuru.nama}`}
+                  fill
+                  className="object-cover object-bottom mt-3"
+                />
+              )}
             </div>
             <div className="flex w-full flex-col">
               <p className="text-base sm:text-xl lg:text-sm font-bold text-black-custom -mb-1">

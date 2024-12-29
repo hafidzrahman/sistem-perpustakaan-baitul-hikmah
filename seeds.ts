@@ -75,18 +75,19 @@ import { Genre, hariKeMiliDetik } from "@/lib";
 export const seeds = {
   buku: [
     {
-      isbn: "978-602-17759-7-4",
-      judul: "Kamus Super Lengkap Bahasa Inggris",
-      penerbit: "Infra Pustaka",
-      genre: [Genre.NONFIKSI.toString()],
-      penulis: ["Staf Bahasa Infra"],
-      halaman: 434,
-      sinopsis:"Kamus Super Lengkap Bahasa Inggris. Referensi terbaik untuk pelajar,mahasiswa dan umum",
+      isbn: "978-602-06-5192-7",
+      judul: "Funiculi Funicula",
+      penerbit: "Gramedia Pustaka Utama",
+      genre: [Genre.FIKSI.toString()],
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
       posisi: "A1",
-      linkGambar: "https://drive.google.com/file/d/1NrY9lZdf0glBbe46KlQexX9MdLpMCk5M/view?usp=drive_link",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
       isbn: "979-017-281-8",
@@ -110,12 +111,13 @@ export const seeds = {
       genre: [Genre.NONFIKSI.toString()],
       penulis: ["Ajeng Kumoratih,M.Kes"],
       halaman: 127,
-      sinopsis:"Panduan Praktis P3k yang dilengkapi dengan gambar penunjang",
+      sinopsis: "Panduan Praktis P3k yang dilengkapi dengan gambar penunjang",
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
       posisi: "A3",
-      linkGambar: "https://drive.google.com/file/d/1-xUb-fS_9XnV66bPrRtGB3Va2gcSlCcz/view?usp=drive_link",
+      linkGambar:
+        "https://drive.google.com/file/d/1-xUb-fS_9XnV66bPrRtGB3Va2gcSlCcz/view?usp=drive_link",
     },
     {
       isbn: "978-602-03-0848-7",
@@ -124,12 +126,13 @@ export const seeds = {
       penerbit: "Gramedia Pustaka Utama",
       penulis: ["A.Fuadi"],
       halaman: 179,
-      sinopsis:"",
+      sinopsis: "",
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
       posisi: "B1",
-      linkGambar: "https://drive.google.com/file/d/1B4MEP8d7KqUyey2vwxxqFI2uiKpKFJJU/view?usp=sharing",
+      linkGambar:
+        "https://drive.google.com/file/d/1B4MEP8d7KqUyey2vwxxqFI2uiKpKFJJU/view?usp=sharing",
     },
     {
       isbn: "978-602-296-046-1",
@@ -143,7 +146,8 @@ export const seeds = {
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
       posisi: "B2",
-      linkGambar: "https://drive.google.com/file/d/1xnVmDdLg6MWPXEZxdw__c0DR0JRyQSJG/view?usp=drive_link",
+      linkGambar:
+        "https://drive.google.com/file/d/1xnVmDdLg6MWPXEZxdw__c0DR0JRyQSJG/view?usp=drive_link",
     },
     {
       isbn: "978-602-288-269-5",
@@ -152,14 +156,15 @@ export const seeds = {
       penerbit: "Pusat Studi Bahasa",
       penulis: ["Feryani Aristya"],
       halaman: 224,
-      sinopsis:"",
+      sinopsis: "",
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
       posisi: "C1",
-      linkGambar: "https://drive.google.com/file/d/1KW7iAgBKJJDQFFOcRrcyIgELQ6o8tPRF/view?usp=drive_link",
+      linkGambar:
+        "https://drive.google.com/file/d/1KW7iAgBKJJDQFFOcRrcyIgELQ6o8tPRF/view?usp=drive_link",
     },
-  {
+    {
       isbn: "978-602-8519-93-9",
       judul: "Killing Commandantore",
       genre: [Genre.SEJARAH.toString()],
@@ -173,6 +178,81 @@ export const seeds = {
       posisi: "A2",
       linkGambar:
         "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1527854255i/38820047.jpg",
+    },
+    {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      penerbit: "Gramedia Pustaka Utama",
+      genre: [Genre.FIKSI.toString()],
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk: new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A3",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    },
+    {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FIKSI.toString()],
+      penerbit: "Gramedia Pustaka Utama",
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk: new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "B1",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    },
+    {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FIKSI.toString()],
+      penerbit: "Gramedia Pustaka Utama",
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk: new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "B2",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    },
+    {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FIKSI.toString()],
+      penerbit: "Gramedia Pustaka Utama",
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk: new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "C1",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
+    },
+    {
+      isbn: "978-602-06-5192-9",
+      judul: "Funiculi Funicula",
+      genre: [Genre.FIKSI.toString()],
+      penerbit: "Gramedia Pustaka Utama",
+      penulis: ["Toshikazu Kawaguchi"],
+      halaman: 224,
+      sinopsis:
+        "Di sebuah gang kecil di Tokyo, ada kafe tua yang bisa membawa pengunjungnya menjelajahi waktu. Keajaiban kafe itu menarik seorang wanita yang ingin memutar waktu untuk berbaikan dengan kekasihnya, seorang perawat yang ingin membaca surat yang tak sempat diberikan suaminya yang sakit, seorang kakak yang ingin menemui adiknya untuk terakhir kali, dan seorang ibu yang ingin bertemu dengan anak yang mungkin takkan pernah dikenalnya.Namun ada banyak peraturan yang harus diingat. Satu, mereka harus tetap duduk di kursi yang telah ditentukan. Dua, apa pun yang mereka lakukan di masa yang didatangi takkan mengubah kenyataan di masa kini. Tiga, mereka harus menghabiskan kopi khusus yang disajikan sebelum kopi itu dingin. Rentetan peraturan lainnya tak menghentikan orang-orang itu untuk menjelajahi waktu. Akan tetapi, jika kepergian mereka tak mengubah satu hal pun di masa kini, layakkah semua itu dijalani?",
+      tanggalMasuk: new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "D1",
+      linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
       isbn: "978-602-033-295-6",
@@ -191,7 +271,7 @@ export const seeds = {
         "https://cdn.gramedia.com/uploads/items/9786020332956_Bumi-New-Cover.jpg",
     },
     {
-      isbn: "978-979-22-5780-9",
+      isbn: "978–979–22–5780-9",
       judul: "Daun yang jatuh tak pernah membenci angin ",
       penerbit: "Gramedia Pustaka Utama",
       genre: [Genre.FIKSI.toString()],
@@ -204,7 +284,7 @@ export const seeds = {
       tanggalHilang: new Date(),
       posisi: "A2",
       linkGambar:
-        "https://drive.google.com/file/d/1IAiSdfBv32zmDz6feA-nw7vhhpO2kMiv/view?usp=drive_link",
+        "https://drive.google.com/file/d/1Ww60hFiHxXsnQxST1HdOV2j_pCgQWzPY/view?usp=sharing",
     },
     {
       isbn: "978-602-06-5192-7",
@@ -458,7 +538,7 @@ export const seeds = {
       jumlahBuku: 0,
       totalNominal: 0,
       nominalPerHari: 1000,
-      denda : true
+      denda: true,
     },
     {
       id: 2,
@@ -466,7 +546,7 @@ export const seeds = {
       jumlahBuku: 1,
       totalNominal: 35000,
       nominalPerHari: 0,
-      denda : true
+      denda: true,
     },
     {
       id: 3,
@@ -474,7 +554,7 @@ export const seeds = {
       jumlahBuku: 1,
       totalNominal: 55000,
       nominalPerHari: 0,
-      denda : true
+      denda: true,
     },
     {
       id: 4,
@@ -482,7 +562,7 @@ export const seeds = {
       jumlahBuku: 2,
       totalNominal: 110000,
       nominalPerHari: 0,
-      denda : false
+      denda: false,
     },
     {
       id: 5,
@@ -490,7 +570,7 @@ export const seeds = {
       jumlahBuku: 1,
       totalNominal: 55000,
       nominalPerHari: 0,
-      denda : true
+      denda: true,
     },
   ],
   peminjaman: [
@@ -555,7 +635,8 @@ export const seeds = {
       bukuISBN: "978-602-06-5192-7",
       muridNIS: "12250111794",
       tanggal: new Date(),
-      intisari: "Menceritakan perjalanan seseorang ke masa lalu.Memang tidak bisa merubah masa depan,tetapi bisa merubah perasaan seseorang untuk menjalani masa depan",
+      intisari:
+        "Menceritakan perjalanan seseorang ke masa lalu.Memang tidak bisa merubah masa depan,tetapi bisa merubah perasaan seseorang untuk menjalani masa depan",
       halamanAwal: 23,
       halamanAkhir: 25,
       status: false,
@@ -564,7 +645,8 @@ export const seeds = {
       bukuISBN: "978-602-8519-93-9",
       muridNIS: "12250111048",
       tanggal: new Date(),
-      intisari: "Buku yang sangat bagus,mengajarkan apa itu kerja sama,kebersamaan dan kekompakan",
+      intisari:
+        "Buku yang sangat bagus,mengajarkan apa itu kerja sama,kebersamaan dan kekompakan",
       halamanAwal: 23,
       halamanAkhir: 25,
       status: false,
@@ -573,7 +655,8 @@ export const seeds = {
       bukuISBN: "979-3062-79-7",
       muridNIS: "12250111791",
       tanggal: new Date(),
-      intisari: "Kisah yang sangat menginspirasi, perjuangan demi mendapat pendidikan untuk masa depan yang cerah",
+      intisari:
+        "Kisah yang sangat menginspirasi, perjuangan demi mendapat pendidikan untuk masa depan yang cerah",
       halamanAwal: 23,
       halamanAkhir: 25,
       status: false,

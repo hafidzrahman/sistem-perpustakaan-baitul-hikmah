@@ -13,7 +13,6 @@ const nextConfig: NextConfig = {
       "www.gramedia.com",
       "cdn.gramedia.com",
       "drive.google.com",
-     
     ],
   },
 };
