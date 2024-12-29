@@ -15,7 +15,7 @@ import {
 } from "date-fns";
 import { id } from "date-fns/locale";
 
-const CalendarPeminjaman = ({ loans }: { loans: any }) => {
+const CalendarPeminjaman = ({ loans = [] }: { loans?: any[] }) => {
   const today = new Date();
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
@@ -67,7 +67,7 @@ const CalendarPeminjaman = ({ loans }: { loans: any }) => {
     );
   };
 
-  const selectedDayLoans = loans.filter((loan: any) =>
+  const selectedDayLoans = loans.filter((loan) =>
     isSameDay(parseISO(loan.tanggalPinjam), selectedDay)
   );
 
@@ -105,7 +105,7 @@ const CalendarPeminjaman = ({ loans }: { loans: any }) => {
               </div>
             ))}
             {allDays.map((day, dayIdx) => {
-              const hasLoan = loans.some((loan: any) =>
+              const hasLoan = loans.some((loan) =>
                 isSameDay(parseISO(loan.tanggalPinjam), day)
               );
 
@@ -164,7 +164,7 @@ const CalendarPeminjaman = ({ loans }: { loans: any }) => {
           </h3>
           <div className="space-y-2 md:space-y-4 lg:space-y-3 max-h-40 md:max-h-64 lg:max-h-56 overflow-y-auto">
             {selectedDayLoans.length > 0 ? (
-              selectedDayLoans.map((loan: any) => (
+              selectedDayLoans.map((loan) => (
                 <div
                   key={loan.id}
                   className="border border-dark-gray rounded-sm md:rounded-lg lg:rounded-md p-2 md:p-4 lg:p-3 hover:border-primary transition-colors duration-200"

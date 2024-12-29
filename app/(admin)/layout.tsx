@@ -4,6 +4,7 @@ import LayoutAdmin from "@/app/components/layout/LayoutAdmin";
 import LayoutMurid from "@/app/components/layout/LayoutMurid";
 import { SessionProvider, useSession } from "next-auth/react";
 import { ToastContainer } from "react-toastify";
+import LayoutGuru from "../components/layout/LayoutGuru";
 
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession();
@@ -18,7 +19,12 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   if (!session) {
     return null;
   }
-  const Layout = session?.user?.role === "murid" ? LayoutMurid : LayoutAdmin;
+  const Layout =
+    session?.user?.role === "murid"
+      ? LayoutMurid
+      : session?.user?.role === "guru"
+      ? LayoutGuru
+      : LayoutAdmin;
 
   return <Layout>{children}</Layout>;
 };

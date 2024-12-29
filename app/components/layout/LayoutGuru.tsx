@@ -158,7 +158,7 @@ const LayoutGuru = ({ children }: { children: React.ReactNode }) => {
               <h1 className="text-sm sm:text-lg font-source-serif leading-none font-bold truncate">
                 {session?.user?.name}
               </h1>
-              <h2 className="text-xs font-source-sans leading-none">Murid</h2>
+              <h2 className="text-xs font-source-sans leading-none">Guru</h2>
             </div>
             <UserCircleIcon
               width={32}
