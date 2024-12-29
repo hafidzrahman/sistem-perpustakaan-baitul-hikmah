@@ -1,22 +1,35 @@
-import { useState } from "react";
-import { kelasType } from "@/lib";
+import { useEffect, useState } from "react";
+import { kelasType, keteranganType } from "@/lib";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 import { toast } from "react-toastify";
 
-interface ModalBayarSumbanganProps {
+interface ModalTambahDendaProps {
   status: boolean;
   handle: () => void;
 }
 
-const ModalBayarSumbangan = ({ status, handle }: ModalBayarSumbanganProps) => {
+const ModalTambahDenda = ({ status, handle }: ModalTambahDendaProps) => {
   const [nama, setNama] = useState("");
-  const [tingkat, setTingkat] = useState<number>(7);
+  const [idKeterangan, setIdKeterangan] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [keterangan, setKeterangan] = useState<keteranganType[]>([])
   const resetForm = () => {
     setNama("");
-    setTingkat(7);
+    setIdKeterangan(1);
   };
+
+  useEffect(() => {
+    async function fetching() {
+      const response = await fetch("/api/keterangan/denda");
+      const responseData = await response.json();
+      if (!responseData) {
+        throw new Error("Gagal mendapatkan data keterangan")
+      }
+      setKeterangan(responseData)
+    }
+
+    fetching()
+  }, [])
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,14 +42,16 @@ const ModalBayarSumbangan = ({ status, handle }: ModalBayarSumbanganProps) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/kelas", {
+
+        // ganti
+      const response = await fetch("/api/denda/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           nama,
-          tingkat,
+          idKeterangan,
         }),
       });
 
@@ -71,7 +86,7 @@ const ModalBayarSumbangan = ({ status, handle }: ModalBayarSumbanganProps) => {
         </button>
 
         <h1 className="text-3xl font-extrabold font-source-serif sm:text-3xl text-light-primary">
-          Bayar Denda
+          Tambah Denda
         </h1>
         <form
           onSubmit={onSubmit}
@@ -82,25 +97,39 @@ const ModalBayarSumbangan = ({ status, handle }: ModalBayarSumbanganProps) => {
               htmlFor="nama"
               className="font-source-serif text-lg font-bold"
             >
-              Nama
+              NIS
             </label>
             <input
               autoComplete="off"
               type="text"
               id="nama"
-              placeholder="Masukkan nama kelas"
+              value={nama}
+              onChange={(e) => setNama(e.target.value)}
+              placeholder="Masukkan NIS murid"
               className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
-              disabled={true}
+              disabled={isSubmitting}
             />
           </div>
           <div className="flex flex-col gap-1">
             <label
-              htmlFor="keterangan"
+              htmlFor="idKeterangan"
               className="font-source-serif text-lg font-bold"
             >
               Keterangan
             </label>
             <div className="relative">
+              <select
+                id="idKeterangan"
+                value={idKeterangan}
+                onChange={(e) => setIdKeterangan(Number(e.target.value))}
+                className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                disabled={isSubmitting}
+              >
+                <option value="" disabled>
+                  Pilih Keterangan Denda
+                </option>
+                {keterangan.map(data => <option key={data.id} value={data.id}>{data.keterangan}</option>)}
+              </select>
               <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
                 ▼
               </span>
@@ -116,7 +145,7 @@ const ModalBayarSumbangan = ({ status, handle }: ModalBayarSumbanganProps) => {
               isSubmitting ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {isSubmitting ? "Menambahkan..." : "Tambahkan Kelas"}
+            {isSubmitting ? "Menambahkan..." : "Tambahkan Denda"}
           </button>
         </form>
       </div>
@@ -124,4 +153,4 @@ const ModalBayarSumbangan = ({ status, handle }: ModalBayarSumbanganProps) => {
   );
 };
 
-export default ModalBayarSumbangan;
+export default ModalTambahDenda;

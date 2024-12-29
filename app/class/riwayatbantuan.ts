@@ -11,6 +11,18 @@ export class RiwayatBantuan {
         this.jumlah = data.jumlah;
     }
 
+    static async tambahRiwayatBantuan(data : riwayatBantuanType) : Promise<void> {
+        const test = await prisma.riwayatBantuan.create({
+            data : {
+                idSumbangan : data.idSumbangan,
+                idPembayaranTunai : data.idPembayaranTunai,
+                jumlah : data.jumlah
+            }
+        })
+        console.log("test11")
+        console.log(test)
+    }
+
     static async totalkanRiwayatBantuan(idSumbangan? : number) {
         if (!idSumbangan) {
             throw new Error("Id sumbangan tidak diinputkan");
@@ -24,7 +36,7 @@ export class RiwayatBantuan {
                     }
                 })
         
-                if (!total?._sum?.jumlah) {
+                if (!total?._sum?.jumlah === null || !total?._sum?.jumlah === undefined) {
                     throw new Error("Gagal menghitung total pembayaran");
                 }
         

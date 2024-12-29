@@ -1,4 +1,5 @@
-import { guruType, muridType, petugasPerpustakaanType, prisma, userType } from "@/lib";
+import { guruType, muridType, perbaruiUserType, petugasPerpustakaanType, prisma, userType } from "@/lib";
+import { hash } from "bcryptjs";
 
 
 export class User {
@@ -20,11 +21,11 @@ export class User {
         if (!username || !password || !role) {
             throw new Error("Harus mengisi field yang wajib");
         }
-
+        const hashedPassword = await hash(password, 12)
         const dataUser = await prisma.user.create({
             data : {
                 username,
-                password,
+                password : hashedPassword,
                 role
             }
         })
@@ -43,5 +44,43 @@ export class User {
           });
 
           return user;
+    }
+
+    static async perbaruiUser(username : string, data : perbaruiUserType) : Promise<userType | null & guruType | null & muridType | null & petugasPerpustakaanType | null> {
+        const user = await prisma.user.findUnique({
+            where: {
+              username: username,
+            },
+          });
+
+          if (user?.id) {
+            throw new Error("Data user tidak ditemukan")
+          }
+
+          const {password, role} = data;
+
+
+            if (password) {
+            const hashedPassword = await hash(password, 12);
+          const updatedUser = await prisma.user.update({
+            where : {
+                username
+            }, data : {
+                password : hashedPassword,
+                role : role || user?.role
+            }
+          })
+            return updatedUser;
+          }
+
+          const updatedUser = await prisma.user.update({
+            where : {
+                username
+            }, data : {
+                role : role || user?.role
+            }
+          })
+
+          return updatedUser;
     }
 }

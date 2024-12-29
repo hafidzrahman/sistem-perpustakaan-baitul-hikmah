@@ -169,7 +169,41 @@ export class Peminjaman {
     return peminjaman;
   }
 
-  static async cariPeminjamanAnggota(anggota : "guru" | "murid", userId : string) : Promise<peminjamanType[]> {
+  static async cariPeminjamanAnggota(anggota : "guru" | "murid", userId : string, belumDikembalikan? : boolean) : Promise<peminjamanType[]> {
+    
+    if (belumDikembalikan) {
+      const peminjaman = (await prisma.peminjaman.findMany({
+        where: {
+          nip : anggota === "guru" ? userId : undefined,
+          nis : anggota === "murid" ? userId : undefined,
+        },
+        include: {
+          bukuPinjaman: {
+            where : {
+              OR : [
+                {tanggalKembali : undefined},
+                {tanggalKembali : null},
+                {eksemplarBuku : {
+                  tanggalRusak : {
+                    not : {
+                      equals : undefined
+                    }
+                  }
+                }},
+                {eksemplarBuku : {
+                  tanggalRusak : {
+                    not : {
+                      equals : null
+                    }
+                  }
+                }}
+              ]
+            }
+          },
+        },
+      })) as peminjamanType[];
+    }
+    
     const peminjaman = (await prisma.peminjaman.findMany({
       where: {
         nip : anggota === "guru" ? userId : undefined,

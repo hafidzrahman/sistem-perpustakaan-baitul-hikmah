@@ -1,4 +1,6 @@
-import {dendaType, prisma} from "@/lib";
+import {dendaType, kenakanDendaType, prisma} from "@/lib";
+import { Sumbangan } from "./sumbangan";
+import { Peminjaman } from "./peminjaman";
 
 export class Denda {
     id? : number;
@@ -33,6 +35,43 @@ export class Denda {
                 });
         return dataDenda;
     }
+
+    static async kenakanDenda(data : kenakanDendaType) : Promise<dendaType> {
+      const {idSumbangan, idPeminjaman, idKeterangan, nis, nip} = data;
+      if (!idSumbangan || !idKeterangan || !(nip || nis)) {
+        throw new Error("Harus mengisi field yang wajib");
+      }
+
+      const dataSumbangan = await Sumbangan.tambahSumbangan({
+        id : idSumbangan,
+        idKeterangan,
+        nis : nis,
+        nip : nip 
+      })
+
+      if (idKeterangan === 3 || idKeterangan === 5) {
+      const {bukuISBN, bukuId, idPeminjaman} = data
+      const dataDenda = await prisma.denda.create({
+                data: {
+                  idSumbangan : dataSumbangan.id!,
+                  bukuISBN,
+                  bukuId,
+                  idPeminjaman,
+                  tanggal : new Date()
+                },
+              });
+              return dataDenda
+      }
+
+      const dataDenda = await prisma.denda.create({
+        data: {
+          idSumbangan : dataSumbangan.id!,
+          tanggal : new Date()
+        },
+      });
+
+      return dataDenda;
+  }
 
     static async cariDenda(id : number) : Promise<dendaType> {
       const dataDenda = await prisma.denda.findUnique({
