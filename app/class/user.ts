@@ -16,7 +16,7 @@ export class User {
     }
 
     static async tambahUser(data : userType) : Promise<userType> {
-        const {username, password, role} = data;
+        const {username, password, role, muridNIS, guruNIP, petugasPerpustakaanId} = data;
 
         if (!username || !password || !role) {
             throw new Error("Harus mengisi field yang wajib");
@@ -26,7 +26,10 @@ export class User {
             data : {
                 username,
                 password : hashedPassword,
-                role
+                role,
+                muridNIS,
+                guruNIP,
+                petugasPerpustakaanId
             }
         })
         return dataUser;
