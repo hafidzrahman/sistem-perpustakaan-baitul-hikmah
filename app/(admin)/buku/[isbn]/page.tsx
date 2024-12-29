@@ -154,7 +154,6 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
   }
 
   const bookStatus = getBookStatus(detailBuku.isbn);
-  const buttonStatus = getBorrowButtonStatus();
 
   const shelfPositions = [
     ["A1", "A2", "", "", ""],
