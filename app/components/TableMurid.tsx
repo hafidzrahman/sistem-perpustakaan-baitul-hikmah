@@ -103,7 +103,7 @@ const TableMurid = ({ data }: { data: any }) => {
           <option value="">Semua Kelas</option>
           {classData.map((kelas) => (
             <option key={kelas.id} value={`${kelas.tingkat} ${kelas.nama}`}>
-              {kelas.tingkat} {kelas.nama} ({kelas._count.RiwayatKelas} murid)
+              {kelas.tingkat} {kelas.nama} ({kelas?._count?.RiwayatKelas} murid)
             </option>
           ))}
         </select>

@@ -67,9 +67,6 @@ model EksemplarBuku {
   idSumbangan Int?
   sumbangan   Sumbangan? @relation("sumbangan", fields: [idSumbangan], references: [id])
 
-  idSumbanganBantuan Int?
-  sumbanganBantuan   Sumbangan? @relation("sumbanganBantuan", fields: [idSumbanganBantuan], references: [id])
-
   bukuPinjaman BukuPinjaman[]
 
   @@id([bukuISBN, id])
@@ -234,10 +231,9 @@ model Sumbangan {
   tanggalSelesai DateTime?
   berlebih       Boolean   @default(false)
 
-  pembayaranTunai      PembayaranTunai[]
-  riwayatBantuan       RiwayatBantuan[]
-  sumbanganBuku        EksemplarBuku[]   @relation("sumbangan")
-  sumbanganBukuBantuan EksemplarBuku[]   @relation("sumbanganBantuan")
+  pembayaranTunai PembayaranTunai[]
+  riwayatBantuan  RiwayatBantuan[]
+  sumbanganBuku   EksemplarBuku[]   @relation("sumbangan")
 
   denda Denda?
 

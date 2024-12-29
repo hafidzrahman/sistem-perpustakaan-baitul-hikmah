@@ -115,6 +115,7 @@ const ModalDetailSumbangan: React.FC<DetailFormBuktiProps> = ({
   };
 
   if (!isOpen) return null;
+  console.log(metodePembayaran)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-11/12 md:w-3/4 lg:w-1/2 relative flex flex-col gap-4 p-8 bg-white border-2 border-black rounded-lg max-h-[90vh] overflow-y-auto">
@@ -155,6 +156,15 @@ const ModalDetailSumbangan: React.FC<DetailFormBuktiProps> = ({
                   <p className="text-sm">Jumlah Buku: {sumbangan.keterangan.jumlahBuku}</p>
                   <p className="text-sm">Total Nominal: {sumbangan.keterangan.totalNominal}</p>
                   <p className="text-sm">Nominal per Hari: {sumbangan.keterangan.nominalPerHari}</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Sumbangan Buku</h3>
+                  {sumbangan.sumbanganBuku.map((data, i) => <div key={i}>
+                  <p>{`ISBN          : ${data.bukuISBN}`}</p>
+                  <p>{`Tanggal Masuk : ${data.tanggalMasuk}`}</p>
+                  </div>
+                  )}
+                  {sumbangan.sumbanganBuku.length === 0 && "-"}
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Riwayat Pembayaran</h3>
@@ -198,14 +208,14 @@ const ModalDetailSumbangan: React.FC<DetailFormBuktiProps> = ({
                   </>
                   }
                 </div>
-
-                {!sumbangan.tanggalSelesai && <div>
+                  
+                {sumbangan.sumbanganBuku.length < (sumbangan.keterangan?.jumlahBuku || 0) && <div>
                   <h3 className="font-semibold text-lg">Pembayaran</h3>
                   <div className="text-sm text-gray-600">
                     <label htmlFor="metode-pembayaran">Metode Pembayaran : </label>
                      <select name="metode-pembayaran" id="metode-pembayaran" defaultValue="buku" onChange={(e) => setMetodePembayaran(e.target.value)}>
                       <option key={1} value="buku">Buku</option>
-                      <option key={2} value="tunai">Tunai</option>
+                      {!sumbangan.tanggalSelesai && <option key={2} value="tunai">Tunai</option>}
                      </select>
                   </div>
                   {metodePembayaran === "tunai" ?
@@ -215,6 +225,7 @@ const ModalDetailSumbangan: React.FC<DetailFormBuktiProps> = ({
                   </div> : <div>
                   {arrayObjekBuku.current.map((item, i) => <div key={i}>  
                     <div className="flex flex-col">
+                      <p>Buku ke-{i+1}</p>
                   <label htmlFor="isbn">ISBN :</label>
                   <input type="text" className="border-[1px]" id="isbn" onChange={(e) => arrayObjekBuku.current[i].isbn = e.target.value} />
                   </div>
@@ -246,15 +257,15 @@ const ModalDetailSumbangan: React.FC<DetailFormBuktiProps> = ({
                   <label htmlFor="sinopsis">Sinopsis :</label>
                   <input type="text" className="border-[1px]" id="sinopsis" onChange={(e) => arrayObjekBuku.current[i].sinopsis = e.target.value}  />
                   </div>
-     </div>)}
-     <button onClick={() => handleOnTambahBuku()}>Tambah Buku</button>
+                  </div>)}
+                  <button className="text-lg font-bold" onClick={() => handleOnTambahBuku()}>Tambah Buku</button>
                   </div>
                   }
                 </div>}
               </div>
             </div>
 
-            {!sumbangan.tanggalSelesai && (
+            {!(sumbangan.sumbanganBuku.length >= (sumbangan.keterangan?.jumlahBuku || 0)) && (
               <div className="flex justify-end pt-4">
                 <button
                   onClick={handleAccept}
@@ -262,6 +273,8 @@ const ModalDetailSumbangan: React.FC<DetailFormBuktiProps> = ({
                 >
                   Terima Sumbangan
                 </button>
+                <p className="text-slate-600">Nominal Sumbangan yang berlebih</p>
+                <p className="text-slate-600">Daripada total Nominal keterangan akan disumbangkan secara otomatis</p>
               </div>
             )}
           </div>
