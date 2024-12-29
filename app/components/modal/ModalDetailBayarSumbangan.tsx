@@ -164,11 +164,11 @@ const ModalDetailSumbangan: React.FC<DetailFormBuktiProps> = ({
                     <p>Jumlah Buku: {sumbangan.keterangan.jumlahBuku}</p>
                     <p>
                       Total Nominal: Rp{" "}
-                      {sumbangan.keterangan.totalNominal.toLocaleString()}
+                      {sumbangan.keterangan.totalNominal?.toLocaleString()}
                     </p>
                     <p>
                       Nominal per Hari: Rp{" "}
-                      {sumbangan.keterangan.nominalPerHari.toLocaleString()}
+                      {sumbangan.keterangan.nominalPerHari?.toLocaleString()}
                     </p>
                   </div>
                 </div>
