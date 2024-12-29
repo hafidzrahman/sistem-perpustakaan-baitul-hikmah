@@ -134,7 +134,7 @@ export const seeds = {
     {
       isbn: "978-602-296-046-1",
       judul: "Panduan Sukses Komunikasi Belajar-Mengajar",
-      genre: [Genre.NONFIKSI.toString()],
+      genre: [Genre.PENDIDIKAN.toString()],
       penerbit: "Diva Press",
       penulis: ["N. Ardi Setyanto"],
       halaman: 224,
@@ -218,7 +218,7 @@ export const seeds = {
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
-      posisi: "A1",
+      posisi: "A2",
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
@@ -531,13 +531,23 @@ export const seeds = {
       nip: "122331",
       tanggalPinjam: new Date(),
       keterangan: "WOW",
-      daftarBukuPinjaman: [],
+      daftarBukuPinjaman: [
+        {
+          isbn: "978-602-033-295-6",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        }
+      ],
     },
     {
       nip: "112233",
       tanggalPinjam: new Date(),
       keterangan: "WOW",
-      daftarBukuPinjaman: [],
+      daftarBukuPinjaman: [
+        {
+          isbn: "978-602-06-5192-7",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        }
+      ],
     },
   ],
   formBukti: [
