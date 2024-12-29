@@ -101,7 +101,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         },
         body: JSON.stringify({
           username: nis,
-          name: nama,
+          muridNis: nis,
           password: password,
           role: "murid",
         }),

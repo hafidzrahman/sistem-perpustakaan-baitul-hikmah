@@ -9,6 +9,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession();
   console.log(session?.user?.role);
   console.log(session?.user?.name);
+  console.log(session);
 
   if (status === "loading") {
     return <div>Loading...</div>;
