@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession();
   console.log(session?.user?.role);
+  console.log(session?.user?.name);
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -16,7 +17,6 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   if (!session) {
     return null;
   }
-
   const Layout = session?.user?.role === "murid" ? LayoutMurid : LayoutAdmin;
 
   return <Layout>{children}</Layout>;

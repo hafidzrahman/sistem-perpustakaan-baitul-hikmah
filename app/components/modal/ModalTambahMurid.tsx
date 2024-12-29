@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 import { muridType } from "@/lib";
-import { hash } from "bcryptjs";
+import { toast } from "react-toastify";
 
 interface ModalTambahMuridProps {
   status: boolean;
@@ -17,6 +17,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
   const [idKelas, setIdKelas] = useState<number>(0);
   const [kelas, setKelas] = useState([]);
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch data kelas
   useEffect(() => {
@@ -27,15 +28,51 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         setKelas(data);
       } catch (error) {
         console.error("Gagal mengambil data kelas:", error);
+        toast.error("Gagal mengambil data kelas");
       }
     };
     fetchKelas();
   }, [status]);
 
+  const resetForm = () => {
+    setNIS("");
+    setNama("");
+    setJenisKelamin("");
+    setKontakOrtu("");
+    setAlamat("");
+    setIdKelas(0);
+    setPassword("");
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validation
+    if (!nis.trim()) {
+      toast.error("NIS tidak boleh kosong!");
+      return;
+    }
+    if (!nama.trim()) {
+      toast.error("Nama tidak boleh kosong!");
+      return;
+    }
+    if (!jenisKelamin) {
+      toast.error("Jenis kelamin harus dipilih!");
+      return;
+    }
+    if (!idKelas) {
+      toast.error("Kelas harus dipilih!");
+      return;
+    }
+    if (!password.trim()) {
+      toast.error("Kata sandi tidak boleh kosong!");
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
+      // Add student data
       let response = await fetch("/api/murid", {
         method: "POST",
         headers: {
@@ -51,6 +88,12 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         } as muridType),
       });
 
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Gagal menambahkan data murid");
+      }
+
+      // Create user account
       response = await fetch("/api/register", {
         method: "POST",
         headers: {
@@ -58,25 +101,30 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         },
         body: JSON.stringify({
           username: nis,
-          password: await hash(password, 12),
+          name: nama,
+          password: password,
           role: "murid",
         }),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        setNIS("");
-        setNama("");
-        setJenisKelamin("");
-        setKontakOrtu("");
-        setAlamat("");
-        setIdKelas(0);
-        setPassword("");
-      } else {
-        console.log(data.error);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Gagal membuat akun murid");
       }
+
+      toast.success(
+        `Berhasil menambahkan akun dan data murid dengan nis ${nis}`
+      );
+      resetForm();
+      handle(); // Close modal after success
     } catch (error) {
-      console.log(error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat menambahkan murid"
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -117,6 +165,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   onChange={(e) => setNIS(e.target.value)}
                   placeholder="Masukkan NIS murid"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -132,6 +181,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                     value={jenisKelamin}
                     onChange={(e) => setJenisKelamin(e.target.value)}
                     className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
+                    disabled={isSubmitting}
                   >
                     <option value="" disabled>
                       Pilih Jenis Kelamin
@@ -157,6 +207,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                     value={idKelas}
                     onChange={(e) => setIdKelas(Number(e.target.value))}
                     className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
+                    disabled={isSubmitting}
                   >
                     <option value={0} disabled>
                       Pilih Kelas
@@ -190,6 +241,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   onChange={(e) => setNama(e.target.value)}
                   placeholder="Masukkan nama murid"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -206,6 +258,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   onChange={(e) => setKontakOrtu(e.target.value)}
                   placeholder="Masukkan kontak orang tua murid"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -222,6 +275,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Masukkan kata sandi akun murid"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -237,6 +291,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   onChange={(e) => setAlamat(e.target.value)}
                   placeholder="Masukkan alamat murid"
                   className="py-3 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -247,9 +302,12 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
           </p>
           <button
             type="submit"
-            className="bg-dark-primary text-white-custom font-source-sans text-sm py-2 w-full rounded-lg border-2 border-black hover:shadow-md transition-all duration-300"
+            disabled={isSubmitting}
+            className={`bg-dark-primary text-white-custom font-source-sans text-sm py-2 w-full rounded-lg border-2 border-black hover:shadow-md transition-all duration-300 ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Tambahkan Murid
+            {isSubmitting ? "Menambahkan..." : "Tambahkan Murid"}
           </button>
         </form>
       </div>
