@@ -37,7 +37,7 @@ export class Denda {
     }
 
     static async kenakanDenda(data : kenakanDendaType) : Promise<dendaType> {
-      const {idSumbangan, idPeminjaman, idKeterangan, nis, nip} = data;
+      const {idSumbangan, idKeterangan, nis, nip} = data;
       if (!idSumbangan || !idKeterangan || !(nip || nis)) {
         throw new Error("Harus mengisi field yang wajib");
       }
@@ -50,7 +50,12 @@ export class Denda {
       })
 
       if (idKeterangan === 3 || idKeterangan === 5) {
-      const {bukuISBN, bukuId, idPeminjaman} = data
+      const {bukuISBN, bukuId, idPeminjaman} = data;
+
+      if (!bukuISBN || !bukuId || !idPeminjaman) {
+        throw new Error("Harus mengisi field yang wajib")
+      }
+      
       const dataDenda = await prisma.denda.create({
                 data: {
                   idSumbangan : dataSumbangan.id!,

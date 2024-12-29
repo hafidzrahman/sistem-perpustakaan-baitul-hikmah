@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { kelasType, keteranganType } from "@/lib";
+import { kelasType, kenakanDendaType, keteranganType } from "@/lib";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 import { toast } from "react-toastify";
 
@@ -9,12 +9,13 @@ interface ModalTambahDendaProps {
 }
 
 const ModalTambahDenda = ({ status, handle }: ModalTambahDendaProps) => {
-  const [nama, setNama] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [isNIS, setIsNIS] = useState(1)
   const [idKeterangan, setIdKeterangan] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [keterangan, setKeterangan] = useState<keteranganType[]>([])
   const resetForm = () => {
-    setNama("");
+    setInputValue("");
     setIdKeterangan(1);
   };
 
@@ -34,31 +35,30 @@ const ModalTambahDenda = ({ status, handle }: ModalTambahDendaProps) => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nama.trim()) {
-      toast.error("Nama kelas tidak boleh kosong!");
+    if (!inputValue.trim()) {
+      toast.error("inputValue kelas tidak boleh kosong!");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-
-        // ganti
       const response = await fetch("/api/denda/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nama,
+          nis : (isNIS === 1) && inputValue,
+          nip : (isNIS === 0) && inputValue,
           idKeterangan,
-        }),
+        } as kenakanDendaType),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        toast.success(`Kelas ${data.nama} berhasil ditambahkan!`);
+        toast.success(`Kelas ${data.inputValue} berhasil ditambahkan!`);
         resetForm();
         handle(); // Tutup modal setelah berhasil
       } else {
@@ -93,19 +93,26 @@ const ModalTambahDenda = ({ status, handle }: ModalTambahDendaProps) => {
           className="w-full flex flex-col gap-4 justify-center items-stretch"
         >
           <div className="flex flex-col gap-1">
-            <label
-              htmlFor="nama"
-              className="font-source-serif text-lg font-bold"
-            >
-              NIS
-            </label>
+          <select
+                id="isNIS"
+                value={isNIS}
+                onChange={(e) => setIsNIS(Number(e.target.value))}
+                className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                disabled={isSubmitting}
+              >
+                <option value={1} disabled>
+                  Pilih NIS atau NIP
+                </option>
+                <option value={1}>NIS</option>
+                <option value={0}>NIP</option>
+              </select>
             <input
               autoComplete="off"
               type="text"
-              id="nama"
-              value={nama}
-              onChange={(e) => setNama(e.target.value)}
-              placeholder="Masukkan NIS murid"
+              id="inputValue"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Masukkan inputValue murid"
               className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
               disabled={isSubmitting}
             />
