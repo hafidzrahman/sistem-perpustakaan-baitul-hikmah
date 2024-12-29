@@ -214,10 +214,9 @@ async function test(dataUser : userType[]): Promise<void> {
   
   for await (const user of dataUser) {
     const {username, password, role, muridNIS, guruNIP, petugasPerpustakaanId} = user;
-    const hashedPassword = await hash(password, 12);
     const dataUser = new User({
         username,
-        password : hashedPassword,
+        password,
         role,
         muridNIS,
         guruNIP,

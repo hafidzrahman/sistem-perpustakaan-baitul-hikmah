@@ -493,6 +493,7 @@ export const seeds = {
       jumlahBuku: 0,
       totalNominal: 0,
       nominalPerHari: 1000,
+      denda : true
     },
     {
       id: 2,
@@ -500,6 +501,7 @@ export const seeds = {
       jumlahBuku: 1,
       totalNominal: 35000,
       nominalPerHari: 0,
+      denda : true
     },
     {
       id: 3,
@@ -507,6 +509,7 @@ export const seeds = {
       jumlahBuku: 1,
       totalNominal: 55000,
       nominalPerHari: 0,
+      denda : true
     },
     {
       id: 4,
@@ -514,6 +517,15 @@ export const seeds = {
       jumlahBuku: 2,
       totalNominal: 110000,
       nominalPerHari: 0,
+      denda : false
+    },
+    {
+      id: 5,
+      keterangan: "Merusak buku perpustakaan",
+      jumlahBuku: 1,
+      totalNominal: 55000,
+      nominalPerHari: 0,
+      denda : true
     },
   ],
   peminjaman: [

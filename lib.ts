@@ -244,6 +244,18 @@ export type dendaType = {
   bukuId?: number | null;
 };
 
+export type kenakanDendaType = {
+  id?: number;
+  idKeterangan: number;
+  idSumbangan: number;
+  nis : string,
+  nip : string,
+  tanggal?: Date | null;
+  idPeminjaman?: number | null;
+  bukuISBN?: string | null;
+  bukuId?: number | null;
+};
+
 export type userType = {
 
   id? : string,
@@ -255,6 +267,11 @@ export type userType = {
   petugasPerpustakaanId? : string | null
 
 };
+
+export type perbaruiUserType = {
+  password? : string,
+  role : string,
+}
 
 export type detailSumbanganType = {
     id?: number;
