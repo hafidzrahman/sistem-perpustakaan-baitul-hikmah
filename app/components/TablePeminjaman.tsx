@@ -8,6 +8,7 @@ import {
   Search01Icon,
 } from "hugeicons-react";
 import { bukuType, guruType, muridType, peminjamanType } from "@/lib";
+import { toast } from "react-toastify";
 
 interface TablePeminjamanProps {
   data: peminjamanType[];
@@ -24,6 +25,7 @@ const TablePeminjaman = ({
 }: TablePeminjamanProps) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const getBukuData = (isbn: string) => {
     if (!bukuList || !isbn) return null;
@@ -39,6 +41,69 @@ const TablePeminjaman = ({
       return guruList.find((g) => g.nip === nip);
     }
     return null;
+  };
+
+  const getStatus = (tanggalKembali: Date | null, tenggatWaktu: Date) => {
+    if (!tanggalKembali) return "Masih";
+
+    const kembali = new Date(tanggalKembali);
+    const tenggat = new Date(tenggatWaktu);
+
+    return kembali <= tenggat ? "Dikembalikan" : "Terlambat";
+  };
+
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "Masih":
+        return "border-jewel-green bg-pastel-green text-jewel-green";
+      case "Dikembalikan":
+        return "border-jewel-blue bg-pastel-blue text-jewel-blue";
+      case "Terlambat":
+        return "border-jewel-red bg-pastel-red text-jewel-red";
+      default:
+        return "border-gray-400 bg-gray-100 text-gray-600";
+    }
+  };
+
+  const handleConfirmReturn = async (
+    idPeminjaman: number,
+    bukuISBN: string,
+    bukuId: number
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        "/api/buku-pinjaman/konfirmasi-pengembalian",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            idPeminjaman,
+            bukuISBN,
+            bukuId,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.details?.message || data.message);
+      }
+
+      toast.success(data.message);
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal mengkonfirmasi pengembalian"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const filteredData = React.useMemo(() => {

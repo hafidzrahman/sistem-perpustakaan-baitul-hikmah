@@ -524,7 +524,7 @@ export const seeds = {
     },
     {
       nip: "122331",
-      nama: "Fulan Thomas",
+      nama: "Fulan, S.Pd., M.Pd.,",
       jenisKelamin: JenisKelamin.LAKI,
       kontak: "0831242152",
       alamat: "Jl. Soebrantas",
