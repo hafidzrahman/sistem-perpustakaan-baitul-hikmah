@@ -108,7 +108,7 @@ export const seeds = {
       isbn: "979-28-8520-0",
       judul: "Panduan Praktis P3K Pertolongan Pertama Pada Kedaruratan",
       penerbit: "Mahkota kita",
-      genre: [Genre.NONFIKSI.toString()],
+      genre: [Genre.PENDIDIKAN.toString()],
       penulis: ["Ajeng Kumoratih,M.Kes"],
       halaman: 127,
       sinopsis: "Panduan Praktis P3k yang dilengkapi dengan gambar penunjang",
@@ -271,7 +271,7 @@ export const seeds = {
         "https://cdn.gramedia.com/uploads/items/9786020332956_Bumi-New-Cover.jpg",
     },
     {
-      isbn: "978–979–22–5780-9",
+      isbn: "978-979-22-5780-9",
       judul: "Daun yang jatuh tak pernah membenci angin ",
       penerbit: "Gramedia Pustaka Utama",
       genre: [Genre.FIKSI.toString()],
