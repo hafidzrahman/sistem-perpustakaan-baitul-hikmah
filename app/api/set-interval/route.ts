@@ -39,7 +39,7 @@ export async function GET() {
                         idKeterangan : 2,
                         nis : dataFormBukti.nis,
                     });
-                    await Denda.tambahDenda({
+                    await Denda.addFine({
                         idSumbangan : dataSumbangan.id!,
                     });
                 }
@@ -63,14 +63,14 @@ export async function GET() {
             })
 
             for await (const dataKelas of arrayDataKelas) {
-                const kelas = await Kelas.tambahKelas({
+                const kelas = await Kelas.addClass({
                     nama : dataKelas.nama,
                     tingkat : dataKelas.tingkat+1,
                     JKMurid : dataKelas.JKMurid
                 });
 
                 for await (const murid of dataKelas.RiwayatKelas) {
-                    await RiwayatKelas.tambahRiwayatKelas({
+                    await RiwayatKelas.addHstryClass({
                         idKelas : kelas.id,
                         muridNIS : murid.muridNIS,
                         tahunAjaran : tahunAjaranSekarang
@@ -134,7 +134,7 @@ export async function GET() {
                         idKeterangan : 2,
                         nis : dataFormBukti.nis,
                     });
-                    await Denda.tambahDenda({
+                    await Denda.addFine({
                         idSumbangan : dataSumbangan.id!,
                     });
                 }

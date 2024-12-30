@@ -1,4 +1,4 @@
-import {keteranganType, prisma} from '@/lib'
+import {infType, prisma} from '@/lib'
 import { NextResponse } from 'next/server';
 
 export class Keterangan{
@@ -8,7 +8,7 @@ export class Keterangan{
     totalNominal? : number | null;
     nominalPerHari? : number | null;
 
-    constructor(data : keteranganType) {
+    constructor(data : infType) {
             this.id = data.id;
             this.keterangan = data.keterangan;
             this.jumlahBuku = data.jumlahBuku;
@@ -16,7 +16,7 @@ export class Keterangan{
             this.nominalPerHari = data.nominalPerHari;
     }
 
-    static async tambahKeterangan(dataKeterangan : Omit<keteranganType, 'id'>) : Promise<keteranganType> {
+    static async addInf(dataKeterangan : Omit<infType, 'id'>) : Promise<infType> {
         const {keterangan, jumlahBuku, totalNominal, nominalPerHari} = dataKeterangan;
         
 
@@ -36,7 +36,7 @@ export class Keterangan{
           return result;
     }
 
-    static async tambahBanyakKeterangan(dataKeterangan : Omit<keteranganType, 'id'>[]) : Promise<keteranganType[]> {
+    static async addManyInf(dataKeterangan : Omit<infType, 'id'>[]) : Promise<infType[]> {
         const result = await prisma.keterangan.createManyAndReturn({
             data : dataKeterangan
         })
@@ -44,13 +44,13 @@ export class Keterangan{
         return result;
     }
 
-    static async cariKeterangan (id : number) : Promise<keteranganType | undefined | null> {
+    static async findInf (id : number) : Promise<infType | undefined | null> {
  
             const keterangan = await prisma.keterangan.findUnique({
                 where : {
                     id
                 }
-            }) as keteranganType
+            }) as infType
     
             if (!keterangan?.id) {
                 throw ({message : "Data keterangan tidak ditemukan"})
@@ -59,26 +59,26 @@ export class Keterangan{
             return keterangan;
 
 }
-    static async ambilSemuaDataKeterangan() : Promise<keteranganType[]> {
-        const keterangan = await prisma.keterangan.findMany({}) as keteranganType[]
+    static async findAllInf() : Promise<infType[]> {
+        const keterangan = await prisma.keterangan.findMany({}) as infType[]
 
         return keterangan;
     }
 
-    static async ambilSemuaDataKeteranganDenda() : Promise<keteranganType[]> {
+    static async findAllInfDenda() : Promise<infType[]> {
         const keterangan = await prisma.keterangan.findMany({
             where : {
                 denda : true
             }
-        }) as keteranganType[]
+        }) as infType[]
 
         return keterangan;
     }
 
-    static async perbaruiKeterangan(id : number, dataKeterangan : Omit<keteranganType, 'id'>) :Promise<keteranganType> {
+    static async updtInf(id : number, dataKeterangan : Omit<infType, 'id'>) :Promise<infType> {
         const {keterangan : deskripsi, jumlahBuku, totalNominal, nominalPerHari} = dataKeterangan;
 
-        const keterangan = await Keterangan.cariKeterangan(id) as keteranganType;
+        const keterangan = await Keterangan.findInf(id) as infType;
 
         if (!keterangan?.id) {
             throw new Error("Data keterangan tidak ditemukan")
@@ -99,7 +99,7 @@ export class Keterangan{
         return result;
     }
 
-    static async hapusKeterangan(id : number) : Promise<void> {
+    static async dltInf(id : number) : Promise<void> {
         const keterangan = await prisma.keterangan.delete({
             where : {
                 id
@@ -111,7 +111,7 @@ export class Keterangan{
         }
     }
 
-    static async hapusSemuaKeterangan() : Promise<void> {
+    static async dltAllInf() : Promise<void> {
         await prisma.keterangan.deleteMany({}) 
     }
     

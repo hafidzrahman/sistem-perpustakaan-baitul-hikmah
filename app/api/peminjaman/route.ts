@@ -23,7 +23,7 @@ export async function GET(req : NextRequest) {
       throw new Error("Terjadi kesalahan pada pengkondisian role")
     }
 
-    // await BukuPinjaman.perbaruiTenggatWaktuPeminjaman(
+    // await BukuPinjaman.updtdeadline(
     //   dataPeminjaman[0].id,
     //   { isbn: "978-602-06-5192-9", id: 1 },
     //   new Date(Date.now() + 10000)

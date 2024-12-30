@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const dataKelas = await Kelas.ambilSemuaDataKelas();
+    const dataKelas = await Kelas.findAllClass();
     console.log(dataKelas);
     return NextResponse.json(dataKelas, {status : 200});
   } catch (error) {
@@ -14,7 +14,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const dataKelas = await Kelas.tambahKelas(body); 
+    const dataKelas = await Kelas.addClass(body); 
     
     return NextResponse.json(dataKelas, {status : 200});
   } catch (error) {

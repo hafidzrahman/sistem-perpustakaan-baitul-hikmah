@@ -12,7 +12,7 @@ export async function GET(req: Request, {params} : paramsType) {
   
   const {isbn} = await params;
 
-  const dataBuku = await Buku.cariBuku(isbn)
+  const dataBuku = await Buku.findBook(isbn)
 
   if (!dataBuku) {
     throw new Error("Data buku tidak ditemukan");
@@ -29,7 +29,7 @@ export async function PUT(req : Request, {params} : paramsType) {
   try {
     const body = await req.json();
     const {isbn} = await params;
-    const dataBuku = await Buku.perbaruiBuku(isbn, body);
+    const dataBuku = await Buku.updateBook(isbn, body);
 
     return NextResponse.json(dataBuku, {status : 200});
   } catch (error) {
@@ -41,7 +41,7 @@ export async function DELETE(req : Request, {params} : paramsType) {
   try {
     const {isbn} = await params;
 
-    await Buku.hapusBuku(isbn);
+    await Buku.deleteBook(isbn);
 
     return NextResponse.json({message : "Berhasil menghapus data buku"}, {status : 200})
   } catch (error) {

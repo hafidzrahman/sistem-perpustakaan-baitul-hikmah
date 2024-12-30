@@ -25,7 +25,7 @@ export type muridType = {
   alamat?: string | null;
 };
 
-export type perbaruiAnggotaType = {
+export type updtMemberType = {
   nama?: string;
   jenisKelamin?: JenisKelamin;
   kontak?: string;
@@ -36,38 +36,38 @@ export type perbaruiAnggotaType = {
 export type perbaruiPeminjaman = Omit<peminjamanType, "id" | "tanggalPinjam">;
 
 export type ambilSemuaDataPeminjamanType = peminjamanType & {
-  bukuPinjaman: (bukuPinjamanType & { eksemplarBuku: eksemplarBukuType })[];
+  bukuPinjaman: (bookBrwType & { eksemplarBuku: copyBookType })[];
 };
 
-export type detailsBukuType = bukuType & {
+export type dtlsBookType = bookType & {
   _count: {
     eksemplarBuku: number;
   };
-  eksemplarBuku: eksemplarBukuType[];
-  penulis: penulisType[];
-  penerbitDetails: penerbitType;
+  eksemplarBuku: copyBookType[];
+  penulis: writerType[];
+  penerbitDetails: publisherType;
   genre: genreType[];
 };
 
-export type perbaruiKelasType = {
+export type updtClassType = {
   nama?: string;
   tingkat?: number;
 };
 
-export type ambilSemuaDataKelasType = kelasType & {
+export type findAllClassType = classType & {
   _count: {
     RiwayatKelas: number;
   };
 };
 
-export type kelasType = {
+export type classType = {
   id: number;
   nama: string;
   tingkat: number;
   JKMurid?: string | null;
 };
 
-export type riwayatKelasType = {
+export type hstryClassType = {
   muridNIS: string;
   idKelas: number;
   tahunAjaran: string;
@@ -77,7 +77,7 @@ export type riwayatKelasType = {
 // id dan bukuISBN jadi opsional (!)
 // sumbangan belum ditambahkan
 
-export type eksemplarBukuType = {
+export type copyBookType = {
   bukuISBN?: string;
   id?: number;
   tanggalMasuk?: Date | null;
@@ -87,15 +87,15 @@ export type eksemplarBukuType = {
   idSumbangan?: number | null;
 } | null;
 
-export type bukuType = {
+export type bookType = {
   judul: string;
-  penulis?: string[] | number[] | penulisType[];
+  penulis?: string[] | number[] | writerType[];
   genre: string[] | number[] | genreType[];
   isbn: string;
   linkGambar?: string | null;
   sinopsis?: string | null;
   penerbit?: string | number | null;
-  penerbitDetails?: penerbitType | null;
+  penerbitDetails?: publisherType | null;
   halaman?: number | null;
   tanggalMasuk?: Date | null;
   tanggalRusak?: Date | null;
@@ -103,11 +103,11 @@ export type bukuType = {
   posisi?: string | null;
 };
 
-export type tambahBukuType = bukuType & eksemplarBukuType;
+export type addBookType = bookType & copyBookType;
 
-export type eksemplarDenganBukuType = eksemplarBukuType & { buku: bukuType };
+export type eksemplarDenganBukuType = copyBookType & { buku: bookType };
 
-export type penerbitType = {
+export type publisherType = {
   id: number;
   nama: string;
 };
@@ -117,39 +117,39 @@ export type genreType = {
   nama: string;
 };
 
-export type cariBukuType =
+export type findBookType =
   | ({
       genre: genreType[];
       _count: {
         eksemplarBuku: number;
       };
     } & {
-      penulis: penulisType[];
+      penulis: writerType[];
     } & {
       isbn: string;
       judul: string;
       halaman: number | null;
       linkGambar: string | null;
       sinopsis: string | null;
-      penerbit: number | penerbitType | null;
-      penerbitDetails?: penerbitType;
+      penerbit: number | publisherType | null;
+      penerbitDetails?: publisherType;
     })
   | null;
 
-export type penulisType = {
+export type writerType = {
   id: number;
   nama: string;
 };
 
-export type perbaruiBukuType = {
+export type updateBookType = {
   judul?: string;
-  penulis?: string[] | number[] | penulisType[];
+  penulis?: string[] | number[] | writerType[];
   genre?: string[] | number[];
   isbn?: string; // berisiko jika diperbarui? kalau bukan autoincrement() harusnya aman? setiap eksemplar buku yang terkait dengan isbn yang mau diubah pasti akan error
   linkGambar?: string;
   sinopsis?: string;
   penerbit?: string | number;
-  penerbitDetails?: penerbitType;
+  penerbitDetails?: publisherType;
   halaman?: number;
   tanggalMasuk?: Date;
   tanggalRusak?: Date;
@@ -157,7 +157,7 @@ export type perbaruiBukuType = {
   posisi?: string;
 };
 
-export type keteranganType = {
+export type infType = {
   id: number;
   keterangan: string;
   jumlahBuku?: number | null;
@@ -165,7 +165,7 @@ export type keteranganType = {
   nominalPerHari?: number | null;
 };
 
-export type perbaruiKeteranganType = {
+export type updtInfType = {
   keterangan?: string | null;
   jumlahBuku?: number | null;
   totalNominal?: number | null;
@@ -178,7 +178,7 @@ export type peminjamanType = {
   nip?: string;
   tanggalPinjam?: Date | null;
   keterangan?: string;
-  bukuPinjaman: bukuPinjamanType[];
+  bukuPinjaman: bookBrwType[];
 };
 
 // untuk user yang ingin meminjam buku
@@ -189,7 +189,7 @@ export type peminjamType = {
   daftarBukuPinjaman: { isbn: string; tenggatWaktu?: Date | null }[];
 };
 
-export type bukuPinjamanType = {
+export type bookBrwType = {
   idPeminjaman: number;
   bukuISBN: string;
   bukuId?: number;
@@ -197,7 +197,7 @@ export type bukuPinjamanType = {
   tanggalKembali?: Date | null;
 };
 
-export type formBuktiType = {
+export type FBType = {
   id?: number;
   bukuISBN: string;
   muridNIS: string;
@@ -219,12 +219,12 @@ export type formBuktiMuridType = {
   };
 };
 
-export type ambilSemuaFormBuktiType = formBuktiMuridType & {
+export type takeAllFBType = formBuktiMuridType & {
   kelas?: { nama: string; tingkat: number } | undefined;
   murid: { nis: string; nama: string; riwayatKelas: { tahunAjaran: string }[] };
 };
 
-export type perbaruiFormBuktiType = {
+export type perbaruiFBType = {
   bukuISBN?: string;
   muridNIS?: string;
   tanggal?: Date;
@@ -234,7 +234,7 @@ export type perbaruiFormBuktiType = {
   status?: boolean;
 };
 
-export type dendaType = {
+export type fineType = {
   id?: number;
   idSumbangan: number;
   tanggal?: Date | null;
@@ -243,7 +243,7 @@ export type dendaType = {
   bukuId?: number | null;
 };
 
-export type kenakanDendaType = {
+export type imposeFineType = {
   id?: number;
   idKeterangan: number;
   idSumbangan: number;
@@ -267,7 +267,7 @@ export type userType = {
 
 };
 
-export type perbaruiUserType = {
+export type updtUserType = {
   password? : string,
   role : string,
 }
@@ -287,11 +287,11 @@ export type detailSumbanganType = {
         sumbangan : { murid: { nama: string; } | null; } | null
       } 
     }[]
-    pembayaranTunai : pembayaranTunaiType[];
+    pembayaranTunai : moneyPymtType[];
     murid? : muridType | null;
     guru? : guruType | null;
-    keterangan : keteranganType;
-    denda? : dendaType | null;
+    keterangan : infType;
+    denda? : fineType | null;
     sumbanganBuku : {
       bukuISBN : string,
       tanggalMasuk? : Date | null
@@ -321,21 +321,21 @@ export type sumbanganType = {
 };
 
 export type cariSumbanganAnggotaType = sumbanganType & {
-  keterangan: keteranganType;
-  pembayaranTunai: pembayaranTunaiType;
+  keterangan: infType;
+  pembayaranTunai: moneyPymtType;
   _count: {
     sumbanganBuku: number;
   };
-  denda: dendaType;
+  denda: fineType;
 };
 
-export type riwayatBantuanType = {
+export type hstryAidType = {
   idPembayaranTunai: number;
   idSumbangan: number;
   jumlah: number;
 };
 
-export type pembayaranTunaiType = {
+export type moneyPymtType = {
   id?: number;
   idSumbangan?: number | null;
   tanggal: Date;
@@ -345,7 +345,7 @@ export type pembayaranTunaiType = {
 export type beriSumbanganType = {
   idSumbangan?: number;
   nominalTotal?: number;
-  buku: tambahBukuType[];
+  buku: addBookType[];
 };
 
 export const hariKeMiliDetik = 1000 * 60 * 60 * 24;
@@ -384,30 +384,30 @@ export async function konversiDataKeId(
   // jika data penulis atau genre yang dimasukkan adalah array string, pasti data belum ada di drop down menu
   if (tableName === "penulis") {
     for await (const nama of data as string[]) {
-      let dataPenulis = await Penulis.cariPenulis({ nama });
+      let dataPenulis = await Penulis.findWriter({ nama });
 
       if (!dataPenulis) {
-        dataPenulis = await Penulis.tambahPenulis(nama);
+        dataPenulis = await Penulis.addWriter(nama);
       }
       arrayId.push(dataPenulis.id);
     }
     return arrayId;
   } else if (tableName === "genre") {
     for await (const nama of data as string[]) {
-      let dataGenre = await GenreClass.cariGenre({ nama });
+      let dataGenre = await GenreClass.findGenre({ nama });
 
       if (!dataGenre) {
-        dataGenre = await GenreClass.tambahGenre(nama);
+        dataGenre = await GenreClass.addGenre(nama);
       }
       arrayId.push(dataGenre.id);
     }
     return arrayId;
   }
 
-  let dataPenerbit = await Penerbit.cariPenerbit({ nama: data as string });
+  let dataPenerbit = await Penerbit.findPublisher({ nama: data as string });
 
   if (!dataPenerbit) {
-    dataPenerbit = await Penerbit.tambahPenerbit(data as string);
+    dataPenerbit = await Penerbit.addPublisher(data as string);
   }
 
   return dataPenerbit.id;

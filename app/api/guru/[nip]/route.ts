@@ -10,7 +10,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {nip} = await params;
         
-        const dataGuru = await Guru.cariAnggota(nip) as guruType;
+        const dataGuru = await Guru.findMember(nip) as guruType;
 
         // if (!dataGuru?.nip) {
         //     return new Error("Data Guru tidak ditemukan")
@@ -28,13 +28,13 @@ export async function PUT(req : Request, {params} : paramsType) {
         const {nip} = await params;
         const body = await req.json();
 
-        // const dataGuru = await guru.cariAnggota(nip) as guruType;
+        // const dataGuru = await guru.findMember(nip) as guruType;
 
         // if (!dataGuru?.nip) {
         //     return NextResponse.json({message : "Data Guru tidak ditemukan"}, {status : 502})
         // }
 
-        const dataGuru = await Guru.perbaruiAnggota(nip, body);
+        const dataGuru = await Guru.updtMember(nip, body);
 
         return NextResponse.json(dataGuru, {status : 200})
 
@@ -48,13 +48,13 @@ export async function DELETE(req : Request, {params} : paramsType) {
     try {
         const {nip} = await params;
         
-        // const dataGuru = await guru.cariAnggota(nip) as guruType
+        // const dataGuru = await guru.findMember(nip) as guruType
 
         // if (!dataGuru?.nip) {
         //     return NextResponse.json({message : "Data Guru tidak ditemukan"}, {status : 502})
         // }
 
-        await Guru.hapusAnggota(nip);
+        await Guru.dltMember(nip);
 
         return NextResponse.json({message : "Berhasil menghapus data Guru"}, {status : 200})
 

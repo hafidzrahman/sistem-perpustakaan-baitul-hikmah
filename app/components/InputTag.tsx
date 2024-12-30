@@ -1,10 +1,10 @@
-import { Genre, genreType, penulisType } from "@/lib";
+import { Genre, genreType, writerType } from "@/lib";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
 interface TagInputProps {
   value: string | string[];
   onChange: (value: string | string[]) => void;
-  suggestions: penulisType[] | genreType[];
+  suggestions: writerType[] | genreType[];
   placeholder: string;
   labelText: string;
   type: "author" | "genre";
@@ -38,7 +38,7 @@ const TagInput: React.FC<TagInputProps> = ({
   const [tags, setTags] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState<
-    (penulisType | genreType)[]
+    (writerType | genreType)[]
   >([]);
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const TagInput: React.FC<TagInputProps> = ({
     }
   };
 
-  const handleSuggestionClick = (suggestion: penulisType | genreType) => {
+  const handleSuggestionClick = (suggestion: writerType | genreType) => {
     addTag(suggestion.nama);
     setShowSuggestions(false);
   };

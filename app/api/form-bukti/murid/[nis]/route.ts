@@ -9,7 +9,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {nis} = await params;
 
-        const dataFormBukti = await FormBukti.cariDataFormBuktiDariMurid(nis);
+        const dataFormBukti = await FormBukti.findFBStudent(nis);
 
         return NextResponse.json(dataFormBukti, {status : 200})
     } catch (error) {

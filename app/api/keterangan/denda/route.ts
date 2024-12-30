@@ -3,7 +3,7 @@ import {NextResponse} from "next/server"
 
 export async function GET() {
     try {
-        const dataKeterangan = await Keterangan.ambilSemuaDataKeterangan();
+        const dataKeterangan = await Keterangan.findAllInf();
 
         return NextResponse.json(dataKeterangan, {status:200})
     }

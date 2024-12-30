@@ -1,8 +1,8 @@
 import {
-  ambilSemuaFormBuktiType,
+  takeAllFBType,
   formBuktiMuridType,
-  formBuktiType,
-  perbaruiFormBuktiType,
+  FBType,
+  perbaruiFBType,
   prisma,
 } from "@/lib";
 
@@ -16,7 +16,7 @@ export class FormBukti {
   halamanAkhir: number;
   status: boolean;
 
-  constructor(data: formBuktiType) {
+  constructor(data: FBType) {
     this.id = data.id;
     this.bukuISBN = data.bukuISBN;
     this.muridNIS = data.muridNIS;
@@ -27,9 +27,9 @@ export class FormBukti {
     this.status = data.status;
   }
 
-  static async tambahDataFormBukti(
-    data: formBuktiType
-  ): Promise<formBuktiType> {
+  static async addFB(
+    data: FBType
+  ): Promise<FBType> {
     const {
       bukuISBN,
       muridNIS,
@@ -66,7 +66,7 @@ export class FormBukti {
     return dataFormBukti;
   }
 
-  static async ambilSemuaDataFormBukti(): Promise<ambilSemuaFormBuktiType[]> {
+  static async takeAllFB(): Promise<takeAllFBType[]> {
     const dataFormBukti = (await prisma.formBukti.findMany({
       select: {
         id: true,
@@ -92,7 +92,7 @@ export class FormBukti {
           },
         },
       },
-    })) as ambilSemuaFormBuktiType[];
+    })) as takeAllFBType[];
     let counter = 0;
     for await (const data of dataFormBukti) {
       const tahun = data.tanggal.getFullYear().toString();
@@ -130,9 +130,9 @@ export class FormBukti {
     return dataFormBukti;
   }
 
-  static async cariDataFormBukti(
+  static async findFB(
     id: number
-  ): Promise<formBuktiType | null | undefined> {
+  ): Promise<FBType | null | undefined> {
     const dataFormBukti = await prisma.formBukti.findUnique({
       where: {
         id,
@@ -150,7 +150,7 @@ export class FormBukti {
     return dataFormBukti;
   }
 
-  static async cariDataFormBuktiDariMurid(
+  static async findFBStudent(
     muridNIS: string
   ): Promise<formBuktiMuridType[]> {
     const dataFormBukti = await prisma.formBukti.findMany({
@@ -174,10 +174,10 @@ export class FormBukti {
     return dataFormBukti;
   }
 
-  static async perbaruiDataFormBukti(
+  static async updateFB(
     id: number,
-    data: perbaruiFormBuktiType
-  ): Promise<formBuktiType> {
+    data: perbaruiFBType
+  ): Promise<FBType> {
     const {
       bukuISBN,
       muridNIS,
@@ -188,7 +188,7 @@ export class FormBukti {
       status,
     } = data;
 
-    const dataFormBuktiLama = await FormBukti.cariDataFormBukti(id);
+    const dataFormBuktiLama = await FormBukti.findFB(id);
 
     if (!dataFormBuktiLama?.id) {
       throw new Error("Data form bukti tidak ditemukan");
@@ -212,7 +212,7 @@ export class FormBukti {
     return dataFormBukti;
   }
 
-  static async hapusDataFormBukti(id: number): Promise<void> {
+  static async deleteFB(id: number): Promise<void> {
     const dataFormBukti = await prisma.formBukti.delete({
       where: {
         id,
@@ -224,7 +224,7 @@ export class FormBukti {
     }
   }
 
-  static async hapusSemuaDataFormBukti(): Promise<void> {
+  static async deleteAllFB(): Promise<void> {
     await prisma.formBukti.deleteMany({});
   }
 }

@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const dataMurid = await Murid.tambahAnggota(body);
+    const dataMurid = await Murid.addMember(body);
     
     return NextResponse.json(dataMurid, {status : 200});
   } catch (error) {

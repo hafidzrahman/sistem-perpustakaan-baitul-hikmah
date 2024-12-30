@@ -8,7 +8,7 @@ import {
   MapPinIcon,
   UserAccountIcon,
 } from "hugeicons-react";
-import { formBuktiType } from "@/lib";
+import { FBType } from "@/lib";
 import CardLeaderboardMurid from "../CardLeaderboardMurid";
 import TableFormBukti from "../TableFormBukti";
 import ModalFormBukti from "../modal/ModalFormBukti";

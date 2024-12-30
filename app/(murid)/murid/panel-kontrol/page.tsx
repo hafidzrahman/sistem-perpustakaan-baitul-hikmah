@@ -2,7 +2,7 @@
 import DoughnutChartGenreBuku from "@/app/components/charts/DoughnutChartGenreBuku";
 import LineChartPeminjaman from "@/app/components/charts/LineChartPeminjaman";
 import TablePeminjaman from "@/app/components/TablePeminjaman";
-import { bukuType, muridType, guruType } from "@/lib";
+import { bookType, muridType, guruType } from "@/lib";
 
 import {
   Mortarboard01Icon,
@@ -17,7 +17,7 @@ const BerandaPage = ({}: BerandaPageProps) => {
   const {data : session, status} = useSession();
   const [peminjaman, setPeminjaman] = useState([]);
   const [data, setData] = useState<{
-    buku: bukuType[];
+    buku: bookType[];
     guru: guruType[];
     murid: muridType[];
   }>();
@@ -54,7 +54,7 @@ const BerandaPage = ({}: BerandaPageProps) => {
           throw new Error("Data murid ga ada");
         }
         setData({
-          buku: dataBuku as bukuType[],
+          buku: dataBuku as bookType[],
           guru: dataGuru as guruType[],
           murid: dataMurid as muridType[],
         });

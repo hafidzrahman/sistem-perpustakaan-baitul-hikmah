@@ -7,7 +7,7 @@ import {
   PencilEdit01Icon,
   Search01Icon,
 } from "hugeicons-react";
-import { kelasType } from "@/lib";
+import { classType } from "@/lib";
 
 const bg = [
   "bg-jewel-purple",
@@ -29,7 +29,7 @@ const TableMurid = ({ data }: { data: any }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
-  const [classData, setClassData] = useState<kelasType[]>([]);
+  const [classData, setClassData] = useState<classType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

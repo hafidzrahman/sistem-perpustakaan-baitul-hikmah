@@ -2,7 +2,7 @@
 import DoughnutChartGenreBuku from "@/app/components/charts/DoughnutChartGenreBuku";
 import LineChartPeminjaman from "@/app/components/charts/LineChartPeminjaman";
 import TablePeminjaman from "@/app/components/TablePeminjaman";
-import { bukuType, muridType, guruType } from "@/lib";
+import { bookType, muridType, guruType } from "@/lib";
 
 import {
   Mortarboard01Icon,
@@ -16,7 +16,7 @@ interface BerandaAdminProps {}
 const BerandaAdmin = ({}: BerandaAdminProps) => {
   const [peminjaman, setPeminjaman] = useState([]);
   const [data, setData] = useState<{
-    buku: bukuType[];
+    buku: bookType[];
     guru: guruType[];
     murid: muridType[];
   }>({
@@ -62,7 +62,7 @@ const BerandaAdmin = ({}: BerandaAdminProps) => {
         }
 
         setData({
-          buku: dataBuku as bukuType[],
+          buku: dataBuku as bookType[],
           guru: dataGuru as guruType[],
           murid: dataMurid as muridType[],
         });

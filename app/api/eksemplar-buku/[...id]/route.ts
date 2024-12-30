@@ -12,7 +12,7 @@ export async function PUT(req : Request, {params} : any) {
         const body = await req.json();
         const {id} = await params;
 
-        await EksemplarBuku.perbaruiEksemplarBuku({bukuISBN : id[0], id : Number(id[1])}, body);
+        await EksemplarBuku.updtCopyBook({bukuISBN : id[0], id : Number(id[1])}, body);
 
         return NextResponse.json({message : "success"}, {status : 200})
     } catch (error) {

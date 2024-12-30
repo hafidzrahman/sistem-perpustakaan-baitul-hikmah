@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const dataPenerbit = await Penerbit.ambilSemuaDataPenerbit();
+    const dataPenerbit = await Penerbit.findAllPublisher();
 
     return NextResponse.json(dataPenerbit, { status: 200 });
   } catch (error) {

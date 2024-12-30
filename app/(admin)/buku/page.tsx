@@ -4,16 +4,16 @@ import { useEffect, useState, useRef } from "react";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 import BtnSecondary from "@/app/components/BtnSecondary";
 import CardBuku from "@/app/components/CardBuku";
-import { cariBukuType } from "@/lib";
+import { findBookType } from "@/lib";
 import ModalTambahBuku from "@/app/components/modal/ModalTambahBuku";
 import TableBukuAdmin from "@/app/components/TableBukuAdmin";
 import { useSession } from "next-auth/react";
 import TableBukuUser from "@/app/components/TableBukuUser";
 
 const BukuPage = () => {
-  const [tambahBuku, setTambahBuku] = useState(false);
-  const [buku, setBuku] = useState<cariBukuType[]>([]);
-  const [recentBooks, setRecentBooks] = useState<cariBukuType[]>([]);
+  const [addBook, setTambahBuku] = useState(false);
+  const [buku, setBuku] = useState<findBookType[]>([]);
+  const [recentBooks, setRecentBooks] = useState<findBookType[]>([]);
   const { data: session } = useSession();
   const [peminjamanData, setPeminjamanData] = useState([]);
   const [bukuDetails, setBukuDetails] = useState({});
@@ -47,7 +47,7 @@ const BukuPage = () => {
   };
 
   const handleTambahBuku = () => {
-    setTambahBuku(!tambahBuku);
+    setTambahBuku(!addBook);
   };
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const BukuPage = () => {
 
         // Fetch detailed info for each book to get tanggalMasuk
         const detailedBooks = await Promise.all(
-          bookList.map(async (book: cariBukuType) => {
+          bookList.map(async (book: findBookType) => {
             const detailResponse = await fetch(`/api/buku/${book!.isbn}`);
             const detailData = await detailResponse.json();
             return {
@@ -106,7 +106,7 @@ const BukuPage = () => {
     };
 
     fetchBooks();
-  }, [tambahBuku]);
+  }, [addBook]);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -137,7 +137,7 @@ const BukuPage = () => {
 
   return (
     <>
-      <ModalTambahBuku status={tambahBuku} handle={handleTambahBuku} />
+      <ModalTambahBuku status={addBook} handle={handleTambahBuku} />
       <div className="mb-4">
         <h2 className="font-semibold text-gray-text font-source-sans">
           Disini Anda, bisa melihat daftar buku, menambahkan, menghapus, dan
@@ -160,7 +160,7 @@ const BukuPage = () => {
         }}
       >
         {recentBooks.length ? (
-          recentBooks.map((item: cariBukuType, index) => (
+          recentBooks.map((item: findBookType, index) => (
             <CardBuku data={item} key={index} />
           ))
         ) : (

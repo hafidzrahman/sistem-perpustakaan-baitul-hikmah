@@ -1,17 +1,17 @@
-import { ambilSemuaDataKelasType, kelasType, perbaruiKelasType, prisma } from "@/lib";
+import { findAllClassType, classType, updtClassType, prisma } from "@/lib";
 
 export class Kelas{
     id : number;
     nama : string;
     tingkat : number;
 
-    constructor(data : kelasType) {
+    constructor(data : classType) {
             this.id = data.id;
             this.nama = data.nama;
             this.tingkat = data.tingkat;
     }
 
-    static async tambahKelas(dataKelas : Omit<kelasType, 'id'>) : Promise<kelasType> {
+    static async addClass(dataKelas : Omit<classType, 'id'>) : Promise<classType> {
         const {nama, tingkat, JKMurid} = dataKelas;
 
         if (!nama || !tingkat) {
@@ -29,20 +29,20 @@ export class Kelas{
           return result;
     }
     
-    static async tambahBanyakKelas(dataKelas : Omit<kelasType, 'id'>[]) : Promise<kelasType[]> {
+    static async addManyClass(dataKelas : Omit<classType, 'id'>[]) : Promise<classType[]> {
         const result = await prisma.kelas.createManyAndReturn({
             data : dataKelas
         })
         return result;
     }
 
-    static async cariKelas (id : number) : Promise<kelasType | undefined | null> {
+    static async findClass (id : number) : Promise<classType | undefined | null> {
   
             const kelas = await prisma.kelas.findUnique({
                 where : {
                     id
                 }
-            }) as kelasType
+            }) as classType
     
             if (!kelas?.id) {
                 throw ({message : "Data kelas tidak ditemukan"})
@@ -51,7 +51,7 @@ export class Kelas{
             return kelas;
 
 }
-    static async ambilSemuaDataKelas() : Promise<ambilSemuaDataKelasType[]> {
+    static async findAllClass() : Promise<findAllClassType[]> {
         const result = await prisma.kelas.findMany({
             include : {
                 _count : {
@@ -65,10 +65,10 @@ export class Kelas{
         return result;
     }
 
-    static async perbaruiKelas(id : number, data : perbaruiKelasType) :Promise<kelasType> {
+    static async updtClass(id : number, data : updtClassType) :Promise<classType> {
         const {nama, tingkat} = data;
 
-        let kelas = await Kelas.cariKelas(id) as kelasType;
+        let kelas = await Kelas.findClass(id) as classType;
 
         if (!kelas?.id) {
             throw ({message : "Data kelas tidak ditemukan"})
@@ -89,7 +89,7 @@ export class Kelas{
 
     }
 
-    static async hapusKelas(id : number) : Promise<void> {
+    static async dltClass(id : number) : Promise<void> {
         await prisma.riwayatKelas.deleteMany({
             where : {
                 idKelas : id
@@ -106,7 +106,7 @@ export class Kelas{
         }
     }
 
-    static async hapusSemuaKelas() {
+    static async dltAllClass() {
         await prisma.riwayatKelas.deleteMany({})
         await prisma.kelas.deleteMany({})
     }

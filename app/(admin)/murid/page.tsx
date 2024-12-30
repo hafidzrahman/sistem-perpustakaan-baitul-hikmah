@@ -22,14 +22,14 @@ interface LeaderboardEntry {
 
 const MuridPage = ({}: MuridPageProps) => {
   const [murid, setMurid] = useState();
-  const [tambahKelas, setTambahKelas] = useState(false);
+  const [addClass, setTambahKelas] = useState(false);
   const [tambahMurid, setTambahMurid] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>(
     []
   );
 
   const handleTambahKelas = () => {
-    setTambahKelas(!tambahKelas);
+    setTambahKelas(!addClass);
   };
   const handleTambahMurid = () => {
     setTambahMurid(!tambahMurid);
@@ -52,7 +52,7 @@ const MuridPage = ({}: MuridPageProps) => {
       setMurid(data);
     };
     fetchKelas();
-  }, [tambahKelas]);
+  }, [addClass]);
 
   useEffect(() => {
     const fetchLeaderboardData = async () => {
@@ -125,7 +125,7 @@ const MuridPage = ({}: MuridPageProps) => {
 
   return (
     <>
-      <ModalTambahKelas status={tambahKelas} handle={handleTambahKelas} />
+      <ModalTambahKelas status={addClass} handle={handleTambahKelas} />
       <ModalTambahMurid status={tambahMurid} handle={handleTambahMurid} />
       <div className="mb-4">
         <h2 className="font-semibold font-source-sans text-[#465b65]">

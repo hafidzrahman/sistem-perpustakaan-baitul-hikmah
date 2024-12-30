@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const dataBuku = await Buku.ambilSemuaDataBuku();
+    const dataBuku = await Buku.findBookMany();
     return NextResponse.json(dataBuku, { status: 200 });
   } catch (error) {
     return NextResponse.json(
@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const dataBuku = await Buku.tambahBuku(body);
+    const dataBuku = await Buku.addBook(body);
     console.log(body);
     console.log(dataBuku);
 

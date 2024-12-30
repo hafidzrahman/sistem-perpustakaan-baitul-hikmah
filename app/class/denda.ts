@@ -1,4 +1,4 @@
-import {dendaType, kenakanDendaType, prisma} from "@/lib";
+import {fineType, imposeFineType, prisma} from "@/lib";
 import { Sumbangan } from "./sumbangan";
 import { Peminjaman } from "./peminjaman";
 
@@ -10,7 +10,7 @@ export class Denda {
     bukuId? : number | null;
     tanggal? : Date | null;
 
-    constructor (data : dendaType) {
+    constructor (data : fineType) {
         this.id = data.id;
         this.idSumbangan = data.idSumbangan;
         this.tanggal = data.tanggal;
@@ -19,7 +19,7 @@ export class Denda {
         this.bukuId = data.bukuId;
     }
 
-    static async tambahDenda(data : dendaType) : Promise<dendaType> {
+    static async addFine(data : fineType) : Promise<fineType> {
         const {idSumbangan, idPeminjaman, bukuISBN, bukuId} = data;
         if (!idSumbangan) {
           throw new Error("Harus mengisi field yang wajib");
@@ -36,7 +36,7 @@ export class Denda {
         return dataDenda;
     }
 
-    static async kenakanDenda(data : kenakanDendaType) : Promise<dendaType> {
+    static async imposeFine(data : imposeFineType) : Promise<fineType> {
       const {idSumbangan, idKeterangan, nis, nip} = data;
       if (!idSumbangan || !idKeterangan || !(nip || nis)) {
         throw new Error("Harus mengisi field yang wajib");
@@ -78,7 +78,7 @@ export class Denda {
       return dataDenda;
   }
 
-    static async cariDenda(id : number) : Promise<dendaType> {
+    static async findFine(id : number) : Promise<fineType> {
       const dataDenda = await prisma.denda.findUnique({
         where : {
           id
@@ -92,7 +92,7 @@ export class Denda {
       return dataDenda;
     }
 
-    static async ambilSemuaDataDenda() :Promise<dendaType[]> {
+    static async fineFindMany() :Promise<fineType[]> {
       const dataDenda = await prisma.denda.findMany({
         include : {
           sumbangan : true

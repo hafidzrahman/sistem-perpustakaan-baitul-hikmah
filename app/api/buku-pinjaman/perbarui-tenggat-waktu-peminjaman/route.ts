@@ -5,7 +5,7 @@ export async function POST(req : Request) {
     try {
         const body = await req.json();
 
-        await BukuPinjaman.perbaruiTenggatWaktuPeminjaman(body);
+        await BukuPinjaman.updtdeadline(body);
         
         return NextResponse.json({message : "Berhasil memperbarui tenggat waktu peminjaman buku"}, {status : 200});
     } catch (error) {

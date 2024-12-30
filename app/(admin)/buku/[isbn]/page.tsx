@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { detailsBukuType, eksemplarBukuType } from "@/lib";
+import { dtlsBookType, copyBookType } from "@/lib";
 import { useSession } from "next-auth/react";
 import ButtonPinjam from "@/app/components/ButtonPinjam";
 
 const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
-  const [detailBuku, setDetailBuku] = useState<detailsBukuType>();
+  const [detailBuku, setDetailBuku] = useState<dtlsBookType>();
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
   const [peminjamanData, setPeminjamanData] = useState([]);
   const { data: session } = useSession();
@@ -109,7 +109,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
     };
   };
 
-  const getEksemplarStatus = (eksemplar: eksemplarBukuType) => {
+  const getEksemplarStatus = (eksemplar: copyBookType) => {
     // Tambahkan pengecekan array
     if (!Array.isArray(peminjamanData)) {
       return { text: "Tersedia", color: "text-jewel-green" };

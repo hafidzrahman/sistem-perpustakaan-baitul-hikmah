@@ -7,11 +7,11 @@ import {
   PencilEdit01Icon,
   Search01Icon,
 } from "hugeicons-react";
-import { bukuType, guruType, muridType, peminjamanType } from "@/lib";
+import { bookType, guruType, muridType, peminjamanType } from "@/lib";
 
 interface TablePeminjamanProps {
   data: peminjamanType[];
-  bukuList: bukuType[];
+  bukuList: bookType[];
   guruList: guruType[];
   muridList: muridType[];
 }

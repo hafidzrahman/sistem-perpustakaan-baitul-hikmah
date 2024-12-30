@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { format } from "date-fns";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
-import { detailSumbanganType, beriSumbanganType, tambahBukuType } from "@/lib";
+import { detailSumbanganType, beriSumbanganType, addBookType } from "@/lib";
 
 interface DetailFormBuktiProps {
   isOpen: boolean;
@@ -71,7 +71,7 @@ const ModalDetailSumbangan: React.FC<DetailFormBuktiProps> = ({
         idSumbangan : sumbangan.id,
         nominalTotal : Number(nominalValue),
         buku : arrayObjekBuku.current.map((objekBuku : any) => {
-          const dataBuku : tambahBukuType = {
+          const dataBuku : addBookType = {
             isbn : objekBuku.isbn,
             judul : objekBuku.judul,
             penulis : objekBuku.penulis,

@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log(body);
 
-    const dataUser = await User.tambahUser(body);
+    const dataUser = await User.addUser(body);
 
     return NextResponse.json(dataUser, { status: 200 });
   } catch (error) {

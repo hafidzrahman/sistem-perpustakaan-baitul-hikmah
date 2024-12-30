@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 
 import {
-  bukuType,
-  kelasType,
-  keteranganType,
+  bookType,
+  classType,
+  infType,
   guruType,
   muridType,
   peminjamanType,
-  perbaruiAnggotaType,
-  perbaruiKelasType,
+  updtMemberType,
+  updtClassType,
   Genre,
   userType,
 } from "@/lib";
@@ -50,28 +50,28 @@ export async function GET() {
   await prisma.pembayaranTunai.deleteMany({});
   await prisma.denda.deleteMany({});
   await prisma.sumbangan.deleteMany({});
-  await Keterangan.hapusSemuaKeterangan();
-  await FormBukti.hapusSemuaDataFormBukti();
-  await Murid.hapusSemuaAnggota();
-  await Guru.hapusSemuaAnggota();
-  await RiwayatKelas.hapusSemuaRiwayatKelas();
+  await Keterangan.dltAllInf();
+  await FormBukti.deleteAllFB();
+  await Murid.dltAllMember();
+  await Guru.dltAllMember();
+  await RiwayatKelas.dltAllHstryType();
   // await prisma.sumbangan.deleteMany({})
 
-  await Kelas.hapusSemuaKelas();
+  await Kelas.dltAllClass();
   // await prisma.penulis.deleteMany({})
   // await prisma.penerbit.deleteMany({})
   await Peminjaman.hapusSemuaPeminjaman();
-  await Buku.hapusSemuaBuku();
+  await Buku.deleteAllBook();
 
-  await Buku.tambahBanyakBuku(dataBuku);
-  await Kelas.tambahBanyakKelas(dataKelas);
-  await Murid.tambahBanyakAnggota(dataMurid);
-  await Guru.tambahBanyakAnggota(dataGuru);
-  await Keterangan.tambahBanyakKeterangan(dataKeterangan);
+  await Buku.addBookMany(dataBuku);
+  await Kelas.addManyClass(dataKelas);
+  await Murid.addManyMember(dataMurid);
+  await Guru.addManyMember(dataGuru);
+  await Keterangan.addManyInf(dataKeterangan);
 
-  await FormBukti.tambahDataFormBukti(dataFormBukti[0]);
-  await FormBukti.tambahDataFormBukti(dataFormBukti[1]);
-  await FormBukti.tambahDataFormBukti(dataFormBukti[2]);
+  await FormBukti.addFB(dataFormBukti[0]);
+  await FormBukti.addFB(dataFormBukti[1]);
+  await FormBukti.addFB(dataFormBukti[2]);
 
   for await (const data of dataPeminjaman)
   await Peminjaman.tambahPeminjaman(data);
@@ -165,28 +165,28 @@ export async function GET() {
 
   // const test = await Sumbangan.cariSumbangan({nis : "12250111794"});
 
-  // const a = await PembayaranTunai.totalkanPembayaranTunai(test[0].id);
-  //             const b = await RiwayatBantuan.totalkanRiwayatBantuan(test[0].id);
+  // const a = await PembayaranTunai.calcMoneyPymt(test[0].id);
+  //             const b = await RiwayatBantuan.calcHtryAid(test[0].id);
   //             const c = a + b;
   //             console.log(a);
   //             console.log(b);
   //             console.log(c);
 
-  const arrayBuku: bukuType[] = (await Buku.ambilSemuaDataBuku()) as bukuType[];
-  const arrayKelas: kelasType[] =
-    (await Kelas.ambilSemuaDataKelas()) as kelasType[];
+  const arrayBuku: bookType[] = (await Buku.findBookMany()) as bookType[];
+  const arrayKelas: classType[] =
+    (await Kelas.findAllClass()) as classType[];
   const arrayMurid: muridType[] =
     (await Murid.ambilSemuDataMurid()) as muridType[];
-  const arrayKeterangan: keteranganType[] =
-    (await Keterangan.ambilSemuaDataKeterangan()) as keteranganType[];
-  const arrayGuru: guruType[] = (await Guru.ambilSemuaDataGuru()) as guruType[];
+  const arrayKeterangan: infType[] =
+    (await Keterangan.findAllInf()) as infType[];
+  const arrayGuru: guruType[] = (await Guru.findAllTcr()) as guruType[];
   const arrayPeminjaman: peminjamanType[] =
     (await Peminjaman.ambilSemuaDataPeminjaman()) as peminjamanType[];
-  const arrayPenulis = await Penulis.ambilSemuaDataPenulis();
-  const arrayPenerbit = await Penerbit.ambilSemuaDataPenerbit();
+  const arrayPenulis = await Penulis.findAllWriter();
+  const arrayPenerbit = await Penerbit.findAllPublisher();
   const arrayBukuPinjaman = await prisma.bukuPinjaman.findMany({});
   const arrayDenda = await prisma.denda.findMany({});
-  const arrayDataFormBukti = await FormBukti.ambilSemuaDataFormBukti();
+  const arrayDataFormBukti = await FormBukti.takeAllFB();
   const arrayEksemplarBuku = await prisma.eksemplarBuku.findMany({});
   const arraySumbangan = await prisma.sumbangan.findMany({});
 
@@ -223,7 +223,7 @@ async function test(dataUser : userType[]): Promise<void> {
         petugasPerpustakaanId
     })
 
-    await User.tambahUser(dataUser);
+    await User.addUser(dataUser);
 
     // console.log(data);
   }

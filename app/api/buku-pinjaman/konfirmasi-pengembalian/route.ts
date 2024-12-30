@@ -5,7 +5,7 @@ export async function POST(req : Request) {
     try {
         const body = await req.json();
 
-        await BukuPinjaman.konfirmasiPengembalian(body);
+        await BukuPinjaman.confirmRtrn(body);
 
         return NextResponse.json({message : "Pengembalian buku telah dikonfirmasi!"}, {status : 200})
     } catch (error) {

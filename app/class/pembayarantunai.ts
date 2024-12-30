@@ -1,4 +1,4 @@
-import {pembayaranTunaiType, prisma} from "@/lib";
+import {moneyPymtType, prisma} from "@/lib";
 
 export class PembayaranTunai {
     id? : number;
@@ -6,14 +6,14 @@ export class PembayaranTunai {
     tanggal : Date;
     jumlah : number
 
-    constructor(data : pembayaranTunaiType) {
+    constructor(data : moneyPymtType) {
         this.id = data.id;
         this.idSumbangan = data.idSumbangan;
         this.tanggal = data.tanggal;
         this.jumlah = data.jumlah
     }
 
-    static async tambahPembayaranTunai(data : pembayaranTunaiType) : Promise<pembayaranTunaiType> {
+    static async addMoneyPymt(data : moneyPymtType) : Promise<moneyPymtType> {
         const {idSumbangan, tanggal, jumlah} = data;
         if (!tanggal || !jumlah) {
             throw new Error("Harus mengisi field yang wajib");
@@ -31,7 +31,7 @@ export class PembayaranTunai {
         return dataPembayaranTunai;
     }
 
-    static async totalkanPembayaranTunai(idSumbangan? : number) : Promise<number> {
+    static async calcMoneyPymt(idSumbangan? : number) : Promise<number> {
         if (!idSumbangan) {
             throw new Error("Id sumbangan tidak diinputkan");
         }

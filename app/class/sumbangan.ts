@@ -201,7 +201,7 @@ export class Sumbangan {
 
                 if (dataSumbangan.tanggalSelesai && dataSumbangan.berlebih === false) {
                     for await (const dataBuku of buku) {
-                        await Buku.tambahBuku(dataBuku)
+                        await Buku.addBook(dataBuku)
                         }
                 } else {
                 const targetBuku = dataSumbangan.keterangan.jumlahBuku;
@@ -211,8 +211,8 @@ export class Sumbangan {
                 }
                 
                 const jumlahBuku = (dataSumbangan.sumbanganBuku.length || 0) + data.buku.length;
-                const totalPembayaranTunai = await PembayaranTunai.totalkanPembayaranTunai(dataSumbangan.id);
-                const totalRiwayatBantuan = await RiwayatBantuan.totalkanRiwayatBantuan(dataSumbangan.id);
+                const totalPembayaranTunai = await PembayaranTunai.calcMoneyPymt(dataSumbangan.id);
+                const totalRiwayatBantuan = await RiwayatBantuan.calcHtryAid(dataSumbangan.id);
                 const bukuKeTunai = jumlahBuku*((dataSumbangan.keterangan.totalNominal || 0) / (dataSumbangan.keterangan.jumlahBuku || 1));
                 const totalTunai = bukuKeTunai + (totalPembayaranTunai || 0) + (totalRiwayatBantuan || 0) + (nominalTotal || 0);
                 console.log("total tunai :")
@@ -243,17 +243,17 @@ export class Sumbangan {
                     }
 
                     for await (const dataBuku of buku) {
-                    await Buku.tambahBuku(dataBuku)
+                    await Buku.addBook(dataBuku)
                     }
 
                 }  else if ((jumlahBuku) < targetBuku! && nominalTotal === 0) {
                     console.log("test3")
                     for await (const dataBuku of buku) {
-                        await Buku.tambahBuku(dataBuku)
+                        await Buku.addBook(dataBuku)
                         }
                 } else if (totalTunai === targetTunai) {
                     console.log("test4")
-                    await PembayaranTunai.tambahPembayaranTunai({
+                    await PembayaranTunai.addMoneyPymt({
                         idSumbangan : dataSumbangan.id,
                         tanggal : new Date(),
                         jumlah : (nominalTotal || 0)
@@ -270,7 +270,7 @@ export class Sumbangan {
 
                 } else if (totalTunai > targetTunai!) {
                     console.log("test5")
-                    const dataPembayaranTunai = await PembayaranTunai.tambahPembayaranTunai({
+                    const dataPembayaranTunai = await PembayaranTunai.addMoneyPymt({
                         idSumbangan : dataSumbangan.id,
                         tanggal : new Date(),
                         jumlah : (nominalTotal || 0)
@@ -290,7 +290,7 @@ export class Sumbangan {
 
                     if (data.buku.length > 0) {
                     for await (const dataBuku of buku) {
-                        await Buku.tambahBuku(dataBuku)
+                        await Buku.addBook(dataBuku)
                         }
                     }
 
@@ -326,8 +326,8 @@ export class Sumbangan {
                     })
 
                     for await (const data of dataSumbanganKurang) {
-                        const tunaiDariRiwayatBantuan = await RiwayatBantuan.totalkanRiwayatBantuan(data.id);
-                        const tunaiDariPembayaran = await PembayaranTunai.totalkanPembayaranTunai(data.id);
+                        const tunaiDariRiwayatBantuan = await RiwayatBantuan.calcHtryAid(data.id);
+                        const tunaiDariPembayaran = await PembayaranTunai.calcMoneyPymt(data.id);
                         const jumlahBuku = (data._count.sumbanganBuku || 0)
                         const totalTunai = jumlahBuku*((data.keterangan?.totalNominal || 0) / (data.keterangan?.jumlahBuku || 1)) + (tunaiDariRiwayatBantuan || 0) + (tunaiDariPembayaran || 0);
                         let kekurangan = (data.keterangan.totalNominal || 0) - totalTunai;
@@ -335,7 +335,7 @@ export class Sumbangan {
                             kekurangan = (Date.now() - data.denda!.tanggal.getTime()) / hariKeMiliDetik * data.keterangan.nominalPerHari - totalTunai
                         }
                         if (berlebih === kekurangan) {
-                            await RiwayatBantuan.tambahRiwayatBantuan({
+                            await RiwayatBantuan.addHstryAid({
                                 idSumbangan : data.id,
                                 idPembayaranTunai : dataPembayaranTunai.id!,
                                 jumlah : berlebih
@@ -353,7 +353,7 @@ export class Sumbangan {
 
                             break;
                         } else if (berlebih < kekurangan) {
-                            await RiwayatBantuan.tambahRiwayatBantuan({
+                            await RiwayatBantuan.addHstryAid({
                                 idSumbangan : data.id,
                                 idPembayaranTunai : dataPembayaranTunai.id!,
                                 jumlah : berlebih
@@ -362,7 +362,7 @@ export class Sumbangan {
                             break;
                         }
                         else if (berlebih > kekurangan) {
-                            await RiwayatBantuan.tambahRiwayatBantuan({
+                            await RiwayatBantuan.addHstryAid({
                                 idSumbangan : data.id,
                                 idPembayaranTunai : dataPembayaranTunai.id!,
                                 jumlah : kekurangan
@@ -409,7 +409,7 @@ export class Sumbangan {
 
             } else if (totalTunai < targetTunai!) {
                     console.log("test6")
-                    await PembayaranTunai.tambahPembayaranTunai({
+                    await PembayaranTunai.addMoneyPymt({
                         idSumbangan : dataSumbangan.id,
                         tanggal : new Date(),
                         jumlah : (nominalTotal || 0)
@@ -438,12 +438,12 @@ export class Sumbangan {
                                 idSumbangan : dataSumbangan.id
                             }
                         }) || 0;
-                        const tunaiDariRiwayatBantuan = await RiwayatBantuan.totalkanRiwayatBantuan(data.id);
-                        const tunaiDariPembayaran = await PembayaranTunai.totalkanPembayaranTunai(data.id);
+                        const tunaiDariRiwayatBantuan = await RiwayatBantuan.calcHtryAid(data.id);
+                        const tunaiDariPembayaran = await PembayaranTunai.calcMoneyPymt(data.id);
                         let bukuKeTunai = jumlahBuku * ((data.keterangan.totalNominal || 0) / (data.keterangan.jumlahBuku || 0));
                         const totalTunaiBerlebih = bukuKeTunai + (tunaiDariPembayaran || 0) + (tunaiDariRiwayatBantuan || 0) - data.keterangan.totalNominal!;
                         if (totalTunaiBerlebih === kekurangan) {
-                            await RiwayatBantuan.tambahRiwayatBantuan({
+                            await RiwayatBantuan.addHstryAid({
                                 idSumbangan : dataSumbangan.id,
                                 idPembayaranTunai : data.pembayaranTunai[0].id,
                                 jumlah : kekurangan
@@ -469,7 +469,7 @@ export class Sumbangan {
 
                             break;
                         } else if (totalTunaiBerlebih > kekurangan) {
-                            await RiwayatBantuan.tambahRiwayatBantuan({
+                            await RiwayatBantuan.addHstryAid({
                                 idSumbangan : dataSumbangan.id,
                                 idPembayaranTunai : data.pembayaranTunai[0].id,
                                 jumlah : kekurangan
@@ -487,7 +487,7 @@ export class Sumbangan {
                             break;
                         } else if (totalTunaiBerlebih < kekurangan) {
                           
-                            await RiwayatBantuan.tambahRiwayatBantuan({
+                            await RiwayatBantuan.addHstryAid({
                                 idSumbangan : dataSumbangan.id,
                                 idPembayaranTunai : data.pembayaranTunai[0].id,
                                 jumlah : totalTunaiBerlebih

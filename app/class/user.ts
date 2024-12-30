@@ -1,7 +1,7 @@
 import {
   guruType,
   muridType,
-  perbaruiUserType,
+  updtUserType,
   petugasPerpustakaanType,
   prisma,
   userType,
@@ -21,7 +21,7 @@ export class User {
     this.role = data.role;
   }
 
-  static async tambahUser(data: userType): Promise<userType> {
+  static async addUser(data: userType): Promise<userType> {
     const {
       username,
       password,
@@ -47,7 +47,7 @@ export class User {
     });
     return dataUser;
   }
-  static async cariUser(
+  static async findUser(
     username: string
   ): Promise<
     | userType
@@ -70,9 +70,9 @@ export class User {
     return user;
   }
 
-  static async perbaruiUser(
+  static async updtUser(
     username: string,
-    data: perbaruiUserType
+    data: updtUserType
   ): Promise<
     | userType
     | (null & guruType)

@@ -1,10 +1,10 @@
 import React from "react";
 import { PencilEdit01Icon, Search01Icon } from "hugeicons-react";
-import { bukuType, peminjamanType } from "@/lib";
+import { bookType, peminjamanType } from "@/lib";
 
 interface TablePeminjamanMuridProps {
   data: peminjamanType[];
-  bukuList: bukuType[];
+  bukuList: bookType[];
   nis?: string;
 }
 

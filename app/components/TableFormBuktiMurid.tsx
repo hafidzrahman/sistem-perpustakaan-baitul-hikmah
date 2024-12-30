@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { Search01Icon } from "hugeicons-react";
-import { formBuktiType } from "@/lib";
+import { FBType } from "@/lib";
 
 interface TableFormBuktiMuridProps {
-  data: formBuktiType[];
+  data: FBType[];
 }
 
 const TableFormBuktiMurid = ({ data = [] }: TableFormBuktiMuridProps) => {

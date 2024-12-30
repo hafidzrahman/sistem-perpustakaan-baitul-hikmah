@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { cariBukuType } from "@/lib";
+import { findBookType } from "@/lib";
 import ButtonDetail from "./ButtonDetail";
 import ButtonPinjam from "./ButtonPinjam";
 
-const CardBuku = ({ data }: { data: cariBukuType }) => {
+const CardBuku = ({ data }: { data: findBookType }) => {
   const { data: session } = useSession();
 
   if (!data) {

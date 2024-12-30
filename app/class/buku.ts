@@ -1,23 +1,23 @@
-import {bukuType, Hash, eksemplarBukuType, perbaruiBukuType, prisma, konversiDataKeId, penulisType, genreType, penerbitType, tambahBukuType, eksemplarDenganBukuType, detailsBukuType} from '@/lib'
+import {bookType, Hash, copyBookType, updateBookType, prisma, konversiDataKeId, writerType, genreType, publisherType, addBookType, eksemplarDenganBukuType, dtlsBookType} from '@/lib'
 import { NextResponse } from 'next/server';
 import {EksemplarBuku} from './eksemplarbuku'
 
 
 export class Buku{
     judul : string;
-    penulis? : string[] | number[] | penulisType[];
+    penulis? : string[] | number[] | writerType[];
     genre : string[] | number[] | genreType[];
     isbn : string | null;
     linkGambar? : string | null;
     sinopsis? : string | null;
-    penerbit? : string | number | penerbitType | null; 
+    penerbit? : string | number | publisherType | null; 
     halaman? : number | null;
     tanggalMasuk? : Date | null;
     tanggalRusak? : Date | null; 
     tanggalHilang? : Date | null; 
     posisi? : string | null;
 
-    constructor(data : bukuType) {
+    constructor(data : bookType) {
             this.judul = data.judul;
             this.penulis = data.penulis;
             this.genre = data.genre;
@@ -32,7 +32,7 @@ export class Buku{
             this.posisi =  data.posisi;
     }
 
-    static async tambahBuku(dataBuku: tambahBukuType) : Promise<eksemplarDenganBukuType> {
+    static async addBook(dataBuku: addBookType) : Promise<eksemplarDenganBukuType> {
         const { judul, isbn, linkGambar, sinopsis, halaman, tanggalMasuk, tanggalRusak, tanggalHilang, posisi, idSumbangan } = dataBuku;
         let {penulis, penerbit, genre} = dataBuku;
         
@@ -55,7 +55,7 @@ export class Buku{
         }
 
         // Hitung jumlah ISBN yang sama, id buku baru = jumlah ISBN yang sama + 1 
-        const count = await EksemplarBuku.eksemplarCounter(isbn);
+        const count = await EksemplarBuku.copyBookCtr(isbn);
         if (count === 0) {
         await prisma.buku.create({
             data: {
@@ -86,12 +86,12 @@ export class Buku{
             posisi,
         })
 
-        const result =  await EksemplarBuku.tambahEksemplarBuku(dataEksemplarBuku);
+        const result =  await EksemplarBuku.addCopyBook(dataEksemplarBuku);
       
         return result as unknown as eksemplarDenganBukuType;
     }
 
-    static async tambahBanyakBuku(dataBuku : (bukuType & eksemplarBukuType)[]) : Promise<void> {
+    static async addBookMany(dataBuku : (bookType & copyBookType)[]) : Promise<void> {
         const map : Hash<number> = {}
 
         // await Promise.all(dataBuku.map(isbnCounter))
@@ -102,7 +102,7 @@ export class Buku{
 
         // Hitung jumlah ISBN yang sama
         // id buku baru = jumlah ISBN yang sama + 1 
-        async function isbnCounter(data : bukuType) : Promise<void> {
+        async function isbnCounter(data : bookType) : Promise<void> {
             const { judul, isbn, linkGambar, sinopsis, halaman, tanggalMasuk, tanggalRusak, tanggalHilang, posisi } = data;
             let {penulis, penerbit, genre} = data;
 
@@ -126,7 +126,7 @@ export class Buku{
             let result = 0;
             
             if (!map[isbn]) {
-            result = await EksemplarBuku.eksemplarCounter(isbn);
+            result = await EksemplarBuku.copyBookCtr(isbn);
             if (result === 0) {
                 await prisma.buku.create({
                     data : {
@@ -159,7 +159,7 @@ export class Buku{
                 posisi,
             })
     
-            await EksemplarBuku.tambahEksemplarBuku(dataEksemplarBuku);
+            await EksemplarBuku.addCopyBook(dataEksemplarBuku);
 
         
 
@@ -167,7 +167,7 @@ export class Buku{
 
 }
 
-    static async cariBuku (isbn : string) : Promise<detailsBukuType | undefined | null> {  
+    static async findBook (isbn : string) : Promise<dtlsBookType | undefined | null> {  
             const buku = await prisma.buku.findUnique({
                 where : {
                     isbn : isbn
@@ -201,9 +201,9 @@ export class Buku{
             if (!buku?.isbn) {
                 throw ({message : "Data buku tidak ditemukan"})
             }
-            return buku as detailsBukuType;
+            return buku as dtlsBookType;
 }
-    static async ambilSemuaDataBuku() : Promise<bukuType[]> {
+    static async findBookMany() : Promise<bookType[]> {
         const buku = await prisma.buku.findMany({
             include : {
                 _count : {
@@ -230,7 +230,7 @@ export class Buku{
             }
         })
 
-        return buku as bukuType[];
+        return buku as bookType[];
     }
 
     // static async ketersedianEksemplarBuku(idBuku : {isbn : string, id : number}) : Promise<number> {
@@ -246,11 +246,11 @@ export class Buku{
     //     return countEksemplarBuku
     // }
 
-    static async perbaruiBuku(isbn : string, dataBuku : perbaruiBukuType) :Promise<void> {
+    static async updateBook(isbn : string, dataBuku : updateBookType) :Promise<void> {
         const { judul, isbn : bukuISBN, linkGambar, sinopsis, halaman } = dataBuku;
         let {penulis, penerbit, genre} = dataBuku;
 
-        let buku = await Buku.cariBuku(isbn) as bukuType;
+        let buku = await Buku.findBook(isbn) as bookType;
 
         if (!buku?.isbn) {
             throw new Error("Data buku tidak ditemukan");
@@ -291,8 +291,8 @@ export class Buku{
 
     }
 
-    static async hapusBuku(isbn : string) : Promise<void> {
-        await EksemplarBuku.hapusSemuaEksemplarBuku(isbn);
+    static async deleteBook(isbn : string) : Promise<void> {
+        await EksemplarBuku.dltAllCopyBook(isbn);
         const buku = await prisma.buku.delete({
             where : {
                 isbn
@@ -304,8 +304,8 @@ export class Buku{
         }
     }
 
-    static async hapusSemuaBuku() : Promise<void> {
-        await EksemplarBuku.hapusSemuaEksemplarBuku();
+    static async deleteAllBook() : Promise<void> {
+        await EksemplarBuku.dltAllCopyBook();
         await prisma.buku.deleteMany({});
     }
     

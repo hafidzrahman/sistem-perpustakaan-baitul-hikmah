@@ -1,4 +1,4 @@
-import { prisma, riwayatKelasType } from "@/lib";
+import { prisma, hstryClassType } from "@/lib";
 
 export class RiwayatKelas {
     muridNIS : string;
@@ -6,14 +6,14 @@ export class RiwayatKelas {
     tahunAjaran : string;
     nomorPresensi? : number;
 
-    constructor (data : riwayatKelasType) {
+    constructor (data : hstryClassType) {
         this.muridNIS = data.muridNIS,
         this.idKelas = data.idKelas,
         this.tahunAjaran = data.tahunAjaran,
         this.nomorPresensi = data.nomorPresensi
     }
 
-    static async tambahRiwayatKelas(data : riwayatKelasType) : Promise<riwayatKelasType> {
+    static async addHstryClass(data : hstryClassType) : Promise<hstryClassType> {
         const dataRiwayatKelas = await prisma.riwayatKelas.create({
             data
         })
@@ -21,7 +21,7 @@ export class RiwayatKelas {
         return dataRiwayatKelas;
     }
 
-    static async hapusSemuaRiwayatKelas() : Promise<void> {
+    static async dltAllHstryType() : Promise<void> {
         await prisma.riwayatKelas.deleteMany({})
     }
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { kelasType } from "@/lib";
+import { classType } from "@/lib";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 import { toast } from "react-toastify";
 

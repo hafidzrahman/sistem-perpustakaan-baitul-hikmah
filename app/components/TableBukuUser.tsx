@@ -1,5 +1,5 @@
 import React from "react";
-import { cariBukuType, genreType } from "@/lib";
+import { findBookType, genreType } from "@/lib";
 import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
 import ButtonDetail from "./ButtonDetail";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ const TableBukuUser = ({
   peminjamanData,
   bukuDetails,
 }: {
-  data: cariBukuType[];
+  data: findBookType[];
   peminjamanData: any[];
   bukuDetails: Record<string, any>;
 }) => {
@@ -83,7 +83,7 @@ const TableBukuUser = ({
     <div className="w-full">
       {/* Mobile and Tablet View (Card Layout) */}
       <div className="lg:hidden space-y-4">
-        {data?.map((item: cariBukuType, index: number) => (
+        {data?.map((item: findBookType, index: number) => (
           <div
             key={index}
             className="bg-white p-4 rounded-lg border border-primary"
@@ -150,7 +150,7 @@ const TableBukuUser = ({
             </tr>
           </thead>
           <tbody>
-            {data?.map((item: cariBukuType, index: number) => (
+            {data?.map((item: findBookType, index: number) => (
               <tr
                 key={index}
                 className="group relative border-t-2 hover:border-y-2 hover:border-black-custom border-dashed transition-all duration-100"

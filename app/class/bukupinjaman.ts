@@ -1,4 +1,4 @@
-import { bukuPinjamanType, prisma } from "@/lib";
+import { bookBrwType, prisma } from "@/lib";
 import { EksemplarBuku } from "./eksemplarbuku";
 import { Peminjaman } from "./peminjaman";
 
@@ -9,7 +9,7 @@ export class BukuPinjaman {
     tenggatWaktu? : Date | null;
     tanggalKembali? : Date | null;
 
-    constructor(data : bukuPinjamanType) {
+    constructor(data : bookBrwType) {
         this.idPeminjaman = data.idPeminjaman;
         this.bukuISBN = data.bukuISBN;
         this.bukuId = data.bukuId;
@@ -17,7 +17,7 @@ export class BukuPinjaman {
         this.tanggalKembali = data.tanggalKembali;
     }
 
-    static async tambahBukuPinjaman(data : bukuPinjamanType) {
+    static async addBookBrw(data : bookBrwType) {
         const {idPeminjaman, bukuISBN, bukuId, tenggatWaktu} = data;
         if (!idPeminjaman || !bukuISBN || !bukuId || !tenggatWaktu) {
             throw new Error("Harus mengisi field yang wajib");
@@ -34,13 +34,13 @@ export class BukuPinjaman {
         return dataBukuPinjaman;
     }
 
-    static async konfirmasiPengembalian(data : bukuPinjamanType) {
+    static async confirmRtrn(data : bookBrwType) {
         const {idPeminjaman, bukuISBN, bukuId} = data;
         
         if (!idPeminjaman || !bukuISBN || !bukuId) {
             throw new Error("Harus mengisi field yang wajib")
         }
-        const dataEksemplarBuku = await EksemplarBuku.cariEksemplarBuku({isbn : bukuISBN, id : bukuId});
+        const dataEksemplarBuku = await EksemplarBuku.findCopyBook({isbn : bukuISBN, id : bukuId});
     
         if (!dataEksemplarBuku?.bukuISBN || !dataEksemplarBuku?.id) {
           throw new Error("Data buku tidak ditemukan.");
@@ -66,17 +66,7 @@ export class BukuPinjaman {
         });
       }
 
-      static async konfirmasiSemuaPengembalianBuku(idPeminjaman : number) {
-        await prisma.bukuPinjaman.updateMany({
-          where : {
-            idPeminjaman
-          }, data : {
-            tanggalKembali : new Date(Date.now())
-          }
-        })
-      }
-
-        static async perbaruiTenggatWaktuPeminjaman(data : bukuPinjamanType) {
+        static async updtdeadline(data : bookBrwType) {
 
         const {idPeminjaman, bukuISBN, bukuId, tenggatWaktu} = data;
 
@@ -101,7 +91,7 @@ export class BukuPinjaman {
         }
         }
 
-        static async hapusSemuaBukuPinjaman(idPeminjaman : number) {
+        static async dltAllBookBrw(idPeminjaman : number) {
             await prisma.bukuPinjaman.deleteMany({
                 where : {
                   idPeminjaman

@@ -1,15 +1,15 @@
-import { penulisType, prisma } from "@/lib";
+import { writerType, prisma } from "@/lib";
 
 export class Penulis {
     id : number;
     nama : string
 
-    constructor (data : penulisType) {
+    constructor (data : writerType) {
         this.id = data.id;
         this.nama = data.nama;
     }
 
-    static async tambahPenulis(nama : string) : Promise<penulisType> {
+    static async addWriter(nama : string) : Promise<writerType> {
         if (!nama) {
             throw new Error("Harus mengisi field yang wajib")
         }
@@ -22,7 +22,7 @@ export class Penulis {
         return dataPenulis;
     }
 
-    static async cariPenulis(data : {id? : number, nama? : string}) : Promise<penulisType | undefined | null> {
+    static async findWriter(data : {id? : number, nama? : string}) : Promise<writerType | undefined | null> {
         const dataPenulis = await prisma.penulis.findFirst({
             where : {
                 nama : data.nama
@@ -31,7 +31,7 @@ export class Penulis {
         return dataPenulis;
     }
 
-    static async ambilSemuaDataPenulis() : Promise<penulisType[]> {
+    static async findAllWriter() : Promise<writerType[]> {
             const dataPenulis = await prisma.penulis.findMany({});
     
             return dataPenulis;

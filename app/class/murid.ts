@@ -1,4 +1,4 @@
-import { Anggota, kelasType, muridType, perbaruiAnggotaType, prisma } from "@/lib";
+import { Anggota, classType, muridType, updtMemberType, prisma } from "@/lib";
 import { JenisKelamin } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { Kelas } from "./kelas";
@@ -21,19 +21,19 @@ export class Murid implements Anggota<muridType>{
         this.alamat = data.alamat;
     }
 
-    static async tambahAnggota(dataMurid : muridType) : Promise<muridType> {
+    static async addMember(dataMurid : muridType) : Promise<muridType> {
         const {nis, nama, jenisKelamin, idKelas, kontak, alamat} = dataMurid;
         if (!nis || !nama || !jenisKelamin || !idKelas || !kontak) {
             throw new Error("Harus mengisi field yang wajib")
         }
 
-        // const cariMurid = await Murid.cariAnggota(nis) as muridType;
+        // const cariMurid = await Murid.findMember(nis) as muridType;
         
         // if (cariMurid.nis) {
         //     throw new Error("NIS sudah terdaftar!")
         // }
 
-        const dataKelas = await Kelas.cariKelas(idKelas) as kelasType;
+        const dataKelas = await Kelas.findClass(idKelas) as classType;
 
         if (!dataKelas?.id) {
             throw new Error("Data kelas tidak ditemukan")
@@ -57,13 +57,13 @@ export class Murid implements Anggota<muridType>{
             idKelas : idKelas, 
             muridNIS : nis, 
             tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`)})
-          await RiwayatKelas.tambahRiwayatKelas(dataRiwayatKelas);
+          await RiwayatKelas.addHstryClass(dataRiwayatKelas);
           
           return result;
         
     }
 
-    static async tambahBanyakAnggota(dataMurid : muridType[]) : Promise<muridType[]> {
+    static async addManyMember(dataMurid : muridType[]) : Promise<muridType[]> {
           const date = new Date();
           const month = date.getMonth();
           const year = date.getFullYear();
@@ -109,7 +109,7 @@ export class Murid implements Anggota<muridType>{
                 tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`),
               })
 
-            await RiwayatKelas.tambahRiwayatKelas(dataRiwayatKelas);
+            await RiwayatKelas.addHstryClass(dataRiwayatKelas);
 
               
           }
@@ -117,7 +117,7 @@ export class Murid implements Anggota<muridType>{
         return result;
     }
 
-    static async cariAnggota (nis : string) : Promise<muridType | undefined | null> {
+    static async findMember (nis : string) : Promise<muridType | undefined | null> {
   
             const murid = await prisma.murid.findUnique({
                 where : {
@@ -169,10 +169,10 @@ export class Murid implements Anggota<muridType>{
         return murid;
     }
 
-    static async perbaruiAnggota(nis : string, data : perbaruiAnggotaType) :Promise<muridType> {
+    static async updtMember(nis : string, data : updtMemberType) :Promise<muridType> {
         const {nama, jenisKelamin, kontak, alamat, idKelas} = data;
 
-        let murid = await Murid.cariAnggota(nis) as muridType
+        let murid = await Murid.findMember(nis) as muridType
 
         if (!murid?.nis) {
             throw ({message : "Data kelas tidak ditemukan"})
@@ -204,14 +204,14 @@ export class Murid implements Anggota<muridType>{
             tahunAjaran : (month > 6 ? `${year}/${year+1}` : `${year-1}/${year}`)
         })
 
-        await RiwayatKelas.tambahRiwayatKelas(dataRiwayatKelas)
+        await RiwayatKelas.addHstryClass(dataRiwayatKelas)
 }
         return result;
 
     }
 
-    static async hapusAnggota(nis : string) : Promise<void> {
-        await RiwayatKelas.hapusSemuaRiwayatKelas();
+    static async dltMember(nis : string) : Promise<void> {
+        await RiwayatKelas.dltAllHstryType();
         const murid = await prisma.murid.delete({
             where : {
                 nis
@@ -223,8 +223,8 @@ export class Murid implements Anggota<muridType>{
         }
     }
 
-    static async hapusSemuaAnggota() : Promise<void> {
-        await RiwayatKelas.hapusSemuaRiwayatKelas();
+    static async dltAllMember() : Promise<void> {
+        await RiwayatKelas.dltAllHstryType();
         await prisma.murid.deleteMany({})
     }
     

@@ -1,17 +1,17 @@
-import { prisma, riwayatBantuanType } from "@/lib";
+import { prisma, hstryAidType } from "@/lib";
 
 export class RiwayatBantuan {
     idPembayaranTunai : number;
     idSumbangan : number;
     jumlah : number;
 
-    constructor(data : riwayatBantuanType) {
+    constructor(data : hstryAidType) {
         this.idPembayaranTunai = data.idPembayaranTunai;
         this.idSumbangan = data.idSumbangan;
         this.jumlah = data.jumlah;
     }
 
-    static async tambahRiwayatBantuan(data : riwayatBantuanType) : Promise<void> {
+    static async addHstryAid(data : hstryAidType) : Promise<void> {
         const test = await prisma.riwayatBantuan.create({
             data : {
                 idSumbangan : data.idSumbangan,
@@ -23,7 +23,7 @@ export class RiwayatBantuan {
         console.log(test)
     }
 
-    static async totalkanRiwayatBantuan(idSumbangan? : number) {
+    static async calcHtryAid(idSumbangan? : number) {
         if (!idSumbangan) {
             throw new Error("Id sumbangan tidak diinputkan");
         }

@@ -4,7 +4,7 @@ import {NextResponse} from "next/server"
 
 export async function GET() {
     try {
-        const dataKeterangan = await Keterangan.ambilSemuaDataKeterangan();
+        const dataKeterangan = await Keterangan.findAllInf();
 
         return NextResponse.json(dataKeterangan, {status:200})
     }
@@ -17,7 +17,7 @@ export async function POST(req : Request) {
     try {
         const body = await req.json();
 
-        const dataKeterangan = await Keterangan.tambahKeterangan(body);
+        const dataKeterangan = await Keterangan.addInf(body);
 
         return NextResponse.json(dataKeterangan, {status : 200})
     } catch (error) {

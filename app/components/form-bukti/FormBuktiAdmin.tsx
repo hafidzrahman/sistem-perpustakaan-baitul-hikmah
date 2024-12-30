@@ -2,7 +2,7 @@
 import DoughnutChartGenreBuku from "@/app/components/charts/DoughnutChartGenreBuku";
 import LineChartPeminjaman from "@/app/components/charts/LineChartPeminjaman";
 import TablePeminjaman from "@/app/components/TablePeminjaman";
-import { bukuType, muridType, guruType } from "@/lib";
+import { bookType, muridType, guruType } from "@/lib";
 
 import {
   Mortarboard01Icon,

@@ -10,7 +10,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
 
-        const dataFormBukti = await FormBukti.cariDataFormBukti(Number(id));
+        const dataFormBukti = await FormBukti.findFB(Number(id));
 
         return NextResponse.json(dataFormBukti, {status : 200})
     } catch (error) {
@@ -23,7 +23,7 @@ export async function PUT(req : Request, {params} : paramsType) {
         const body = await req.json()
         const {id} = await params;
 
-        const dataFormBukti = await FormBukti.perbaruiDataFormBukti(Number(id), body);
+        const dataFormBukti = await FormBukti.updateFB(Number(id), body);
 
         return NextResponse.json(dataFormBukti, {status : 200})
     } catch (error) {
@@ -35,7 +35,7 @@ export async function DELETE(req : Request, {params} : paramsType) {
     try {
         const {id} = await params;
 
-        await FormBukti.hapusDataFormBukti(Number(id));
+        await FormBukti.deleteFB(Number(id));
 
         return NextResponse.json({message : "Berhasil menghapus data form bukti"}, {status : 200})
     } catch (error) {

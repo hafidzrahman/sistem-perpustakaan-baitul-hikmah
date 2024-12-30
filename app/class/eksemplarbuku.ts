@@ -1,6 +1,6 @@
-import { eksemplarBukuType, prisma } from "@/lib";
+import { copyBookType, prisma } from "@/lib";
 
-export type constructorEksemplarBukuType = {
+export type cstrCopyBookType = {
     bukuISBN : string;
     id : number;
     tanggalMasuk? : Date | null;
@@ -19,7 +19,7 @@ export class EksemplarBuku {
     posisi? : string | null;
     idSumbangan? : number | null
 
-    constructor (data : constructorEksemplarBukuType) {
+    constructor (data : cstrCopyBookType) {
         this.bukuISBN = data.bukuISBN;
         this.id = data.id;
         this.tanggalMasuk = data.tanggalMasuk;
@@ -29,7 +29,7 @@ export class EksemplarBuku {
         this.idSumbangan = data.idSumbangan;
     }
 
-    static async tambahEksemplarBuku(data : constructorEksemplarBukuType) : Promise<constructorEksemplarBukuType> {
+    static async addCopyBook(data : cstrCopyBookType) : Promise<cstrCopyBookType> {
         const dataEksemplarBuku =  await prisma.eksemplarBuku.create({
             data : {
                 id : data.id,
@@ -53,7 +53,7 @@ export class EksemplarBuku {
           return dataEksemplarBuku;
     }
 
-    static async eksemplarCounter(isbn : string) : Promise<number> {
+    static async copyBookCtr(isbn : string) : Promise<number> {
         const counter = await prisma.eksemplarBuku.count({
             where : {
             bukuISBN : isbn
@@ -62,7 +62,7 @@ export class EksemplarBuku {
         return counter;
     }
 
-    static async cariEksemplarBuku(idBuku : {isbn : string, id : number}) : Promise<eksemplarBukuType> {
+    static async findCopyBook(idBuku : {isbn : string, id : number}) : Promise<copyBookType> {
             const dataBuku = await prisma.eksemplarBuku.findUnique({
                 where : {
                     bukuISBN_id : {
@@ -87,7 +87,7 @@ export class EksemplarBuku {
             return dataBuku;
         }
     
-        static async perbaruiEksemplarBuku(idBuku : {bukuISBN : string, id : number}, data : eksemplarBukuType) : Promise<void> {
+        static async updtCopyBook(idBuku : {bukuISBN : string, id : number}, data : copyBookType) : Promise<void> {
             const {bukuISBN, id} = idBuku;
             const dataEksemplarBuku = await prisma.eksemplarBuku.findUnique({
                 where : {
@@ -118,7 +118,7 @@ export class EksemplarBuku {
             })
         }
 
-    static async hapusSemuaEksemplarBuku(isbn? : string) : Promise<void> {
+    static async dltAllCopyBook(isbn? : string) : Promise<void> {
         if (isbn) {
             await prisma.eksemplarBuku.deleteMany({
                 where : {
@@ -130,7 +130,7 @@ export class EksemplarBuku {
         }
     }
 
-    static async ketersediaanEksemplarBuku(isbn : string) : Promise<eksemplarBukuType> {
+    static async availCopyBook(isbn : string) : Promise<copyBookType> {
         const dataEksemplarBuku = await prisma.eksemplarBuku.findFirst({
             where : {
                 AND : [

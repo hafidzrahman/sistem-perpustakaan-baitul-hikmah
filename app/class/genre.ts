@@ -9,7 +9,7 @@ export class GenreClass {
     this.nama = data.nama;
   }
 
-  static async tambahGenre(nama: string): Promise<genreType> {
+  static async addGenre(nama: string): Promise<genreType> {
     if (!nama) {
       throw new Error("Harus mengisi field yang wajib");
     }
@@ -22,7 +22,7 @@ export class GenreClass {
     return dataGenre;
   }
 
-  static async cariGenre(data: {
+  static async findGenre(data: {
     id?: number;
     nama?: string;
   }): Promise<genreType | undefined | null> {
@@ -34,7 +34,7 @@ export class GenreClass {
     return dataGenre;
   }
 
-  static async ambilSemuaDataGenre(): Promise<genreType[]> {
+  static async findAllGenre(): Promise<genreType[]> {
     const dataGenre = await prisma.genre.findMany({
       select: {
         id: true, // Include id here

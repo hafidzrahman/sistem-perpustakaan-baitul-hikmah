@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Search01Icon } from "hugeicons-react";
 import ModalDetailFormBukti from "./modal/ModalDetailFormBukti";
 
-interface FormBuktiType {
+interface FBType {
   intisari: string;
   halamanAwal: number;
   halamanAkhir: number;
@@ -24,7 +24,7 @@ interface FormBuktiType {
 
 const TableFormBukti = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [data, setData] = useState<FormBuktiType[]>([]);
+  const [data, setData] = useState<FBType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFormId, setSelectedFormId] = useState<number | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);

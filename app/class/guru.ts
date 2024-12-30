@@ -1,4 +1,4 @@
-import { Anggota, guruType, perbaruiAnggotaType, prisma } from "@/lib";
+import { Anggota, guruType, updtMemberType, prisma } from "@/lib";
 import { JenisKelamin } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -17,14 +17,14 @@ export class Guru implements Anggota<guruType> {
     this.alamat = data.alamat;
   }
 
-  static async tambahAnggota(dataGuru: guruType): Promise<guruType> {
+  static async addMember(dataGuru: guruType): Promise<guruType> {
     const { nip, nama, jenisKelamin, kontak, alamat } = dataGuru;
 
     if (!nip || !nama || !jenisKelamin || !kontak) {
       throw new Error("Harus mengisi field yang wajib");
     }
 
-    // const cariGuru = await Guru.cariAnggota(nip) as guruType;
+    // const cariGuru = await Guru.findMember(nip) as guruType;
 
     // if (cariGuru.nip) {
     //     throw new Error("NIP sudah terdaftar!")
@@ -43,14 +43,14 @@ export class Guru implements Anggota<guruType> {
     return result;
   }
 
-  static async tambahBanyakAnggota(dataGuru: guruType[]): Promise<guruType[]> {
+  static async addManyMember(dataGuru: guruType[]): Promise<guruType[]> {
     const result = await prisma.guru.createManyAndReturn({
       data: dataGuru,
     });
     return result;
   }
 
-  static async cariAnggota(nip: string): Promise<guruType | undefined | null> {
+  static async findMember(nip: string): Promise<guruType | undefined | null> {
     const guru = (await prisma.guru.findUnique({
       where: {
         nip,
@@ -70,19 +70,19 @@ export class Guru implements Anggota<guruType> {
 
     return guru;
   }
-  static async ambilSemuaDataGuru(): Promise<guruType[]> {
+  static async findAllTcr(): Promise<guruType[]> {
     const guru = (await prisma.guru.findMany({})) as guruType[];
 
     return guru;
   }
 
-  static async perbaruiAnggota(
+  static async updtMember(
     nip: string,
-    data: perbaruiAnggotaType
+    data: updtMemberType
   ): Promise<guruType> {
     const { nama, jenisKelamin, kontak, alamat } = data;
 
-    let guru = (await Guru.cariAnggota(nip)) as guruType;
+    let guru = (await Guru.findMember(nip)) as guruType;
 
     if (!guru?.nip) {
       throw new Error("Data kelas tidak ditemukan");
@@ -103,7 +103,7 @@ export class Guru implements Anggota<guruType> {
     return result;
   }
 
-  static async hapusAnggota(nip: string): Promise<void> {
+  static async dltMember(nip: string): Promise<void> {
     const guru = await prisma.guru.delete({
       where: {
         nip,
@@ -118,7 +118,7 @@ export class Guru implements Anggota<guruType> {
     }
   }
 
-  static async hapusSemuaAnggota(): Promise<void> {
+  static async dltAllMember(): Promise<void> {
     await prisma.guru.deleteMany({});
   }
 }

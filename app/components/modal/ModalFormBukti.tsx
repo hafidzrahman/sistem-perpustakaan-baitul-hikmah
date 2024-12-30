@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
-import { formBuktiType } from "@/lib";
+import { FBType } from "@/lib";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 

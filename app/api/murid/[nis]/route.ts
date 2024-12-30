@@ -10,7 +10,7 @@ export async function GET(req : Request, {params} : paramsType) {
     try {
         const {nis} = await params;
         
-        const dataMurid = await Murid.cariAnggota(nis) as muridType;
+        const dataMurid = await Murid.findMember(nis) as muridType;
 
         if (!dataMurid?.nis) {
             return new Error("Data murid tidak ditemukan");
@@ -28,13 +28,13 @@ export async function PUT(req : Request, {params} : paramsType) {
         const {nis} = await params;
         const body = await req.json();
 
-        // const dataMurid = await murid.cariAnggota(nis) as muridType;
+        // const dataMurid = await murid.findMember(nis) as muridType;
 
         // if (!dataMurid?.nis) {
         //     return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
         // }
 
-        const dataMurid = await Murid.perbaruiAnggota(nis, body);
+        const dataMurid = await Murid.updtMember(nis, body);
 
         return NextResponse.json(dataMurid, {status : 200})
 
@@ -48,13 +48,13 @@ export async function DELETE(req : Request, {params} : paramsType) {
     try {
         const {nis} = await params;
         
-        // const dataMurid = await murid.cariAnggota(nis) as muridType;
+        // const dataMurid = await murid.findMember(nis) as muridType;
 
         // if (!dataMurid?.nis) {
         //     return NextResponse.json({message : "Data murid tidak ditemukan"}, {status : 502})
         // }
 
-        await Murid.hapusAnggota(nis);
+        await Murid.dltMember(nis);
 
         return NextResponse.json({message : "Berhasil menghapus data murid"}, {status : 200})
 

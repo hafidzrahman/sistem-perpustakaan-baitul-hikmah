@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { kelasType, kenakanDendaType, keteranganType } from "@/lib";
+import { classType, imposeFineType, infType } from "@/lib";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
 import { toast } from "react-toastify";
 
@@ -13,7 +13,7 @@ const ModalTambahDenda = ({ status, handle }: ModalTambahDendaProps) => {
   const [isNIS, setIsNIS] = useState(1)
   const [idKeterangan, setIdKeterangan] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [keterangan, setKeterangan] = useState<keteranganType[]>([])
+  const [keterangan, setKeterangan] = useState<infType[]>([])
   const resetForm = () => {
     setInputValue("");
     setIdKeterangan(1);
@@ -52,7 +52,7 @@ const ModalTambahDenda = ({ status, handle }: ModalTambahDendaProps) => {
           nis : (isNIS === 1) && inputValue,
           nip : (isNIS === 0) && inputValue,
           idKeterangan,
-        } as kenakanDendaType),
+        } as imposeFineType),
       });
 
       const data = await response.json();

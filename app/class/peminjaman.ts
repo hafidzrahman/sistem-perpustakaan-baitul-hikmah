@@ -56,7 +56,7 @@ export class Peminjaman {
     }) {
       const { isbn, tenggatWaktu } = bukuPinjaman;
 
-      const dataEksemplarBuku = await EksemplarBuku.ketersediaanEksemplarBuku(isbn);
+      const dataEksemplarBuku = await EksemplarBuku.availCopyBook(isbn);
       
       if (!dataEksemplarBuku) {
         throw new Error()
@@ -73,7 +73,7 @@ export class Peminjaman {
           bukuId: dataEksemplarBuku.id!,
           tenggatWaktu: deadline,
         });
-        const dataBukuPinjaman = await BukuPinjaman.tambahBukuPinjaman(objectBukuPinjaman);
+        const dataBukuPinjaman = await BukuPinjaman.addBookBrw(objectBukuPinjaman);
 
         let timer = setTimeout(
           () =>
@@ -129,7 +129,7 @@ export class Peminjaman {
               bukuId: dataBukuPinjaman.bukuId,
             });
 
-            await Denda.tambahDenda(objectDenda);
+            await Denda.addFine(objectDenda);
           } else if (
             bukuPinjaman.tenggatWaktu &&
             Date.now() < bukuPinjaman.tenggatWaktu.getTime()
@@ -260,7 +260,7 @@ export class Peminjaman {
   }
 
   static async hapusPeminjaman(idPeminjaman: number): Promise<void> {
-    await BukuPinjaman.hapusSemuaBukuPinjaman(idPeminjaman);
+    await BukuPinjaman.dltAllBookBrw(idPeminjaman);
     const peminjaman = await prisma.peminjaman.delete({
       where: {
         id: idPeminjaman,
