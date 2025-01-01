@@ -20,25 +20,31 @@ const ButtonPinjam = ({
   session,
   isbn,
   judul,
-  disabled,
-  text,
   peminjamanData = [],
   eksemplarCount,
 }: ButtonPinjamProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Tambahkan pengecekan array
   const safeArrayData = Array.isArray(peminjamanData) ? peminjamanData : [];
 
   // Check if current user has borrowed this book
-  const currentUserBorrowing = safeArrayData.find(
-    (peminjaman) =>
-      peminjaman.nisUser === session?.user?.username &&
+  const currentUserBorrowing = safeArrayData.find((peminjaman) => {
+    const isGuru = session?.user?.role === "guru";
+    const userIdentifier = isGuru ? peminjaman.nip : peminjaman.nis;
+
+    return (
+      userIdentifier === session?.user?.username &&
       peminjaman.bukuPinjaman?.some(
         (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
       )
-  );
+    );
+  });
+
+  // console.log(peminjamanData[0].nis);
+  console.log(peminjamanData);
+
+  console.log(currentUserBorrowing);
 
   // Count total borrowed copies
   const totalBorrowed = safeArrayData.reduce((count, peminjaman) => {
@@ -52,59 +58,8 @@ const ButtonPinjam = ({
     );
   }, 0);
 
-  const handleReturn = async () => {
-    if (!session?.user?.username || !currentUserBorrowing) {
-      toast.error("Terjadi kesalahan!");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const borrowedBook = currentUserBorrowing.bukuPinjaman.find(
-        (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
-      );
-
-      if (!borrowedBook) {
-        throw new Error("Data peminjaman tidak ditemukan");
-      }
-
-      const requestData = {
-        idPeminjaman: currentUserBorrowing.id,
-        bukuISBN: isbn,
-        bukuId: borrowedBook.eksemplarId,
-      };
-
-      const response = await fetch("/api/buku/konfirmasi-pengembalian", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      const responseData = await response.json();
-      if (!response.ok) {
-        throw new Error(
-          responseData.details?.message ||
-            responseData.message ||
-            "Gagal mengembalikan buku"
-        );
-      }
-
-      toast.success(responseData.message);
-      router.refresh();
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error(
-          "Terjadi kesalahan yang tidak diketahui saat mengembalikan buku"
-        );
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  console.log(totalBorrowed);
+  console.log(eksemplarCount);
 
   const handlePinjam = async () => {
     if (!session?.user?.username) {
@@ -174,11 +129,8 @@ const ButtonPinjam = ({
   // If current user has borrowed the book
   if (currentUserBorrowing) {
     return (
-      <button
-        onClick={handleReturn}
-        className={`${buttonStyle} ${activeStyle}`}
-      >
-        Kembalikan
+      <button className={`${buttonStyle} ${activeStyle}`}>
+        Sudah dipinjam
       </button>
     );
   }
@@ -192,7 +144,6 @@ const ButtonPinjam = ({
     );
   }
 
-  // Default borrow button
   return (
     <button onClick={handlePinjam} className={`${buttonStyle} ${activeStyle}`}>
       Pinjam

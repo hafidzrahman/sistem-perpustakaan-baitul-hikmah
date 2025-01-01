@@ -69,9 +69,9 @@ export async function GET() {
   await Guru.tambahBanyakAnggota(dataGuru);
   await Keterangan.tambahBanyakKeterangan(dataKeterangan);
 
-  await FormBukti.tambahDataFormBukti(dataFormBukti[0]);
-  await FormBukti.tambahDataFormBukti(dataFormBukti[1]);
-  await FormBukti.tambahDataFormBukti(dataFormBukti[2]);
+  // await FormBukti.tambahDataFormBukti(dataFormBukti[0]);
+  // await FormBukti.tambahDataFormBukti(dataFormBukti[1]);
+  // await FormBukti.tambahDataFormBukti(dataFormBukti[2]);
 
   for await (const data of dataPeminjaman)
     await Peminjaman.tambahPeminjaman(data);
@@ -146,22 +146,6 @@ export async function GET() {
   //     { idPembayaranTunai: 3005, idSumbangan: 1000, jumlah: 50000 },
   //   ],
   // });
-
-  await prisma.kelas.create({
-    data: {
-      id: 10000,
-      nama: "test",
-      tingkat: 8,
-    },
-  });
-
-  await prisma.riwayatKelas.create({
-    data: {
-      tahunAjaran: "2023/2024",
-      idKelas: 10000,
-      muridNIS: "12250120338",
-    },
-  });
 
   // const test = await Sumbangan.cariSumbangan({nis : "12250111794"});
 

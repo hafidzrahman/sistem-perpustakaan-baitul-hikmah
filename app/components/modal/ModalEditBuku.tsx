@@ -91,7 +91,6 @@ const ModalEditBuku = ({ status, handle, isbn }: ModalEditBukuProps) => {
 
       if (response.ok) {
         handle();
-        window.location.reload();
       } else {
         console.error("Failed to update book");
       }

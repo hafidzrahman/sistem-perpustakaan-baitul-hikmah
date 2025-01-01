@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Delete02Icon,
@@ -24,8 +24,10 @@ const TablePeminjaman = ({
   muridList = [],
 }: TablePeminjamanProps) => {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = React.useState<string>("");
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  console.log(data);
 
   const getBukuData = (isbn: string) => {
     if (!bukuList || !isbn) return null;
@@ -43,54 +45,40 @@ const TablePeminjaman = ({
     return null;
   };
 
-  const getStatus = (tanggalKembali: Date | null, tenggatWaktu: Date) => {
-    if (!tanggalKembali) return "Masih";
-
-    const kembali = new Date(tanggalKembali);
-    const tenggat = new Date(tenggatWaktu);
-
-    return kembali <= tenggat ? "Dikembalikan" : "Terlambat";
-  };
-
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case "Masih":
-        return "border-jewel-green bg-pastel-green text-jewel-green";
-      case "Dikembalikan":
-        return "border-jewel-blue bg-pastel-blue text-jewel-blue";
-      case "Terlambat":
-        return "border-jewel-red bg-pastel-red text-jewel-red";
-      default:
-        return "border-gray-400 bg-gray-100 text-gray-600";
-    }
-  };
-
   const handleConfirmReturn = async (
     idPeminjaman: number,
-    bukuISBN: string,
-    bukuId: number
+    bukuPinjaman: peminjamanType["bukuPinjaman"][0]
   ) => {
+    if (!bukuPinjaman) {
+      toast.error("Data buku pinjaman tidak ditemukan");
+      return;
+    }
+
+    const payload = {
+      idPeminjaman,
+      bukuISBN: bukuPinjaman.bukuISBN,
+      bukuId: bukuPinjaman.bukuId,
+    };
+
     setIsLoading(true);
     try {
       const response = await fetch(
         "/api/buku-pinjaman/konfirmasi-pengembalian",
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            idPeminjaman,
-            bukuISBN,
-            bukuId,
-          }),
+          body: JSON.stringify(payload),
         }
       );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.details?.message || data.message);
+        // Backend mengirim error dalam format yang spesifik
+        const errorMessage = data.details?.message || data.message;
+        throw new Error(errorMessage);
       }
 
       toast.success(data.message);
@@ -106,7 +94,7 @@ const TablePeminjaman = ({
     }
   };
 
-  const filteredData = React.useMemo(() => {
+  const filteredData = useMemo(() => {
     if (!data) return [];
 
     return data.filter((item) => {
@@ -126,6 +114,45 @@ const TablePeminjaman = ({
   if (!data || !bukuList || !guruList || !muridList) {
     return <div className="w-full p-4 text-center">Data tidak tersedia</div>;
   }
+
+  // Tambahkan fungsi untuk mengecek status peminjaman
+  const getStatusPeminjaman = (
+    tanggalKembali: Date | null,
+    tenggatWaktu: Date
+  ) => {
+    if (!tanggalKembali) return "Masih";
+
+    const kembali = new Date(tanggalKembali);
+    const tenggat = new Date(tenggatWaktu);
+
+    return kembali > tenggat ? "Terlambat" : "Dikembalikan";
+  };
+
+  // Tambahkan fungsi untuk mendapatkan style berdasarkan status
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "Masih":
+        return {
+          container: "border-jewel-green bg-pastel-green text-jewel-green",
+          dot: "bg-jewel-green",
+        };
+      case "Dikembalikan":
+        return {
+          container: "border-jewel-blue bg-pastel-blue text-jewel-blue",
+          dot: "bg-jewel-blue",
+        };
+      case "Terlambat":
+        return {
+          container: "border-jewel-red bg-pastel-red text-jewel-red",
+          dot: "bg-jewel-red",
+        };
+      default:
+        return {
+          container: "border-gray-400 bg-gray-100 text-gray-600",
+          dot: "bg-gray-600",
+        };
+    }
+  };
 
   return (
     <div className="w-full space-y-4">
@@ -232,11 +259,12 @@ const TablePeminjaman = ({
           <thead>
             <tr className="bg-light-primary text-white sticky top-0 z-10">
               <th className="px-4 py-2 text-left w-1/12">ID</th>
-              <th className="px-4 py-2 text-left w-3/12">Judul Buku</th>
+              <th className="px-4 py-2 text-left w-2/12">Judul Buku</th>
               <th className="px-4 py-2 text-center w-3/12">Peminjam</th>
-              <th className="px-4 py-2 text-center w-2/12">Tanggal Pinjam</th>
-              <th className="px-4 py-2 text-center w-2/12">Tenggat</th>
+              <th className="px-4 py-2 text-center w-1/12">Tanggal Pinjam</th>
+              <th className="px-4 py-2 text-center w-1/12">Tenggat</th>
               <th className="px-4 py-2 text-center w-1/12">Status</th>
+              <th className="px-4 py-2 text-center w-3/12">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -294,7 +322,7 @@ const TablePeminjaman = ({
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-2 text-sm text-center">
+                  <td className="px-4 py-2 text-xs text-center">
                     {item.tanggalPinjam
                       ? new Date(item.tanggalPinjam).toLocaleString("id-ID", {
                           year: "numeric",
@@ -303,7 +331,7 @@ const TablePeminjaman = ({
                         })
                       : "Tanggal tidak tersedia"}
                   </td>
-                  <td className="px-4 py-2 text-sm text-center">
+                  <td className="px-4 py-2 text-xs text-center">
                     {item.bukuPinjaman?.[0]?.tenggatWaktu
                       ? new Date(
                           item.bukuPinjaman[0].tenggatWaktu
@@ -316,11 +344,45 @@ const TablePeminjaman = ({
                   </td>
                   <td className="px-4 py-2">
                     <div className="flex items-center justify-center">
-                      <div className="px-2 py-0.5 border border-jewel-green bg-pastel-green rounded-full flex justify-between items-center text-jewel-green">
-                        <span className="inline-block w-2 h-2 rounded-full bg-jewel-green"></span>
-                        <p className="text-xs ml-1">Masih</p>
-                      </div>
+                      {item.bukuPinjaman.map((buku, bukuIndex) => {
+                        const statusPeminjaman = getStatusPeminjaman(
+                          buku.tanggalKembali,
+                          buku.tenggatWaktu
+                        );
+                        const statusStyle = getStatusStyle(statusPeminjaman);
+
+                        return (
+                          <div
+                            key={`status-${item.id}-${bukuIndex}`}
+                            className={`px-2 py-0.5 border rounded-full flex justify-between items-center ${statusStyle.container}`}
+                          >
+                            <span
+                              className={`inline-block w-2 h-2 rounded-full ${statusStyle.dot}`}
+                            ></span>
+                            <p className="text-xs ml-1">{statusPeminjaman}</p>
+                          </div>
+                        );
+                      })}
                     </div>
+                  </td>
+                  <td className="px-4 py-2 text-center">
+                    {item.bukuPinjaman.map(
+                      (buku, bukuIndex) =>
+                        !buku.tanggalKembali && (
+                          <button
+                            key={`${item.id}-${bukuIndex}`}
+                            disabled={isLoading}
+                            onClick={() => handleConfirmReturn(item.id, buku)}
+                            className={`bg-dark-primary text-white-custom font-source-sans leading-none text-sm rounded-lg border-2 border-black-custom py-2 px-10 font-light ${
+                              isLoading ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
+                          >
+                            {isLoading
+                              ? "Memproses..."
+                              : "Konfirmasi Pengembalian"}
+                          </button>
+                        )
+                    )}
                   </td>
                 </tr>
               );
