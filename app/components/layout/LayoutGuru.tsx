@@ -19,7 +19,7 @@ import Link from "next/link";
 import SidebarLink from "../SidebarLink";
 import Breadcrumb from "../Breadcrumbs";
 import { useSession, signOut } from "next-auth/react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const LayoutGuru = ({ children }: { children: React.ReactNode }) => {
@@ -56,8 +56,6 @@ const LayoutGuru = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex h-screen bg-white">
-      <ToastContainer position="top-right" autoClose={3000} />
-
       {/* Desktop Sidebar */}
       <div
         className={`hidden lg:flex bg-dark gap-8 relative flex-col h-screen transition-width border-r-2 border-black-custom duration-300 ${
