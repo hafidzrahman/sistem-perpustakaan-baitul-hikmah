@@ -32,7 +32,7 @@ export async function PUT(req: Request, { params }: paramsType) {
 
     console.log(isbn, body);
 
-    return NextResponse.json(dataBuku, { status: 200 });
+    return NextResponse.json({message : "Data buku berhasil diperbarui"}, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { message: "Gagal memperbarui data buku", details: error },

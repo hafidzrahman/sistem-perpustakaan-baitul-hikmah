@@ -335,12 +335,12 @@ export class Buku {
         sinopsis: sinopsis || buku.sinopsis,
         penerbit: (penerbit || buku.penerbit) as number,
         halaman: halaman || buku.halaman,
-        penulis: {
-          connect: (penulis as number[]).map((id) => ({ id })),
+        genre : { // kalau user tidak masukin, maka bagian pertama akan bernilai [] bukan null, amankah?
+            connect : ((genre?.length !== 0) ? genre?.map(id => ({id})) : buku.genre.map(id => ({id}))) as {id : number}[]
         },
-        genre: {
-          connect: (genre as number[]).map((id) => ({ id })),
-        },
+        penulis : {
+            connect : ((penulis?.length !== 0) ? penulis?.map(id => ({id})) : buku.penulis?.map(id => ({id}))) as {id : number}[]
+        }
       },
       where: {
         isbn,
