@@ -266,10 +266,10 @@ export class Buku{
                 penerbit : (penerbit || buku.penerbit) as number, 
                 halaman : halaman || buku.halaman,
                 genre : { // kalau user tidak masukin, maka bagian pertama akan bernilai [] bukan null, amankah?
-                    set : ((genre?.length !== 0) ? genre?.map(id => ({id})) : buku.genre.map(id => ({id}))) as {id : number}[]
+                    connect : ((genre?.length !== 0) ? genre?.map(id => ({id})) : buku.genre.map(id => ({id}))) as {id : number}[]
                 },
                 penulis : {
-                    set : ((penulis?.length !== 0) ? penulis?.map(id => ({id})) : buku.penulis?.map(id => ({id}))) as {id : number}[]
+                    connect : ((penulis?.length !== 0) ? penulis?.map(id => ({id})) : buku.penulis?.map(id => ({id}))) as {id : number}[]
                 }
             },
             where : {

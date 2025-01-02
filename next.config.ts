@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       "image.gramedia.net",
       "example.com",
       "images-na.ssl-images-amazon.com",
+      "www.gramedia.com",
+      "cdn.gramedia.com",
+      "drive.google.com",
     ],
   },
 };
