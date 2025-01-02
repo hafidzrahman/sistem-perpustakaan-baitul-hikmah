@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
-import { Genre } from "@/lib";
+import { Genre, perbaruiBukuType } from "@/lib";
 
 interface ModalEditBukuProps {
   status: boolean;
@@ -79,6 +79,7 @@ const ModalEditBuku = ({ status, handle, isbn }: ModalEditBukuProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          isbn: isbn,
           judul,
           penulis: penulis.split(",").map((p) => p.trim()),
           penerbit,
@@ -86,7 +87,7 @@ const ModalEditBuku = ({ status, handle, isbn }: ModalEditBukuProps) => {
           genre: selectedGenres,
           linkGambar,
           sinopsis,
-        }),
+        } as perbaruiBukuType),
       });
 
       if (response.ok) {

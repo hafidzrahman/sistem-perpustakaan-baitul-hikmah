@@ -10,6 +10,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
   const [detailBuku, setDetailBuku] = useState<detailsBukuType>();
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
   const [peminjamanData, setPeminjamanData] = useState([]);
+
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -58,7 +59,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
     console.log(dipinjam);
 
     return {
-      dipinjam,
+      dipinjam: detailBuku.eksemplarBuku.length - totalEksemplar,
       tersedia: totalEksemplar,
     };
   };
