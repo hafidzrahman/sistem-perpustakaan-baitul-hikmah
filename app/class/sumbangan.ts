@@ -61,12 +61,6 @@ export class Sumbangan {
                 id
             },
             include : {
-                _count : {
-                    select : {
-                        sumbanganBuku : true,
-                        sumbanganBukuBantuan : true,
-                    }
-                },
                 pembayaranTunai : true,
                 murid : true,
                 guru : true,
@@ -87,7 +81,12 @@ export class Sumbangan {
                         }
                     }
                 },
-                sumbanganBuku : true,
+                sumbanganBuku : {
+                    select : {
+                        bukuISBN : true,
+                        tanggalMasuk : true
+                    }
+                },
                 keterangan : true,
                 denda : true
             }
@@ -139,13 +138,13 @@ export class Sumbangan {
                 _count : {
                     select : {
                         sumbanganBuku : true,
-                        sumbanganBukuBantuan : true,
                     }
                 },
                 denda : true,
                 keterangan : true,
                 pembayaranTunai : true,
-                riwayatBantuan : true
+                riwayatBantuan : true,
+                
             }
         });
 
@@ -195,17 +194,23 @@ export class Sumbangan {
         }
 
             const dataSumbangan = await Sumbangan.cariSumbangan(idSumbangan);
+
                 if (!dataSumbangan?.id) { 
                     throw new Error("Id sumbangan tidak ada")
                 }
-                
+
+                if (dataSumbangan.tanggalSelesai && dataSumbangan.berlebih === false) {
+                    for await (const dataBuku of buku) {
+                        await Buku.tambahBuku(dataBuku)
+                        }
+                } else {
                 const targetBuku = dataSumbangan.keterangan.jumlahBuku;
                 let targetTunai = dataSumbangan.keterangan.totalNominal;
                 if (dataSumbangan.keterangan.nominalPerHari && dataSumbangan.denda?.tanggal) {
                     targetTunai = ((Date.now() - dataSumbangan.denda.tanggal!.getTime()) / hariKeMiliDetik) * dataSumbangan.keterangan.nominalPerHari
                 }
                 
-                const jumlahBuku = (dataSumbangan._count.sumbanganBuku || 0) + (dataSumbangan._count.sumbanganBukuBantuan || 0) + data.buku.length;
+                const jumlahBuku = (dataSumbangan.sumbanganBuku.length || 0) + data.buku.length;
                 const totalPembayaranTunai = await PembayaranTunai.totalkanPembayaranTunai(dataSumbangan.id);
                 const totalRiwayatBantuan = await RiwayatBantuan.totalkanRiwayatBantuan(dataSumbangan.id);
                 const bukuKeTunai = jumlahBuku*((dataSumbangan.keterangan.totalNominal || 0) / (dataSumbangan.keterangan.jumlahBuku || 1));
@@ -283,6 +288,12 @@ export class Sumbangan {
                         }
                     })
 
+                    if (data.buku.length > 0) {
+                    for await (const dataBuku of buku) {
+                        await Buku.tambahBuku(dataBuku)
+                        }
+                    }
+
                     const dataSumbanganKurang = await prisma.sumbangan.findMany({
                         where : {
                             AND: [
@@ -309,7 +320,6 @@ export class Sumbangan {
                             _count : {
                                 select : {
                                     sumbanganBuku : true,
-                                    sumbanganBukuBantuan : true,
                                 }
                             }
                         }
@@ -318,7 +328,7 @@ export class Sumbangan {
                     for await (const data of dataSumbanganKurang) {
                         const tunaiDariRiwayatBantuan = await RiwayatBantuan.totalkanRiwayatBantuan(data.id);
                         const tunaiDariPembayaran = await PembayaranTunai.totalkanPembayaranTunai(data.id);
-                        const jumlahBuku = (data._count.sumbanganBuku || 0) + (data._count.sumbanganBukuBantuan || 0)
+                        const jumlahBuku = (data._count.sumbanganBuku || 0)
                         const totalTunai = jumlahBuku*((data.keterangan?.totalNominal || 0) / (data.keterangan?.jumlahBuku || 1)) + (tunaiDariRiwayatBantuan || 0) + (tunaiDariPembayaran || 0);
                         let kekurangan = (data.keterangan.totalNominal || 0) - totalTunai;
                         if (data.keterangan.nominalPerHari) {
@@ -500,7 +510,7 @@ export class Sumbangan {
                 }
 
 
-            
+                }
         
     }
 }

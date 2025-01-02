@@ -85,7 +85,6 @@ export type eksemplarBukuType = {
   tanggalHilang?: Date | null;
   posisi?: string | null;
   idSumbangan?: number | null;
-  idSumbanganBantuan?: number | null;
 } | null;
 
 export type bukuType = {
@@ -293,10 +292,10 @@ export type detailSumbanganType = {
     guru? : guruType | null;
     keterangan : keteranganType;
     denda? : dendaType | null;
-    _count : {
-      sumbanganBuku : number,
-      sumbanganBukuBantuan : number
-    }
+    sumbanganBuku : {
+      bukuISBN : string,
+      tanggalMasuk? : Date | null
+    }[]
 }
 
 
@@ -326,7 +325,6 @@ export type cariSumbanganAnggotaType = sumbanganType & {
   pembayaranTunai: pembayaranTunaiType;
   _count: {
     sumbanganBuku: number;
-    sumbanganBukuBantuan: number;
   };
   denda: dendaType;
 };

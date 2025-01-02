@@ -269,6 +269,7 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
                   Tanggal Baca
                 </label>
                 <input
+                  autoComplete="off"
                   type="date"
                   id="tanggal"
                   name="tanggal"
@@ -290,6 +291,7 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
                   Halaman Awal
                 </label>
                 <input
+                  autoComplete="off"
                   type="number"
                   min="1"
                   id="halamanAwal"
@@ -310,6 +312,7 @@ const ModalFormBukti = ({ status, handle }: ModalFormBuktiProps) => {
                   Halaman Akhir
                 </label>
                 <input
+                  autoComplete="off"
                   type="number"
                   min="1"
                   max={selectedBookPages}

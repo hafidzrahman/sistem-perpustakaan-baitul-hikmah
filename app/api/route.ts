@@ -42,8 +42,8 @@ export async function GET() {
     peminjaman: dataPeminjaman,
     formBukti: dataFormBukti,
     eksemplarBuku: dataEksemplarBuku,
-    user : dataUser,
-    petugasPerpustakaan : dataPetugasPerpustakaan
+    user: dataUser,
+    petugasPerpustakaan: dataPetugasPerpustakaan,
   } = seeds;
 
   await prisma.riwayatBantuan.deleteMany({});
@@ -69,17 +69,17 @@ export async function GET() {
   await Guru.tambahBanyakAnggota(dataGuru);
   await Keterangan.tambahBanyakKeterangan(dataKeterangan);
 
-  await FormBukti.tambahDataFormBukti(dataFormBukti[0]);
-  await FormBukti.tambahDataFormBukti(dataFormBukti[1]);
-  await FormBukti.tambahDataFormBukti(dataFormBukti[2]);
+  // await FormBukti.tambahDataFormBukti(dataFormBukti[0]);
+  // await FormBukti.tambahDataFormBukti(dataFormBukti[1]);
+  // await FormBukti.tambahDataFormBukti(dataFormBukti[2]);
 
   for await (const data of dataPeminjaman)
-  await Peminjaman.tambahPeminjaman(data);
+    await Peminjaman.tambahPeminjaman(data);
 
   await prisma.petugasPerpustakaan.deleteMany({});
 
   await prisma.petugasPerpustakaan.createMany({
-    data : dataPetugasPerpustakaan
+    data: dataPetugasPerpustakaan,
   });
 
   await test(dataUser);
@@ -91,16 +91,16 @@ export async function GET() {
         nis: "12250111794",
         idKeterangan: 2,
         tanggalSelesai: new Date(),
-        berlebih : true
+        berlebih: true,
       },
       {
         id: 1001,
-        nis: "12250111794",
+        nis: "12250111048",
         idKeterangan: 4,
       },
       {
         id: 1002,
-        nis: "12250111794",
+        nis: "12250111791",
         idKeterangan: 4,
       },
       {
@@ -117,16 +117,16 @@ export async function GET() {
   });
 
   await prisma.denda.create({
-    data : {
-      id : 10000,
-      idSumbangan : 1000,
-      tanggal : new Date(),
-    }
-  })
+    data: {
+      id: 10000,
+      idSumbangan: 1000,
+      tanggal: new Date(),
+    },
+  });
 
-    await prisma.eksemplarBuku.createMany({
-      data : dataEksemplarBuku
-    })
+  await prisma.eksemplarBuku.createMany({
+    data: dataEksemplarBuku,
+  });
 
   await prisma.pembayaranTunai.createMany({
     data: [
@@ -146,22 +146,6 @@ export async function GET() {
   //     { idPembayaranTunai: 3005, idSumbangan: 1000, jumlah: 50000 },
   //   ],
   // });
-
-  await prisma.kelas.create({
-    data : {
-      id : 10000,
-      nama : "test",
-      tingkat : 8,
-    }
-  })
-
-  await prisma.riwayatKelas.create({
-    data : {
-      tahunAjaran : "2023/2024",
-      idKelas : 10000,
-      muridNIS : "12250120338",
-    }
-  })
 
   // const test = await Sumbangan.cariSumbangan({nis : "12250111794"});
 
@@ -208,20 +192,26 @@ export async function GET() {
   });
 }
 
-async function test(dataUser : userType[]): Promise<void> {
-
+async function test(dataUser: userType[]): Promise<void> {
   await prisma.user.deleteMany({});
-  
+
   for await (const user of dataUser) {
-    const {username, password, role, muridNIS, guruNIP, petugasPerpustakaanId} = user;
+    const {
+      username,
+      password,
+      role,
+      muridNIS,
+      guruNIP,
+      petugasPerpustakaanId,
+    } = user;
     const dataUser = new User({
-        username,
-        password,
-        role,
-        muridNIS,
-        guruNIP,
-        petugasPerpustakaanId
-    })
+      username,
+      password,
+      role,
+      muridNIS,
+      guruNIP,
+      petugasPerpustakaanId,
+    });
 
     await User.tambahUser(dataUser);
 

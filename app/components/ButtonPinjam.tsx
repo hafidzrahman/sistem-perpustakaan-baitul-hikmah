@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Session } from "next-auth";
 import { peminjamType } from "@/lib";
@@ -6,7 +6,12 @@ import { toast } from "react-toastify";
 
 interface ButtonPinjamProps {
   session:
-    | (Session & { user: { role: "murid" | "guru"; username: string } })
+    | (Session & {
+        user: {
+          role: "murid" | "guru";
+          username: string;
+        };
+      })
     | null;
   isbn: string;
   judul: string;
@@ -14,95 +19,55 @@ interface ButtonPinjamProps {
   text?: string;
   peminjamanData?: any[];
   eksemplarCount: number;
+  onUpdatePeminjaman?: (newPeminjaman: any) => void;
 }
 
 const ButtonPinjam = ({
   session,
   isbn,
   judul,
-  disabled,
-  text,
   peminjamanData = [],
-  eksemplarCount,
+  eksemplarCount: initialEksemplarCount,
+  onUpdatePeminjaman,
 }: ButtonPinjamProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [localPeminjamanData, setLocalPeminjamanData] =
+    useState(peminjamanData);
+  const [localEksemplarCount, setLocalEksemplarCount] = useState(
+    initialEksemplarCount
+  );
 
-  // Tambahkan pengecekan array
-  const safeArrayData = Array.isArray(peminjamanData) ? peminjamanData : [];
+  // Update local state when props change
+  useEffect(() => {
+    setLocalPeminjamanData(peminjamanData);
+    setLocalEksemplarCount(initialEksemplarCount);
+  }, [peminjamanData, initialEksemplarCount]);
+
+  const safeArrayData = Array.isArray(localPeminjamanData)
+    ? localPeminjamanData
+    : [];
 
   // Check if current user has borrowed this book
-  const currentUserBorrowing = safeArrayData.find(
-    (peminjaman) =>
-      peminjaman.nisUser === session?.user?.username &&
+  const currentUserBorrowing = safeArrayData.find((peminjaman) => {
+    const isGuru = session?.user?.role === "guru";
+    const userIdentifier = isGuru ? peminjaman.nip : peminjaman.nis;
+
+    return (
+      userIdentifier === session?.user?.username &&
       peminjaman.bukuPinjaman?.some(
         (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
       )
-  );
-
-  // Count total borrowed copies
-  const totalBorrowed = safeArrayData.reduce((count, peminjaman) => {
-    if (!Array.isArray(peminjaman.bukuPinjaman)) return count;
-
-    return (
-      count +
-      peminjaman.bukuPinjaman.filter(
-        (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
-      ).length
     );
-  }, 0);
+  });
 
-  const handleReturn = async () => {
-    if (!session?.user?.username || !currentUserBorrowing) {
-      toast.error("Terjadi kesalahan!");
-      return;
-    }
+  // Optimistic update function
+  const updateLocalState = (newPeminjaman: any) => {
+    setLocalPeminjamanData((prev) => [...prev, newPeminjaman]);
+    setLocalEksemplarCount((prev) => Math.max(0, prev - 1));
 
-    setIsLoading(true);
-    try {
-      const borrowedBook = currentUserBorrowing.bukuPinjaman.find(
-        (bp: any) => bp.bukuISBN === isbn && bp.tanggalKembali === null
-      );
-
-      if (!borrowedBook) {
-        throw new Error("Data peminjaman tidak ditemukan");
-      }
-
-      const requestData = {
-        idPeminjaman: currentUserBorrowing.id,
-        bukuISBN: isbn,
-        bukuId: borrowedBook.eksemplarId,
-      };
-
-      const response = await fetch("/api/buku/konfirmasi-pengembalian", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      const responseData = await response.json();
-      if (!response.ok) {
-        throw new Error(
-          responseData.details?.message ||
-            responseData.message ||
-            "Gagal mengembalikan buku"
-        );
-      }
-
-      toast.success(responseData.message);
-      router.refresh();
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error(
-          "Terjadi kesalahan yang tidak diketahui saat mengembalikan buku"
-        );
-      }
-    } finally {
-      setIsLoading(false);
+    if (onUpdatePeminjaman) {
+      onUpdatePeminjaman(newPeminjaman);
     }
   };
 
@@ -113,6 +78,22 @@ const ButtonPinjam = ({
     }
 
     setIsLoading(true);
+
+    // Create the new peminjaman object
+    const newPeminjaman = {
+      nis: session.user.role === "murid" ? session.user.username : undefined,
+      nip: session.user.role === "guru" ? session.user.username : undefined,
+      bukuPinjaman: [
+        {
+          bukuISBN: isbn,
+          tanggalKembali: null,
+        },
+      ],
+    };
+
+    // Optimistic update
+    updateLocalState(newPeminjaman);
+
     try {
       const requestData = {
         nis: session.user.role === "murid" ? session.user.username : undefined,
@@ -136,6 +117,9 @@ const ButtonPinjam = ({
 
       const responseData = await response.json();
       if (!response.ok) {
+        // Rollback optimistic update if request fails
+        setLocalPeminjamanData(peminjamanData);
+        setLocalEksemplarCount(initialEksemplarCount);
         throw new Error(
           responseData.details?.message ||
             responseData.message ||
@@ -171,20 +155,15 @@ const ButtonPinjam = ({
     );
   }
 
-  // If current user has borrowed the book
   if (currentUserBorrowing) {
     return (
-      <button
-        onClick={handleReturn}
-        className={`${buttonStyle} ${activeStyle}`}
-      >
-        Kembalikan
+      <button className={`${buttonStyle} ${disabledStyle}`} disabled>
+        Sudah dipinjam
       </button>
     );
   }
 
-  // If all copies are borrowed
-  if (totalBorrowed >= eksemplarCount) {
+  if (localEksemplarCount === 0) {
     return (
       <button className={`${buttonStyle} ${disabledStyle}`} disabled>
         Sedang dipinjam
@@ -192,7 +171,6 @@ const ButtonPinjam = ({
     );
   }
 
-  // Default borrow button
   return (
     <button onClick={handlePinjam} className={`${buttonStyle} ${activeStyle}`}>
       Pinjam

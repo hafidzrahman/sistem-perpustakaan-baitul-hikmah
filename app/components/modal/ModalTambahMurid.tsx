@@ -159,6 +159,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   NIS
                 </label>
                 <input
+                  autoComplete="off"
                   type="text"
                   id="nis"
                   value={nis}
@@ -235,6 +236,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   Nama
                 </label>
                 <input
+                  autoComplete="off"
                   type="text"
                   id="nama"
                   value={nama}
@@ -252,6 +254,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   Kontak Ortu
                 </label>
                 <input
+                  autoComplete="off"
                   type="text"
                   id="kontak"
                   value={kontakOrtu}
@@ -269,6 +272,7 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   Kata Sandi Akun
                 </label>
                 <input
+                  autoComplete="off"
                   type="text"
                   id="password"
                   value={password}

@@ -10,6 +10,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
   const [detailBuku, setDetailBuku] = useState<detailsBukuType>();
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
   const [peminjamanData, setPeminjamanData] = useState([]);
+
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -29,9 +30,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
     };
 
     fetchData();
-  }, [params]);
-
-  const bgColor = ["bg-jewel-blue"];
+  }, []);
 
   const getBookStatus = (isbn: string) => {
     if (!detailBuku) return { dipinjam: 0, tersedia: 0, total: 0 };
@@ -43,7 +42,6 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
       return {
         dipinjam: 0,
         tersedia: totalEksemplar,
-        total: totalEksemplar,
       };
     }
 
@@ -56,56 +54,13 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
       );
     }, 0);
 
-    return {
-      dipinjam,
-      tersedia: totalEksemplar - dipinjam,
-      total: totalEksemplar,
-    };
-  };
+    console.log(totalEksemplar);
 
-  const getBorrowButtonStatus = () => {
-    if (!detailBuku || !session?.user?.username)
-      return {
-        text: "Pinjam",
-        disabled: true,
-      };
-
-    // Tambahkan pengecekan array
-    if (!Array.isArray(peminjamanData)) {
-      return {
-        text: "Pinjam",
-        disabled: false,
-      };
-    }
-
-    const userHasBorrowed = peminjamanData.some(
-      (peminjaman) =>
-        peminjaman.nisUser === session.user.username &&
-        peminjaman.bukuPinjaman?.some(
-          (bp: any) =>
-            bp.bukuISBN === detailBuku.isbn && bp.tanggalKembali === null
-        )
-    );
-
-    if (userHasBorrowed) {
-      return {
-        text: "Sudah dipinjam",
-        disabled: true,
-      };
-    }
-
-    const status = getBookStatus(detailBuku.isbn);
-
-    if (status.tersedia === 0) {
-      return {
-        text: "Sedang dipinjam",
-        disabled: true,
-      };
-    }
+    console.log(dipinjam);
 
     return {
-      text: "Pinjam",
-      disabled: false,
+      dipinjam: detailBuku.eksemplarBuku.length - totalEksemplar,
+      tersedia: totalEksemplar,
     };
   };
 
@@ -154,6 +109,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
   }
 
   const bookStatus = getBookStatus(detailBuku.isbn);
+  console.log(bookStatus);
 
   const shelfPositions = [
     ["A1", "A2", "", "", ""],
@@ -162,6 +118,8 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
     ["", "", "", "", ""],
     ["E1", "E2", "E3", "E4", "E5"],
   ];
+
+  console.log(peminjamanData);
 
   return (
     <div className="min-h-screen p-4">
@@ -184,25 +142,20 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
               <div className="p-4 bg-white-custom rounded-lg border-jewel-green border-2 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="text-gray-600 text-sm">Sisa</div>
-                    <div className="text-gray-800 text-lg">
-                      {bookStatus.total}
-                    </div>
+                    <div className="text-gray-600 text-sm">Dipinjam</div>
+                    {
+                      <div className="px-2 py-0.5 bg-pastel-red text-jewel-red rounded-full text-xs">
+                        {bookStatus.dipinjam}
+                      </div>
+                    }
                   </div>
                   <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="text-gray-600 text-sm">Status</div>
-                    <div className="flex flex-col gap-1 items-center">
-                      {bookStatus.dipinjam > 0 && (
-                        <div className="px-2 py-0.5 bg-pastel-red text-jewel-red rounded-full text-xs">
-                          {bookStatus.dipinjam} Dipinjam
-                        </div>
-                      )}
-                      {bookStatus.tersedia > 0 && (
-                        <div className="px-2 py-0.5 bg-pastel-green text-jewel-green rounded-full text-xs">
-                          {bookStatus.tersedia} Tersedia
-                        </div>
-                      )}
-                    </div>
+                    <div className="text-gray-600 text-sm">Tersedia</div>
+                    {
+                      <div className="px-2 py-0.5 bg-pastel-green text-jewel-green rounded-full text-xs">
+                        {bookStatus.tersedia}
+                      </div>
+                    }
                   </div>
                 </div>
                 {session?.user?.role === "admin" ? (

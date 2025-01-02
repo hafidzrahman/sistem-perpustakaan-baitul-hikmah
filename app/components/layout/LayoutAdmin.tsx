@@ -13,18 +13,34 @@ import {
   Menu01Icon,
   LicenseDraftIcon,
   MoneyNotFound04Icon,
+  Logout01Icon,
 } from "hugeicons-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Breadcrumb from "../Breadcrumbs";
 import SidebarLink from "../SidebarLink";
+import { signOut } from "next-auth/react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LayoutAdmin = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  const handleLogout = async () => {
+    try {
+      await signOut({ redirect: false });
+      toast.success("Berhasil keluar dari sistem");
+      router.push("/");
+    } catch (error) {
+      toast.error("Gagal keluar dari sistem");
+      console.error("Logout error:", error);
+    }
+  };
 
   const navigation = [
     {
@@ -99,6 +115,17 @@ const LayoutAdmin = ({ children }: { children: React.ReactNode }) => {
             />
           ))}
         </ul>
+
+        {/* Logout Button di Sidebar */}
+        <button
+          onClick={handleLogout}
+          className={`mt-auto mb-8 flex items-center gap-2 px-8 py-2 text-white-custom hover:text-yellow-custom transition-colors duration-300 ${
+            !isSidebarOpen && "justify-center"
+          }`}
+        >
+          <Logout01Icon width={24} height={24} />
+          {isSidebarOpen && <span className="font-source-sans">Keluar</span>}
+        </button>
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -128,7 +155,7 @@ const LayoutAdmin = ({ children }: { children: React.ReactNode }) => {
         </div>
         <ul className="px-8 py-2 space-y-2">
           {navigation.map((item) => {
-            const isActive = pathname === item.href; // Periksa apakah link aktif
+            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
@@ -145,6 +172,15 @@ const LayoutAdmin = ({ children }: { children: React.ReactNode }) => {
             );
           })}
         </ul>
+
+        {/* Logout Button di Mobile Sidebar */}
+        <button
+          onClick={handleLogout}
+          className="absolute bottom-8 left-8 flex items-center gap-2 text-white-custom hover:text-yellow-custom transition-colors duration-300"
+        >
+          <Logout01Icon width={24} height={24} />
+          <span className="font-source-sans">Keluar</span>
+        </button>
       </div>
 
       {/* Main Content */}

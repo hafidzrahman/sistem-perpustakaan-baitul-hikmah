@@ -1,8 +1,6 @@
-// app/components/TableBukuAdmin.tsx
-
 import React, { useState } from "react";
 import { cariBukuType, genreType } from "@/lib";
-import { Delete02Icon, PencilEdit01Icon } from "hugeicons-react";
+import { Delete02Icon, PencilEdit01Icon, Search01Icon } from "hugeicons-react";
 import ButtonDetail from "./ButtonDetail";
 import ModalHapusBuku from "./modal/ModalHapusBuku";
 import ModalEditBuku from "./modal/ModalEditBuku";
@@ -26,10 +24,23 @@ const border = [
 const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedBook, setSelectedBook] = useState<{
     isbn: string;
     judul: string;
   } | null>(null);
+
+  // Filter data berdasarkan pencarian
+  const filteredData = data?.filter((item: cariBukuType) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      item.judul.toLowerCase().includes(searchLower) ||
+      item.isbn.toLowerCase().includes(searchLower) ||
+      item.penulis.some((p) => p.nama.toLowerCase().includes(searchLower)) ||
+      item.genre.some((g) => g.nama.toLowerCase().includes(searchLower))
+    );
+  });
+
   const handleDeleteClick = (isbn: string, judul: string) => {
     setSelectedBook({ isbn, judul });
     setShowDeleteModal(true);
@@ -50,7 +61,7 @@ const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
 
       if (response.ok) {
         setShowDeleteModal(false);
-        window.location.reload(); // Refresh the page to show updated data
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error deleting book:", error);
@@ -63,7 +74,23 @@ const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
 
   return (
     <>
-      <div className="w-full">
+      <div className="w-full space-y-4">
+        {/* Search Bar */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Cari berdasarkan judul, ISBN, penulis, atau genre..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2 pl-10 border-2 border-primary rounded-lg focus:outline-none focus:border-dark-primary"
+          />
+          <Search01Icon
+            className="absolute left-3 top-[30%] transform -translate-y-1/2 text-gray-400"
+            width={20}
+            height={20}
+          />
+        </div>
+
         {showDeleteModal && selectedBook && (
           <ModalHapusBuku
             status={showDeleteModal}
@@ -81,9 +108,10 @@ const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
             isbn={selectedBook.isbn}
           />
         )}
+
         {/* Mobile and Tablet View (Card Layout) */}
         <div className="lg:hidden space-y-4">
-          {data?.map((item: cariBukuType, index: number) => (
+          {filteredData?.map((item: cariBukuType, index: number) => (
             <div
               key={index}
               className="bg-white p-4 rounded-lg border border-primary"
@@ -94,8 +122,14 @@ const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
                     {item?.judul}
                   </h3>
                   <div className="flex items-center gap-2">
-                    <Delete02Icon className="w-5 h-5 text-jewel-red" />
-                    <PencilEdit01Icon className="w-5 h-5 text-jewel-blue" />
+                    <button
+                      onClick={() => handleDeleteClick(item?.isbn, item?.judul)}
+                    >
+                      <Delete02Icon className="w-5 h-5 text-jewel-red" />
+                    </button>
+                    <button onClick={() => handleEditClick(item?.isbn)}>
+                      <PencilEdit01Icon className="w-5 h-5 text-jewel-blue" />
+                    </button>
                   </div>
                 </div>
 
@@ -127,9 +161,7 @@ const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
                     <span className="inline-block w-2 h-2 rounded-full bg-jewel-green"></span>
                     <p className="text-xs">Tersedia</p>
                   </div>
-                  <button className="bg-dark-primary text-white-custom font-source-sans py-1 px-4 rounded-lg border-2 border-black text-xs hover:shadow-sm transition-all duration-300">
-                    Detail
-                  </button>
+                  <ButtonDetail isbn={item?.isbn} />
                 </div>
               </div>
             </div>
@@ -151,7 +183,7 @@ const TableBukuAdmin = ({ data }: { data: cariBukuType[] }) => {
               </tr>
             </thead>
             <tbody>
-              {data?.map((item: cariBukuType, index: number) => (
+              {filteredData?.map((item: cariBukuType, index: number) => (
                 <tr
                   key={index}
                   className="group relative border-t-2 hover:border-y-2 hover:border-black-custom border-dashed transition-all duration-100"
