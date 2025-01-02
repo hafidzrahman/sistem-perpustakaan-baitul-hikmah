@@ -19,8 +19,12 @@ datasource db {
 }
 
 model PetugasPerpustakaan {
-  id   String @id
+  id   String @id @default(uuid())
   nama String
+
+  user User?
+
+  @@index([id])
 }
 
 model Buku {
@@ -63,9 +67,6 @@ model EksemplarBuku {
   idSumbangan Int?
   sumbangan   Sumbangan? @relation("sumbangan", fields: [idSumbangan], references: [id])
 
-  idSumbanganBantuan Int?
-  sumbanganBantuan   Sumbangan? @relation("sumbanganBantuan", fields: [idSumbanganBantuan], references: [id])
-
   bukuPinjaman BukuPinjaman[]
 
   @@id([bukuISBN, id])
@@ -97,6 +98,8 @@ model Murid {
   kontak       String
   alamat       String?
 
+  user User?
+
   FormBukti    FormBukti[]
   Peminjaman   Peminjaman[]
   riwayatKelas RiwayatKelas[]
@@ -111,15 +114,18 @@ model Guru {
   jenisKelamin JenisKelamin
   kontak       String
   alamat       String?
-  sumbangan    Sumbangan[]
-  peminjaman   Peminjaman[]
+
+  user User?
+
+  sumbangan  Sumbangan[]
+  peminjaman Peminjaman[]
 
   @@index([nip])
 }
 
 model RiwayatKelas {
   tahunAjaran   String
-  nomorPresensi Int?   @default(autoincrement())
+  nomorPresensi Int?
 
   muridNIS String
   murid    Murid  @relation(fields: [muridNIS], references: [nis])
@@ -132,9 +138,10 @@ model RiwayatKelas {
 }
 
 model Kelas {
-  id      Int    @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   nama    String
   tingkat Int
+  JKMurid String?
 
   RiwayatKelas RiwayatKelas[]
 
@@ -176,7 +183,7 @@ model Peminjaman {
 
 model BukuPinjaman {
   tanggalKembali DateTime?
-  tenggatWaktu   DateTime
+  tenggatWaktu   DateTime?
 
   denda Denda[]
 
@@ -197,6 +204,7 @@ model Keterangan {
   jumlahBuku     Int?
   totalNominal   Int?
   nominalPerHari Int?
+  denda          Boolean     @default(false)
   sumbangan      Sumbangan[]
 
   @@index([id])
@@ -221,12 +229,11 @@ model Denda {
 model Sumbangan {
   id             Int       @id @default(autoincrement())
   tanggalSelesai DateTime?
-  berlebih       Boolean
+  berlebih       Boolean   @default(false)
 
-  pembayaranTunai      PembayaranTunai[]
-  riwayatBantuan       RiwayatBantuan[]
-  sumbanganBuku        EksemplarBuku[]   @relation("sumbangan")
-  sumbanganBukuBantuan EksemplarBuku[]   @relation("sumbanganBantuan")
+  pembayaranTunai PembayaranTunai[]
+  riwayatBantuan  RiwayatBantuan[]
+  sumbanganBuku   EksemplarBuku[]   @relation("sumbangan")
 
   denda Denda?
 
@@ -238,6 +245,24 @@ model Sumbangan {
 
   nip  String?
   guru Guru?   @relation(fields: [nip], references: [nip])
+
+  @@index([id])
+}
+
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+  role     String
+
+  muridNIS String? @unique
+  murid    Murid?  @relation(fields: [muridNIS], references: [nis])
+
+  guruNIP String? @unique
+  guru    Guru?   @relation(fields: [guruNIP], references: [nip])
+
+  petugasPerpustakaanId String?              @unique
+  petugasPerpustakaan   PetugasPerpustakaan? @relation(fields: [petugasPerpustakaanId], references: [id])
 
   @@index([id])
 }
@@ -267,8 +292,8 @@ model PembayaranTunai {
 
   riwayatBantuan RiwayatBantuan[]
 
-  idSumbangan Int
-  sumbangan   Sumbangan @relation(fields: [idSumbangan], references: [id])
+  idSumbangan Int?
+  sumbangan   Sumbangan? @relation(fields: [idSumbangan], references: [id])
 
   @@index([id])
 }

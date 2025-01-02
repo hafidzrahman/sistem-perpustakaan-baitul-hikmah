@@ -1,4 +1,4 @@
-import { kelasType, perbaruiKelasType, prisma } from "@/lib";
+import { ambilSemuaDataKelasType, kelasType, perbaruiKelasType, prisma } from "@/lib";
 
 export class Kelas{
     id : number;
@@ -12,7 +12,7 @@ export class Kelas{
     }
 
     static async tambahKelas(dataKelas : Omit<kelasType, 'id'>) : Promise<kelasType> {
-        const {nama, tingkat} = dataKelas;
+        const {nama, tingkat, JKMurid} = dataKelas;
 
         if (!nama || !tingkat) {
             throw new Error("Harus mengisi field yang wajib")
@@ -21,7 +21,8 @@ export class Kelas{
         const result = await prisma.kelas.create({
             data: {
               nama,
-              tingkat
+              tingkat,
+              JKMurid
             },
           });
 
@@ -50,8 +51,16 @@ export class Kelas{
             return kelas;
 
 }
-    static async ambilSemuaDataKelas() : Promise<kelasType[]> {
-        const result = await prisma.kelas.findMany({});
+    static async ambilSemuaDataKelas() : Promise<ambilSemuaDataKelasType[]> {
+        const result = await prisma.kelas.findMany({
+            include : {
+                _count : {
+                    select : {
+                        RiwayatKelas : true
+                    }
+                }
+            }
+        });
 
         return result;
     }

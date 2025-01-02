@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
-import {muridType} from "@/lib";
+import { muridType, userType } from "@/lib";
+import { toast } from "react-toastify";
 
 interface ModalTambahMuridProps {
   status: boolean;
@@ -13,8 +14,10 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
   const [jenisKelamin, setJenisKelamin] = useState("");
   const [kontakOrtu, setKontakOrtu] = useState("");
   const [alamat, setAlamat] = useState("");
-  const [idKelas, setIdKelas] = useState<number>(0); // State untuk menyimpan ID kelas
-  const [kelas, setKelas] = useState([]); // State untuk menyimpan daftar kelas
+  const [idKelas, setIdKelas] = useState<number>(0);
+  const [kelas, setKelas] = useState([]);
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch data kelas
   useEffect(() => {
@@ -25,16 +28,52 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         setKelas(data);
       } catch (error) {
         console.error("Gagal mengambil data kelas:", error);
+        toast.error("Gagal mengambil data kelas");
       }
     };
     fetchKelas();
   }, [status]);
 
+  const resetForm = () => {
+    setNIS("");
+    setNama("");
+    setJenisKelamin("");
+    setKontakOrtu("");
+    setAlamat("");
+    setIdKelas(0);
+    setPassword("");
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validation
+    if (!nis.trim()) {
+      toast.error("NIS tidak boleh kosong!");
+      return;
+    }
+    if (!nama.trim()) {
+      toast.error("Nama tidak boleh kosong!");
+      return;
+    }
+    if (!jenisKelamin) {
+      toast.error("Jenis kelamin harus dipilih!");
+      return;
+    }
+    if (!idKelas) {
+      toast.error("Kelas harus dipilih!");
+      return;
+    }
+    if (!password.trim()) {
+      toast.error("Kata sandi tidak boleh kosong!");
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      const response = await fetch("/api/murid", {
+      // Add student data
+      let response = await fetch("/api/murid", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,25 +82,49 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
           nis,
           nama,
           jenisKelamin,
-          kontak : kontakOrtu,
+          kontak: kontakOrtu,
           alamat,
           idKelas: Number(idKelas),
         } as muridType),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        setNIS("");
-        setNama("");
-        setJenisKelamin("");
-        setKontakOrtu("");
-        setAlamat("");
-        setIdKelas(0);
-      } else {
-        console.log(data.error);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Gagal menambahkan data murid");
       }
+
+      // Create user account
+      response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: nis,
+          muridNIS: nis,
+          password: password,
+          role: "murid",
+        } as userType),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Gagal membuat akun murid");
+      }
+
+      toast.success(
+        `Berhasil menambahkan akun dan data murid dengan nis ${nis}`
+      );
+      resetForm();
+      handle(); // Close modal after success
     } catch (error) {
-      console.log(error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat menambahkan murid"
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -71,23 +134,23 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
         status ? "block" : "hidden"
       }`}
     >
-      <div className="w-1/2 relative flex flex-col items-center gap-4 p-8 bg-white-custom border-black-custom rounded-lg border-2">
+      <div className="w-11/12 md:w-3/5 max-h-[90vh] overflow-y-auto relative flex flex-col items-center gap-4 p-4 md:p-8 bg-white-custom border-black-custom rounded-lg border-2">
         <button
           onClick={handle}
-          className="absolute top-6 p-2 right-6 text-red-600 hover:text-red-400"
+          className="absolute top-4 md:top-6 p-2 right-4 md:right-6 text-red-600 hover:text-red-400"
         >
           <CancelCircleHalfDotIcon width={32} height={32} strokeWidth={4} />
         </button>
 
-        <h1 className="text-3xl font-extrabold font-source-serif sm:text-3xl text-light-primary">
+        <h1 className="text-2xl md:text-3xl font-extrabold font-source-serif text-light-primary">
           Tambah Murid
         </h1>
         <form
           onSubmit={onSubmit}
           className="w-full flex flex-col gap-4 justify-center items-stretch"
         >
-          <div className="w-full flex gap-6">
-            <div className="flex w-1/2 flex-col gap-4 items-stretch">
+          <div className="w-full flex flex-col md:flex-row gap-6">
+            <div className="flex w-full md:w-1/2 flex-col gap-4 items-stretch">
               <div className="flex flex-col gap-1">
                 <label
                   htmlFor="nis"
@@ -96,12 +159,14 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   NIS
                 </label>
                 <input
+                  autoComplete="off"
                   type="text"
                   id="nis"
                   value={nis}
                   onChange={(e) => setNIS(e.target.value)}
                   placeholder="Masukkan NIS murid"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -116,7 +181,8 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                     id="jenisKelamin"
                     value={jenisKelamin}
                     onChange={(e) => setJenisKelamin(e.target.value)}
-                    className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                    className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
+                    disabled={isSubmitting}
                   >
                     <option value="" disabled>
                       Pilih Jenis Kelamin
@@ -141,7 +207,8 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                     id="idKelas"
                     value={idKelas}
                     onChange={(e) => setIdKelas(Number(e.target.value))}
-                    className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                    className="py-3 px-6 w-full border text-xs border-black rounded-md font-source-sans appearance-none"
+                    disabled={isSubmitting}
                   >
                     <option value={0} disabled>
                       Pilih Kelas
@@ -160,21 +227,23 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                 </div>
               </div>
             </div>
-            <div className="flex w-1/2 flex-col gap-4 items-stretch">
+            <div className="flex w-full md:w-1/2 flex-col gap-4 items-stretch">
               <div className="flex flex-col gap-1">
                 <label
-                  htmlFor="isbn"
+                  htmlFor="nama"
                   className="font-source-serif text-lg font-bold"
                 >
                   Nama
                 </label>
                 <input
+                  autoComplete="off"
                   type="text"
-                  id="isbn"
+                  id="nama"
                   value={nama}
                   onChange={(e) => setNama(e.target.value)}
                   placeholder="Masukkan nama murid"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -185,12 +254,32 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   Kontak Ortu
                 </label>
                 <input
+                  autoComplete="off"
                   type="text"
                   id="kontak"
                   value={kontakOrtu}
                   onChange={(e) => setKontakOrtu(e.target.value)}
                   placeholder="Masukkan kontak orang tua murid"
                   className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label
+                  htmlFor="password"
+                  className="font-source-serif text-lg font-bold"
+                >
+                  Kata Sandi Akun
+                </label>
+                <input
+                  autoComplete="off"
+                  type="text"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Masukkan kata sandi akun murid"
+                  className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -206,19 +295,23 @@ const ModalTambahMurid = ({ status, handle }: ModalTambahMuridProps) => {
                   onChange={(e) => setAlamat(e.target.value)}
                   placeholder="Masukkan alamat murid"
                   className="py-3 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
           </div>
 
-          <p className="text-gray-text italic text-sm">
+          <p className="text-gray-text italic text-sm mt-4">
             *Data tetap akan bisa diubah di lain waktu
           </p>
           <button
             type="submit"
-            className="bg-dark-primary text-white-custom font-source-sans text-sm py-2 w-full rounded-lg border-2 border-black hover:shadow-md transition-all duration-300 hover:transition-all hover:duration-300"
+            disabled={isSubmitting}
+            className={`bg-dark-primary text-white-custom font-source-sans text-sm py-2 w-full rounded-lg border-2 border-black hover:shadow-md transition-all duration-300 ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Tambahkan Murid
+            {isSubmitting ? "Menambahkan..." : "Tambahkan Murid"}
           </button>
         </form>
       </div>

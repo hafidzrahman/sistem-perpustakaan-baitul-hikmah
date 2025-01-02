@@ -1,29 +1,39 @@
-import { ambilSemuaDataPeminjamanType, bukuPinjamanType, peminjamanType, peminjamType, perbaruiPeminjaman, prisma } from "@/lib";
+// app/class/peminjaman.ts
+
+import {
+  ambilSemuaDataPeminjamanType,
+  peminjamanType,
+  peminjamType,
+  perbaruiPeminjaman,
+  prisma,
+} from "@/lib";
 import { NextResponse } from "next/server";
-import { Buku } from "@/app/class/buku";
 import { EksemplarBuku } from "./eksemplarbuku";
+import { BukuPinjaman } from "./bukupinjaman";
+import { Denda } from "./denda";
 
 export class Peminjaman {
   id: number;
   nis?: string;
   nip?: string;
-  tanggalPinjam: Date;
+  tanggalPinjam?: Date | null;
   keterangan?: string;
 
   constructor(data: peminjamanType) {
-      this.id = data.id;
-      this.nis = data.nis;
-      this.nip = data.nip;
-      this.tanggalPinjam = data.tanggalPinjam;
-      this.keterangan = data.keterangan;
+    this.id = data.id;
+    this.nis = data.nis;
+    this.nip = data.nip;
+    this.tanggalPinjam = data.tanggalPinjam;
+    this.keterangan = data.keterangan;
   }
 
-  static async tambahPeminjaman(dataPeminjam: peminjamType) : Promise<void> {
+  static async tambahPeminjaman(dataPeminjam: peminjamType): Promise<{message : string}> {
     const { nis, nip, keterangan, daftarBukuPinjaman } = dataPeminjam;
 
     if (!nis && !nip) {
       throw new Error("Harus mengisi field yang wajib");
     }
+
 
     const peminjaman = await prisma.peminjaman.create({
       data: {
@@ -32,143 +42,201 @@ export class Peminjaman {
         keterangan,
       },
     });
-
-    for await (const data of daftarBukuPinjaman) {
-      await setDataPeminjaman(data);
+    try {
+      for await (const data of daftarBukuPinjaman) {
+        await setDataPeminjaman(data);
+    } 
+    } catch (error) {
+        return {message : "Buku sedang tidak tersedia"}
     }
 
+    async function setDataPeminjaman(bukuPinjaman: {
+      isbn: string;
+      tenggatWaktu?: Date | null;
+    }) {
+      const { isbn, tenggatWaktu } = bukuPinjaman;
 
-    async function setDataPeminjaman(bukuPinjaman : {isbn : string, tenggatWaktu : Date}) {
-    
-    const {isbn, tenggatWaktu} = bukuPinjaman;
-
-    const dataEksemplarBuku = await EksemplarBuku.ketersediaanEksemplarBuku(isbn);
-
-    if (dataEksemplarBuku) {
-    // 31536000000 --> satu tahun ke ms
-    // 604800000 --> satu minggu ke ms
-    // default peminjaman seminggu, bisa diatur sesuai dengan keinginan petugas perpustakaan
-    const date = new Date();
-    const deadline = tenggatWaktu || new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const result = deadline.getTime() - date.getTime();
-
-    const dataBukuPinjaman = await prisma.bukuPinjaman.create({
-      data: {
-        idPeminjaman: peminjaman.id,
-        bukuISBN: dataEksemplarBuku.bukuISBN!,
-        bukuId: dataEksemplarBuku.id!,
-        tenggatWaktu: deadline,
-      },
-    });
-
-    let timer = setTimeout(() => setDenda(peminjaman.id, dataBukuPinjaman.bukuISBN, dataBukuPinjaman.bukuId), result);
-
-    async function setDenda(idPeminjaman : number, bukuISBN : string, bukuId : number) {
-      // jika timer sedang berjalan, sementara kita pergi ke /api yang menyebabkan terdeletenya semua data peminjaman
-      // maka ketika timer sudah habis, fungsi setDenda dijalankan, dan ketika bukuPinjaman.findUnique({}) dijalankan,
-      // idPeminjaman tidak ditemukan karena sudah di delete, yang hal ini juga dikarenakan id Peminjaman menggunakan autoincrement()
-      // sementara data bukuISBN dan bukuId aman karena tidak menggunakan autoincrement() tapi input isbn & id secara manual
-      const bukuPinjaman = await prisma.bukuPinjaman.findUnique({
-        where: {
-          idPeminjaman_bukuISBN_bukuId: {
-            idPeminjaman,
-            bukuISBN,
-            bukuId,
-          },
-        },
-      });
-      if (!bukuPinjaman?.bukuISBN) {
-        throw new Error("Data buku tidak ditemukan");
-      }
-
-      if (Date.now() >= bukuPinjaman.tenggatWaktu.getTime() && !bukuPinjaman?.tanggalKembali) {
-        clearTimeout(timer)
-        const dataSumbangan = await prisma.sumbangan.create({
-          data: {
-            idKeterangan: 1,
-            nis,
-            nip,
-            berlebih: false,
-          },
+      const dataEksemplarBuku = await EksemplarBuku.ketersediaanEksemplarBuku(isbn);
+      
+      if (!dataEksemplarBuku) {
+        throw new Error()
+      } else {
+        // 31536000000 --> satu tahun ke ms
+        // 604800000 --> satu minggu ke ms
+        // default peminjaman seminggu, bisa diatur sesuai dengan keinginan petugas perpustakaan
+        const date = new Date();
+        const deadline = new Date(tenggatWaktu || date.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const result = deadline.getTime() - date.getTime();
+        const objectBukuPinjaman = new BukuPinjaman({
+          idPeminjaman: peminjaman.id,
+          bukuISBN: dataEksemplarBuku.bukuISBN!,
+          bukuId: dataEksemplarBuku.id!,
+          tenggatWaktu: deadline,
         });
+        const dataBukuPinjaman = await BukuPinjaman.tambahBukuPinjaman(objectBukuPinjaman);
 
-        await prisma.denda.create({
-          data: {
-            idSumbangan: dataSumbangan.id,
-            bukuISBN: dataBukuPinjaman.bukuISBN,
-            idPeminjaman: dataBukuPinjaman.idPeminjaman,
-            bukuId: dataBukuPinjaman.bukuId,
-          },
-        });
-      } else if (Date.now() < bukuPinjaman.tenggatWaktu.getTime()) {
-        const result = bukuPinjaman.tenggatWaktu.getTime() - Date.now()
-        // clearTimeout(timer);
-        timer = setTimeout(() => setDenda(peminjaman.id, dataBukuPinjaman.bukuISBN, dataBukuPinjaman.bukuId), result);
-      }
-    }}
-  }
-}
+        let timer = setTimeout(
+          () =>
+            setDenda(
+              peminjaman.id,
+              dataBukuPinjaman.bukuISBN,
+              dataBukuPinjaman.bukuId
+            ),
+          result
+        );
 
-  static async konfirmasiPengembalian(
-    idPeminjaman: number,
-    idBuku: { isbn: string; id: number }
-  ) {
 
-    const dataEksemplarBuku = await EksemplarBuku.cariEksemplarBuku(idBuku);
+        async function setDenda(
+          idPeminjaman: number,
+          bukuISBN: string,
+          bukuId: number
+        ) {
+          // jika timer sedang berjalan, sementara kita pergi ke /api yang menyebabkan terdeletenya semua data peminjaman
+          // maka ketika timer sudah habis, fungsi setDenda dijalankan, dan ketika bukuPinjaman.findUnique({}) dijalankan,
+          // idPeminjaman tidak ditemukan karena sudah di delete, yang hal ini juga dikarenakan id Peminjaman menggunakan autoincrement()
+          // sementara data bukuISBN dan bukuId aman karena tidak menggunakan autoincrement() tapi input isbn & id secara manual
+          const bukuPinjaman = await prisma.bukuPinjaman.findUnique({
+            where: {
+              idPeminjaman_bukuISBN_bukuId: {
+                idPeminjaman,
+                bukuISBN,
+                bukuId,
+              },
+            },
+          });
+          if (!bukuPinjaman?.bukuISBN) {
+            throw new Error("Data buku tidak ditemukan");
+          }
 
-    if (!dataEksemplarBuku?.bukuISBN || !dataEksemplarBuku?.id) {
-      throw new Error("Data buku tidak ditemukan.");
-    }
+          if (
+            bukuPinjaman.tenggatWaktu &&
+            Date.now() >= bukuPinjaman.tenggatWaktu.getTime() &&
+            !bukuPinjaman?.tanggalKembali
+          ) {
+            clearTimeout(timer);
+            const dataSumbangan = await prisma.sumbangan.create({
+              data: {
+                idKeterangan: 1,
+                nis,
+                nip,
+              },
+            });
 
-    const dataPeminjaman = await Peminjaman.cariPeminjaman(idPeminjaman);
+            const objectDenda = new Denda({
+              idSumbangan: dataSumbangan.id,
+              bukuISBN: dataBukuPinjaman.bukuISBN,
+              idPeminjaman: dataBukuPinjaman.idPeminjaman,
+              bukuId: dataBukuPinjaman.bukuId,
+            });
 
-    if (!dataPeminjaman?.id) {
-      throw new Error("Data peminjaman tidak ditemukan.");
-    }
-
-    await prisma.bukuPinjaman.update({
-      data: {
-        tanggalKembali: new Date(),
-      },
-      where: {
-        idPeminjaman_bukuISBN_bukuId: {
-          idPeminjaman: dataPeminjaman.id,
-          bukuISBN: dataEksemplarBuku.bukuISBN,
-          bukuId: dataEksemplarBuku.id,
-        },
-      },
-    });
-  }
-
-  static async cariPeminjaman(id: number) : Promise<peminjamanType> {
-      const peminjaman = (await prisma.peminjaman.findUnique({
-        where: {
-          id,
-        },
-        include : {
-          bukuPinjaman : true
+            await Denda.tambahDenda(objectDenda);
+          } else if (
+            bukuPinjaman.tenggatWaktu &&
+            Date.now() < bukuPinjaman.tenggatWaktu.getTime()
+          ) {
+            const result = bukuPinjaman.tenggatWaktu.getTime() - Date.now();
+            // clearTimeout(timer);
+            timer = setTimeout(
+              () =>
+                setDenda(
+                  peminjaman.id,
+                  dataBukuPinjaman.bukuISBN,
+                  dataBukuPinjaman.bukuId
+                ),
+              result
+            );
+          }
         }
-      })) as peminjamanType;
-
-      if (!peminjaman?.id) {
-        throw { message: "Data peminjaman tidak ditemukan" };
       }
-
-      return peminjaman;
+    }
+    return {message : "Buku berhasil dipinjam"}
   }
 
-  static async ambilSemuaDataPeminjaman() : Promise<ambilSemuaDataPeminjamanType[]> {
-    const peminjaman = (await prisma.peminjaman.findMany({
-      include: {
-        bukuPinjaman: { include: { eksemplarBuku: true } },
+  static async cariPeminjaman(id: number): Promise<peminjamanType> {
+    const peminjaman = (await prisma.peminjaman.findUnique({
+      where: {
+        id,
       },
-    })) as ambilSemuaDataPeminjamanType[]
+      include: {
+        bukuPinjaman: true,
+      },
+    })) as peminjamanType;
+
+    if (!peminjaman?.id) {
+      throw { message: "Data peminjaman tidak ditemukan" };
+    }
 
     return peminjaman;
   }
 
-  static async perbaruiPeminjaman(id: number, dataPeminjaman: perbaruiPeminjaman
-  ) : Promise<void> {
+  static async cariPeminjamanAnggota(anggota : "guru" | "murid", userId : string, belumDikembalikan? : boolean) : Promise<peminjamanType[]> {
+    
+    if (belumDikembalikan) {
+      const peminjaman = (await prisma.peminjaman.findMany({
+        where: {
+          nip : anggota === "guru" ? userId : undefined,
+          nis : anggota === "murid" ? userId : undefined,
+        },
+        include: {
+          bukuPinjaman: {
+            where : {
+              OR : [
+                {tanggalKembali : undefined},
+                {tanggalKembali : null},
+                {eksemplarBuku : {
+                  tanggalRusak : {
+                    not : {
+                      equals : undefined
+                    }
+                  }
+                }},
+                {eksemplarBuku : {
+                  tanggalRusak : {
+                    not : {
+                      equals : null
+                    }
+                  }
+                }}
+              ]
+            }
+          },
+        },
+      })) as peminjamanType[];
+    }
+    
+    const peminjaman = (await prisma.peminjaman.findMany({
+      where: {
+        nip : anggota === "guru" ? userId : undefined,
+        nis : anggota === "murid" ? userId : undefined
+      },
+      include: {
+        bukuPinjaman: true,
+      },
+    })) as peminjamanType[];
+
+    if (!peminjaman?.length || peminjaman.length === 0) {
+      throw { message: "Data peminjaman tidak ditemukan" };
+    }
+
+    return peminjaman;
+  }
+
+  static async ambilSemuaDataPeminjaman(): Promise<
+    ambilSemuaDataPeminjamanType[]
+  > {
+    const peminjaman = (await prisma.peminjaman.findMany({
+      include: {
+        bukuPinjaman: { include: { eksemplarBuku: true } },
+      },
+    })) as ambilSemuaDataPeminjamanType[];
+
+    return peminjaman;
+  }
+
+  static async perbaruiPeminjaman(
+    id: number,
+    dataPeminjaman: perbaruiPeminjaman
+  ): Promise<void> {
     // tanggal pinjam boleh diperbarui?
     const { nis, nip, keterangan } = dataPeminjaman;
 
@@ -182,7 +250,7 @@ export class Peminjaman {
       data: {
         nis: nis || peminjaman.nis,
         nip: nip || peminjaman.nip,
-        tanggalPinjam: peminjaman.tanggalPinjam,
+        tanggalPinjam: peminjaman.tanggalPinjam!,
         keterangan: keterangan || peminjaman.keterangan,
       },
       where: {
@@ -191,34 +259,11 @@ export class Peminjaman {
     });
   }
 
-  static async perbaruiTenggatWaktuPeminjaman(
-    idPeminjaman: number,
-    idBuku: { isbn: string; id: number },
-    tenggatWaktu: Date
-  ) {
-    await prisma.bukuPinjaman.update({
-      data: {
-        tenggatWaktu,
-      },
-      where: {
-        idPeminjaman_bukuISBN_bukuId: {
-          idPeminjaman,
-          bukuISBN: idBuku.isbn,
-          bukuId: idBuku.id,
-        },
-      },
-    });
-  }
-
-  static async hapusPeminjaman(id: number): Promise<void> {
-    await prisma.bukuPinjaman.deleteMany({
-      where : {
-        idPeminjaman : id
-      }
-    })
+  static async hapusPeminjaman(idPeminjaman: number): Promise<void> {
+    await BukuPinjaman.hapusSemuaBukuPinjaman(idPeminjaman);
     const peminjaman = await prisma.peminjaman.delete({
       where: {
-        id,
+        id: idPeminjaman,
       },
     });
 
@@ -231,9 +276,9 @@ export class Peminjaman {
   }
 
   static async hapusSemuaPeminjaman(): Promise<void> {
-    await prisma.denda.deleteMany({})
-    await prisma.sumbangan.deleteMany({})
-    await prisma.bukuPinjaman.deleteMany({})
+    await prisma.denda.deleteMany({});
+    // await prisma.sumbangan.deleteMany({})
+    await prisma.bukuPinjaman.deleteMany({});
     await prisma.peminjaman.deleteMany({});
   }
 }

@@ -65,6 +65,16 @@ export class Keterangan{
         return keterangan;
     }
 
+    static async ambilSemuaDataKeteranganDenda() : Promise<keteranganType[]> {
+        const keterangan = await prisma.keterangan.findMany({
+            where : {
+                denda : true
+            }
+        }) as keteranganType[]
+
+        return keterangan;
+    }
+
     static async perbaruiKeterangan(id : number, dataKeterangan : Omit<keteranganType, 'id'>) :Promise<keteranganType> {
         const {keterangan : deskripsi, jumlahBuku, totalNominal, nominalPerHari} = dataKeterangan;
 

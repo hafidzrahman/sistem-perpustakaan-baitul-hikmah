@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -10,41 +10,46 @@ import {
 } from "recharts";
 
 const DoughnutChartGenreBuku = () => {
-  // Data kategori buku
-  const bookData = [
-    {
-      name: "Fiksi",
-      value: 45,
-      color: "#064359",
-      stroke: "#a0ced9",
-    },
-    {
-      name: "Non-Fiksi",
-      value: 35,
-      color: "#6D275D",
-      stroke: "#a594f9",
-    },
-    {
-      name: "Sains",
-      value: 20,
-      color: "#055A39",
-      stroke: "#adf7b6",
-    },
-    {
-      name: "Sejarah",
-      value: 25,
-      color: "#C50043",
-      stroke: "#ffc09f",
-    },
-    {
-      name: "Teknologi",
-      value: 15,
-      color: "#F3A51A",
-      stroke: "#ffee93",
-    },
-  ];
+  const [bookData, setBookData] = useState<
+    { name: string; value: number; color: string; stroke: string }[]
+  >([]);
 
-  // Kustom Tooltip
+  useEffect(() => {
+    async function fetching() {
+      try {
+        const response = await fetch("/api/genre");
+        const data = await response.json();
+
+        // Transform the API data to match the bookData format
+        const transformedData = data.map((genre: any, index: number) => ({
+          name: genre.nama,
+          value: genre._count.buku,
+          color: generateColor(index), // Function to generate unique colors
+          stroke: generateStroke(index), // Function to generate unique strokes
+        }));
+
+        setBookData(transformedData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetching();
+  }, []);
+
+  // Function to generate colors dynamically
+  const generateColor = (index: number) => {
+    const colors = ["#064359", "#6D275D", "#055A39", "#C50043", "#F3A51A"];
+    return colors[index % colors.length];
+  };
+
+  // Function to generate stroke colors dynamically
+  const generateStroke = (index: number) => {
+    const strokes = ["#a0ced9", "#a594f9", "#adf7b6", "#ffc09f", "#ffee93"];
+    return strokes[index % strokes.length];
+  };
+
+  // Custom Tooltip
   const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       const data = payload[0];
@@ -69,8 +74,8 @@ const DoughnutChartGenreBuku = () => {
           cy="50%"
           innerRadius="40%"
           outerRadius="80%"
-          paddingAngle={4} // Jarak antar segmen
-          cornerRadius={4} // Lengkungan sudut
+          paddingAngle={4}
+          cornerRadius={4}
           dataKey="value"
         >
           {bookData.map((entry, index) => (

@@ -8,7 +8,6 @@ export type constructorEksemplarBukuType = {
     tanggalHilang? : Date | null;
     posisi? : string | null;
     idSumbangan? : number | null;
-    idSumbanganBantuan? : number | null;
 }
 
 export class EksemplarBuku {
@@ -19,7 +18,6 @@ export class EksemplarBuku {
     tanggalHilang? :  Date | null
     posisi? : string | null;
     idSumbangan? : number | null
-    idSumbanganBantuan? : number | null
 
     constructor (data : constructorEksemplarBukuType) {
         this.bukuISBN = data.bukuISBN;
@@ -29,7 +27,6 @@ export class EksemplarBuku {
         this.tanggalHilang = data.tanggalHilang;
         this.posisi = data.posisi;
         this.idSumbangan = data.idSumbangan;
-        this.idSumbanganBantuan = data.idSumbanganBantuan;
     }
 
     static async tambahEksemplarBuku(data : constructorEksemplarBukuType) : Promise<constructorEksemplarBukuType> {
@@ -40,11 +37,8 @@ export class EksemplarBuku {
                 tanggalRusak : data.tanggalRusak,
                 tanggalHilang : data.tanggalHilang,
                 posisi : data.posisi,
-                buku : {
-                    connect :  {
-                        isbn : data.bukuISBN
-                    }
-                }
+                idSumbangan : data.idSumbangan || null,
+                bukuISBN : data.bukuISBN
             },
             include : {
                 buku : {
@@ -91,6 +85,37 @@ export class EksemplarBuku {
             }
     
             return dataBuku;
+        }
+    
+        static async perbaruiEksemplarBuku(idBuku : {bukuISBN : string, id : number}, data : eksemplarBukuType) : Promise<void> {
+            const {bukuISBN, id} = idBuku;
+            const dataEksemplarBuku = await prisma.eksemplarBuku.findUnique({
+                where : {
+                    bukuISBN_id : {
+                        bukuISBN,
+                        id
+                    }
+                },
+            });
+
+            if (!dataEksemplarBuku?.id) {
+                throw new Error("Data eksemplar buku tidak ditemukan");
+            }
+
+            await prisma.eksemplarBuku.update({
+                where : {
+                    bukuISBN_id : {
+                        bukuISBN,
+                        id
+                    }
+                },
+                data : {
+                    posisi : data?.posisi || dataEksemplarBuku?.posisi,
+                    tanggalHilang : data?.tanggalHilang || dataEksemplarBuku?.tanggalHilang,
+                    tanggalMasuk : data?.tanggalMasuk || dataEksemplarBuku?.tanggalMasuk,
+                    tanggalRusak : data?.tanggalRusak || dataEksemplarBuku?.tanggalRusak,
+                }
+            })
         }
 
     static async hapusSemuaEksemplarBuku(isbn? : string) : Promise<void> {

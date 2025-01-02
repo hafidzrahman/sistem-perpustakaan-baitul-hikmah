@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { kelasType } from "@/lib";
 import { CancelCircleHalfDotIcon } from "hugeicons-react";
+import { toast } from "react-toastify";
 
 interface ModalTambahKelasProps {
   status: boolean;
@@ -9,9 +11,22 @@ interface ModalTambahKelasProps {
 const ModalTambahKelas = ({ status, handle }: ModalTambahKelasProps) => {
   const [nama, setNama] = useState("");
   const [tingkat, setTingkat] = useState<number>(7);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const resetForm = () => {
+    setNama("");
+    setTingkat(7);
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!nama.trim()) {
+      toast.error("Nama kelas tidak boleh kosong!");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/kelas", {
@@ -26,14 +41,18 @@ const ModalTambahKelas = ({ status, handle }: ModalTambahKelasProps) => {
       });
 
       const data = await response.json();
+
       if (response.ok) {
-        setNama("");
-        setTingkat(7);
+        toast.success(`Kelas ${data.nama} berhasil ditambahkan!`);
+        resetForm();
+        handle(); // Tutup modal setelah berhasil
       } else {
-        console.log(data.error);
+        toast.error(data.error || "Gagal menambahkan kelas");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Terjadi kesalahan saat menambahkan kelas");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -58,7 +77,6 @@ const ModalTambahKelas = ({ status, handle }: ModalTambahKelasProps) => {
           onSubmit={onSubmit}
           className="w-full flex flex-col gap-4 justify-center items-stretch"
         >
-          {/* Input Fields */}
           <div className="flex flex-col gap-1">
             <label
               htmlFor="nama"
@@ -67,12 +85,14 @@ const ModalTambahKelas = ({ status, handle }: ModalTambahKelasProps) => {
               Nama
             </label>
             <input
+              autoComplete="off"
               type="text"
               id="nama"
               value={nama}
               onChange={(e) => setNama(e.target.value)}
               placeholder="Masukkan nama kelas"
               className="py-2 px-6 w-full border border-black rounded-md font-source-sans placeholder:text-xs placeholder:font-source-sans"
+              disabled={isSubmitting}
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -88,6 +108,7 @@ const ModalTambahKelas = ({ status, handle }: ModalTambahKelasProps) => {
                 value={tingkat}
                 onChange={(e) => setTingkat(Number(e.target.value))}
                 className="py-3 px-6 w-full border border-black rounded-md text-sm font-source-sans appearance-none"
+                disabled={isSubmitting}
               >
                 <option value="" disabled>
                   Pilih Tingkat Kelas
@@ -106,9 +127,12 @@ const ModalTambahKelas = ({ status, handle }: ModalTambahKelasProps) => {
           </p>
           <button
             type="submit"
-            className="bg-dark-primary text-white-custom font-source-sans text-sm py-2 w-full rounded-lg border-2 border-black hover:shadow-md transition-all duration-300 hover:transition-all hover:duration-300"
+            disabled={isSubmitting}
+            className={`bg-dark-primary text-white-custom font-source-sans text-sm py-2 w-full rounded-lg border-2 border-black hover:shadow-md transition-all duration-300 hover:transition-all hover:duration-300 ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Tambahkan Kelas
+            {isSubmitting ? "Menambahkan..." : "Tambahkan Kelas"}
           </button>
         </form>
       </div>

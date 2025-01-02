@@ -1,37 +1,26 @@
-"use client";
-
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import withRouter from "next/router"
-import { toSlug } from "../utils/slug";
+import { useSession } from "next-auth/react";
 import { cariBukuType } from "@/lib";
+import ButtonDetail from "./ButtonDetail";
+import ButtonPinjam from "./ButtonPinjam";
 
-interface Buku {
-  id: number;
-  isbn: string;
-  judul: string;
-  penulisBuku: { penulis: { nama: string } }[];
-  linkGambar: string;
-}
+const CardBuku = ({ data }: { data: cariBukuType }) => {
+  const { data: session } = useSession();
 
-// interface CardBukuProps {
-//   data: Buku;
-// }
-
-const CardBuku = ( {data} :  {data : cariBukuType}) => {
-  if (data === null) {
-    return <div>kosong</div>
+  if (!data) {
+    return <div>kosong</div>;
   }
-  const router = useRouter();
-  const {linkGambar, judul, penulis, isbn} = data;
+
+  const { linkGambar, judul, penulis, isbn } = data;
+
   return (
     <div className="py-4 flex flex-col items-center max-w-36 justify-between rounded-lg gap-2 flex-shrink-0">
       <div>
         <Image
-          src={linkGambar || "https://example.com"}
-          alt="buku"
+          src={linkGambar || "/placeholder-book.jpg"}
+          alt={`Cover buku ${judul}`}
           width={132}
-          height={0}
+          height={200}
           className="rounded-md border-2 border-black-custom"
         />
       </div>
@@ -43,13 +32,7 @@ const CardBuku = ( {data} :  {data : cariBukuType}) => {
           {penulis.map((d) => d.nama).join(", ")}
         </h2>
       </div>
-      <button
-        onClick={() => router.push(`http://localhost:3000/buku/${isbn}`)}
-        className={`bg-primary w-full text-white-custom font-source-sans leading-none text-xs rounded-md border-2 border-black-custom py-2 font-normal transition-all duration-300
-        hover:font-bold hover:shadow-sm hover:transition-all hover:duration-300`}
-      >
-        Lihat Detail
-      </button>
+      <ButtonDetail isbn={isbn} />
     </div>
   );
 };
