@@ -6,11 +6,7 @@ import TableGuru from "@/app/components/TableGuru";
 import { AddCircleHalfDotIcon } from "hugeicons-react";
 import { useEffect, useState } from "react";
 
-interface GuruPageProps {
-  onclick: () => void;
-}
-
-const GuruPage = ({ onclick }: GuruPageProps) => {
+const GuruPage = () => {
   const [guru, setGuru] = useState();
   const [tambahGuru, setTambahGuru] = useState(false);
 
