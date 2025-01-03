@@ -10,7 +10,7 @@ interface GuruPageProps {
   onclick: () => void;
 }
 
-const GuruPage = ({}: GuruPageProps) => {
+const GuruPage = ({ onclick }: GuruPageProps) => {
   const [guru, setGuru] = useState();
   const [tambahGuru, setTambahGuru] = useState(false);
 
