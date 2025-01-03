@@ -117,6 +117,7 @@ const ButtonPinjam = ({
 
       const responseData = await response.json();
       if (!response.ok) {
+        console.log("error")
         // Rollback optimistic update if request fails
         setLocalPeminjamanData(peminjamanData);
         setLocalEksemplarCount(initialEksemplarCount);
