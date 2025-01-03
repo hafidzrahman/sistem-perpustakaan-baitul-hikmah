@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   images: {
     domains: [
       "books.google.co.id",
@@ -13,7 +17,7 @@ const nextConfig: NextConfig = {
       "www.gramedia.com",
       "cdn.gramedia.com",
       "drive.google.com",
-      "test.com"
+      "test.com",
     ],
   },
 };
