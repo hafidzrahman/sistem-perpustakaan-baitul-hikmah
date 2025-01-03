@@ -108,7 +108,7 @@ export const seeds = {
       isbn: "979-28-8520-0",
       judul: "Panduan Praktis P3K Pertolongan Pertama Pada Kedaruratan",
       penerbit: "Mahkota kita",
-      genre: [Genre.NONFIKSI.toString()],
+      genre: [Genre.PENDIDIKAN.toString()],
       penulis: ["Ajeng Kumoratih,M.Kes"],
       halaman: 127,
       sinopsis: "Panduan Praktis P3k yang dilengkapi dengan gambar penunjang",
@@ -137,7 +137,7 @@ export const seeds = {
     {
       isbn: "978-602-296-046-1",
       judul: "Panduan Sukses Komunikasi Belajar-Mengajar",
-      genre: [Genre.NONFIKSI.toString()],
+      genre: [Genre.PENDIDIKAN.toString()],
       penerbit: "Diva Press",
       penulis: ["N. Ardi Setyanto"],
       halaman: 224,
@@ -255,7 +255,23 @@ export const seeds = {
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
-      isbn: "978–979–22–5780-9",
+      isbn: "978-602-033-295-6",
+      judul: "Bumi",
+      penerbit: "Gramedia Pustaka Utama",
+      genre: [Genre.FIKSI.toString()],
+      penulis: ["Tere Liye"],
+      halaman: 440,
+      sinopsis:
+        "Cerita ini bermula dari seorang gadis berusia 15 tahun, bernama Raib. Sebenarnya, Raib layaknya remaja pada umumnya, tetap dirinya memiliki satu kemampuan, yakni bisa menghilang. Bagaimana caranya? Hanya dengan meletakkan telapak tangan di wajahnya dan gadis itu bisa langsung tidak tampak di penglihatan.Sebenarnya, kemampuan aneh itu telah melekat padanya sejak dirinya masih berusia sekitar 2 tahun. Dahulu, Raib gemar bermain petak umpet dengan kedua orang tuanya, kemudian Raib yang sedang meletakkan kedua telapak tangan ke wajahnya tiba-tiba menghilang. Raib merasa bingung sekaligus heran. Ia merahasiakan kemampuan yang dimilikinya itu ke semua orang, termasuk ke orang tuanya.",
+      tanggalMasuk: new Date(),
+      tanggalRusak: new Date(),
+      tanggalHilang: new Date(),
+      posisi: "A1",
+      linkGambar:
+        "https://cdn.gramedia.com/uploads/items/9786020332956_Bumi-New-Cover.jpg",
+    },
+    {
+      isbn: "978-979-22-5780-9",
       judul: "Daun yang jatuh tak pernah membenci angin ",
       penerbit: "Gramedia Pustaka Utama",
       genre: [Genre.FIKSI.toString()],
@@ -282,7 +298,7 @@ export const seeds = {
       tanggalMasuk: new Date(),
       tanggalRusak: new Date(),
       tanggalHilang: new Date(),
-      posisi: "A1",
+      posisi: "A2",
       linkGambar: "https://gpu.id/data-gpu/images/img-book/93386/621186015.jpg",
     },
     {
@@ -558,83 +574,141 @@ export const seeds = {
     },
   ],
   peminjaman: [
-    // {
-    //   nis: "12250111048",
-    //   tanggalPinjam: new Date(),
-    //   keterangan: "WOW",
-    //   daftarBukuPinjaman: [
-    //     {
-    //       isbn: "979-3062-79-7",
-    //       tenggatWaktu: new Date(Date.now() + 10000000),
-    //     },
-    //   ],
-    // },
-    // {
-    //   nis: "12250111791",
-    //   tanggalPinjam: new Date(),
-    //   keterangan: "WOW",
-    //   daftarBukuPinjaman: [
-    //     {
-    //       isbn: "979-3062-79-7",
-    //       tenggatWaktu: new Date(Date.now() + 10000000),
-    //     },
-    //   ],
-    // },
-    // {
-    //   nip: "112233",
-    //   tanggalPinjam: new Date(),
-    //   keterangan: "WOW",
-    //   daftarBukuPinjaman: [
-    //     {
-    //       isbn: "978-602-06-5192-7",
-    //       tenggatWaktu: new Date(Date.now() + 10000000),
-    //     },
-    //   ],
-    // },
-    // {
-    //   nip: "122331",
-    //   tanggalPinjam: new Date(),
-    //   keterangan: "WOW",
-    //   daftarBukuPinjaman: [],
-    // },
-    // {
-    //   nip: "112233",
-    //   tanggalPinjam: new Date(),
-    //   keterangan: "WOW",
-    //   daftarBukuPinjaman: [],
-    // },
+
+    {
+      nis: "12250111048",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [
+        {
+          isbn: "979-3062-79-7",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        },
+      ],
+    },
+    {
+      nis: "12250111791",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [
+        {
+          isbn: "979-3062-79-7",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        },
+      ],
+    },
+    {
+      nip: "112233",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [
+        {
+          isbn: "978-602-06-5192-7",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        },
+      ],
+    },
+    {
+      nip: "122331",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [
+        {
+          isbn: "978-602-033-295-6",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        }
+      ],
+    },
+    {
+      nip: "112233",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [
+        {
+          isbn: "978-602-06-5192-7",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        }
+      ],
+    },
+
+    {
+      nis: "12250111048",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [
+        {
+          isbn: "979-3062-79-7",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        },
+      ],
+    },
+    {
+      nis: "12250111791",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [
+        {
+          isbn: "979-3062-79-7",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        },
+      ],
+    },
+    {
+      nip: "112233",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [
+        {
+          isbn: "978-602-06-5192-7",
+          tenggatWaktu: new Date(Date.now() + 10000000),
+        },
+      ],
+    },
+    {
+      nip: "122331",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [],
+    },
+    {
+      nip: "112233",
+      tanggalPinjam: new Date(),
+      keterangan: "WOW",
+      daftarBukuPinjaman: [],
+    },
+
   ],
   formBukti: [
-    // {
-    //   bukuISBN: "978-602-06-5192-7",
-    //   muridNIS: "12250111794",
-    //   tanggal: new Date(),
-    //   intisari:
-    //     "Menceritakan perjalanan seseorang ke masa lalu.Memang tidak bisa merubah masa depan,tetapi bisa merubah perasaan seseorang untuk menjalani masa depan",
-    //   halamanAwal: 23,
-    //   halamanAkhir: 25,
-    //   status: false,
-    // },
-    // {
-    //   bukuISBN: "978-602-8519-93-9",
-    //   muridNIS: "12250111048",
-    //   tanggal: new Date(),
-    //   intisari:
-    //     "Buku yang sangat bagus,mengajarkan apa itu kerja sama,kebersamaan dan kekompakan",
-    //   halamanAwal: 23,
-    //   halamanAkhir: 25,
-    //   status: false,
-    // },
-    // {
-    //   bukuISBN: "979-3062-79-7",
-    //   muridNIS: "12250111791",
-    //   tanggal: new Date(),
-    //   intisari:
-    //     "Kisah yang sangat menginspirasi, perjuangan demi mendapat pendidikan untuk masa depan yang cerah",
-    //   halamanAwal: 23,
-    //   halamanAkhir: 25,
-    //   status: false,
-    // },
+    {
+      bukuISBN: "978-602-06-5192-7",
+      muridNIS: "12250111794",
+      tanggal: new Date(),
+      intisari:
+        "Menceritakan perjalanan seseorang ke masa lalu.Memang tidak bisa merubah masa depan,tetapi bisa merubah perasaan seseorang untuk menjalani masa depan",
+      halamanAwal: 23,
+      halamanAkhir: 25,
+      status: false,
+    },
+    {
+      bukuISBN: "978-602-8519-93-9",
+      muridNIS: "12250111048",
+      tanggal: new Date(),
+      intisari:
+        "Buku yang sangat bagus,mengajarkan apa itu kerja sama,kebersamaan dan kekompakan",
+      halamanAwal: 23,
+      halamanAkhir: 25,
+      status: false,
+    },
+    {
+      bukuISBN: "979-3062-79-7",
+      muridNIS: "12250111791",
+      tanggal: new Date(),
+      intisari:
+        "Kisah yang sangat menginspirasi, perjuangan demi mendapat pendidikan untuk masa depan yang cerah",
+      halamanAwal: 23,
+      halamanAkhir: 25,
+      status: false,
+    },
   ],
   user: [
     {
