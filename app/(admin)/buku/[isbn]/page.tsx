@@ -9,6 +9,7 @@ import ButtonPinjam from "@/app/components/ButtonPinjam";
 const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
   const [detailBuku, setDetailBuku] = useState<detailsBukuType>();
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
+  const [statusBuku, setStatusBuku] = useState({dipinjam : 0, tersedia : 0})
   const [peminjamanData, setPeminjamanData] = useState([]);
 
   const { data: session } = useSession();
@@ -18,7 +19,12 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
       const { isbn } = await params;
       try {
         const responseBook = await fetch(`/api/buku/${isbn}`);
-        const dataBook = await responseBook.json();
+        const dataBook = (await responseBook.json()) as detailsBukuType;
+        const data = {
+          tersedia : dataBook._count.eksemplarBuku,
+          dipinjam : dataBook.eksemplarBuku.length - dataBook._count.eksemplarBuku 
+        }
+        setStatusBuku(data);
         setDetailBuku(dataBook);
 
         const responsePeminjaman = await fetch("/api/peminjaman");
@@ -145,7 +151,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
                     <div className="text-gray-600 text-sm">Dipinjam</div>
                     {
                       <div className="px-2 py-0.5 bg-pastel-red text-jewel-red rounded-full text-xs">
-                        {bookStatus.dipinjam}
+                        {statusBuku.dipinjam}
                       </div>
                     }
                   </div>
@@ -153,7 +159,7 @@ const PageDetailBuku = ({ params }: { params: Promise<{ isbn: string }> }) => {
                     <div className="text-gray-600 text-sm">Tersedia</div>
                     {
                       <div className="px-2 py-0.5 bg-pastel-green text-jewel-green rounded-full text-xs">
-                        {bookStatus.tersedia}
+                        {statusBuku.tersedia}
                       </div>
                     }
                   </div>
