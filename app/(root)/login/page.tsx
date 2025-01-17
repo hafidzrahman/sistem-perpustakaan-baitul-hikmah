@@ -49,10 +49,7 @@ const LoginPage = ({}: LoginPageProps) => {
 
       if (!res?.error) {
         toast.success("Login berhasil!");
-        // setTimeout(() => {
-        //   router.push(`/panel-kontrol`);
-        //   // router.refresh();
-        // }, 1000)
+        router.push(`/panel-kontrol`);
       } else {
         // Handle specific error cases
         if (res.error === "CredentialsSignin") {
