@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build" : "prisma migrate resolve --rolled-back '20250117083114_testt' && prisma generate && prisma migrate deploy && next build",
+    "vercel-build" : "prisma generate && prisma migrate deploy && next build",
     "postinstall": "prisma generate"
   },
   "packageManager": "npm@10.5.2",
