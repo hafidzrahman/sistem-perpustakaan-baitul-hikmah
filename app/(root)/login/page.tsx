@@ -4,7 +4,7 @@ import BtnPrimary from "@/app/components/BtnPrimary";
 import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -49,7 +49,9 @@ const LoginPage = ({}: LoginPageProps) => {
 
       if (!res?.error) {
         toast.success("Login berhasil!");
-        redirect(`/panel-kontrol`);
+        setTimeout(() => {
+          push(`/panel-kontrol`);
+        }, 1000)
       } else {
         // Handle specific error cases
         if (res.error === "CredentialsSignin") {
