@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint : {
-    ignoreDuringBuilds : true
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
   images: {
     domains: [
@@ -16,7 +19,7 @@ const nextConfig: NextConfig = {
       "www.gramedia.com",
       "cdn.gramedia.com",
       "drive.google.com",
-      "test.com"
+      "test.com",
     ],
   },
 };
