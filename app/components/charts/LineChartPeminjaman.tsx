@@ -67,7 +67,7 @@ const LineChartPeminjaman: React.FC = () => {
             date.setDate(today.getDate() - i);
 
             const formattedDate = date.toISOString().split("T")[0]; // Format YYYY-MM-DD
-            const lendingCount = result.filter(
+            const lendingCount = result?.filter(
               (item: any) => item.tanggalPinjam.split("T")[0] === formattedDate
             ).length;
 
@@ -93,7 +93,7 @@ const LineChartPeminjaman: React.FC = () => {
             const endOfWeek = new Date(startOfWeek);
             endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-            const lendingCount = result.filter((item: any) => {
+            const lendingCount = result?.filter((item: any) => {
               const itemDate = new Date(item.tanggalPinjam);
               return itemDate >= startOfWeek && itemDate <= endOfWeek;
             }).length;

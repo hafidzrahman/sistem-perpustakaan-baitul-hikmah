@@ -12,7 +12,7 @@ export async function middleware(req : NextRequest) {
 
     if (intervalTrigger === 0) {
         intervalTrigger = setInterval(async () => {
-            fetch("http://localhost:3000/api/set-interval").then(() => console.log("test"))
+            fetch("/api/set-interval").then(() => console.log("test"))
         }, hariKeMiliDetik)
     } 
     if (!token?.role) {

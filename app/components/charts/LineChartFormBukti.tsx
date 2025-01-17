@@ -67,7 +67,7 @@ const LineChartFormBukti: React.FC = () => {
             date.setDate(today.getDate() - i);
 
             const formattedDate = date.toISOString().split("T")[0];
-            const formCount = result.filter(
+            const formCount = result?.filter(
               (item: any) => item.tanggal.split("T")[0] === formattedDate
             ).length;
 
@@ -94,7 +94,7 @@ const LineChartFormBukti: React.FC = () => {
             const endOfWeek = new Date(startOfWeek);
             endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-            const formCount = result.filter((item: any) => {
+            const formCount = result?.filter((item: any) => {
               const itemDate = new Date(item.tanggal);
               return itemDate >= startOfWeek && itemDate <= endOfWeek;
             }).length;
