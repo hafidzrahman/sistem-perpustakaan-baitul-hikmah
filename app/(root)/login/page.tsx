@@ -51,6 +51,7 @@ const LoginPage = ({}: LoginPageProps) => {
         toast.success("Login berhasil!");
         setTimeout(() => {
           push(`/panel-kontrol`);
+          location.reload();
         }, 1000)
       } else {
         // Handle specific error cases

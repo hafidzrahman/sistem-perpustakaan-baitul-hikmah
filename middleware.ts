@@ -22,5 +22,5 @@ export async function middleware(req : NextRequest) {
 }
 
 export const config = {
-    matcher : ['/panel-kontrol', '/buku', '/murid', '/guru', '/form-bukti','/laporan']
+    matcher : ['/', '/panel-kontrol', '/buku', '/murid', '/guru', '/form-bukti','/laporan']
 }
