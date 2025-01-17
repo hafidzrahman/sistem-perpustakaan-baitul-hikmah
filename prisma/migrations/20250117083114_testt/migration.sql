@@ -56,7 +56,6 @@ CREATE TABLE "EksemplarBuku" (
     "posisi" TEXT,
     "bukuISBN" TEXT NOT NULL,
     "idSumbangan" INTEGER,
-    "idSumbanganBantuan" INTEGER,
 
     CONSTRAINT "EksemplarBuku_pkey" PRIMARY KEY ("bukuISBN","id")
 );
@@ -102,7 +101,7 @@ CREATE TABLE "Guru" (
 -- CreateTable
 CREATE TABLE "RiwayatKelas" (
     "tahunAjaran" TEXT NOT NULL,
-    "nomorPresensi" SERIAL,
+    "nomorPresensi" INTEGER,
     "muridNIS" TEXT NOT NULL,
     "idKelas" INTEGER NOT NULL,
 
@@ -114,7 +113,7 @@ CREATE TABLE "Kelas" (
     "id" SERIAL NOT NULL,
     "nama" TEXT NOT NULL,
     "tingkat" INTEGER NOT NULL,
-    "JKmurid" "JenisKelamin",
+    "JKMurid" TEXT,
 
     CONSTRAINT "Kelas_pkey" PRIMARY KEY ("id")
 );
@@ -162,6 +161,7 @@ CREATE TABLE "Keterangan" (
     "jumlahBuku" INTEGER,
     "totalNominal" INTEGER,
     "nominalPerHari" INTEGER,
+    "denda" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Keterangan_pkey" PRIMARY KEY ("id")
 );
@@ -327,9 +327,6 @@ ALTER TABLE "EksemplarBuku" ADD CONSTRAINT "EksemplarBuku_bukuISBN_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "EksemplarBuku" ADD CONSTRAINT "EksemplarBuku_idSumbangan_fkey" FOREIGN KEY ("idSumbangan") REFERENCES "Sumbangan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "EksemplarBuku" ADD CONSTRAINT "EksemplarBuku_idSumbanganBantuan_fkey" FOREIGN KEY ("idSumbanganBantuan") REFERENCES "Sumbangan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RiwayatKelas" ADD CONSTRAINT "RiwayatKelas_muridNIS_fkey" FOREIGN KEY ("muridNIS") REFERENCES "Murid"("nis") ON DELETE RESTRICT ON UPDATE CASCADE;
