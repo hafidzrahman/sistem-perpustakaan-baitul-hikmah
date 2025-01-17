@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 interface LoginPageProps {}
 
 const LoginPage = ({}: LoginPageProps) => {
-  const { push } = useRouter();
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ username: "", password: "" });
@@ -50,8 +50,8 @@ const LoginPage = ({}: LoginPageProps) => {
       if (!res?.error) {
         toast.success("Login berhasil!");
         setTimeout(() => {
-          push(`/panel-kontrol`);
-          location.reload();
+          router.push(`/panel-kontrol`);
+          router.refresh();
         }, 1000)
       } else {
         // Handle specific error cases
