@@ -54,7 +54,7 @@ const LineChartPeminjaman: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:3000/api/peminjaman");
+        const response = await fetch("https://sistem-perpustakaan-baitul-hikmah-iota.vercel.app//api/peminjaman");
         const result = await response.json();
 
         const groupedData: DataPeminjaman[] = [];

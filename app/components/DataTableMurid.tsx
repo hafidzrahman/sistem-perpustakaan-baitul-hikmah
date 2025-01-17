@@ -68,7 +68,7 @@ const DataTableMurid = ({ item, kelas }: DataTableMuridProps) => {
       </td>
       <td className="px-4 py-2 ">
         <button
-          onClick={() => router.push(`http://localhost:3000/murid/${item.nis}`)}
+          onClick={() => router.push(`https://sistem-perpustakaan-baitul-hikmah-iota.vercel.app//murid/${item.nis}`)}
           type="submit"
           className="bg-dark-primary text-white-custom font-source-sans py-1 px-2 w-full rounded-lg border-2 border-black text-xs hover:shadow-sm transition-all duration-300 hover:transition-all hover:duration-300"
         >

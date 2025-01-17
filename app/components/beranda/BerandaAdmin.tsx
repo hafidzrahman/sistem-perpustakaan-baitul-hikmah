@@ -46,9 +46,9 @@ const BerandaAdmin = ({}: BerandaAdminProps) => {
     const fetchData = async () => {
       try {
         const [bukuRes, guruRes, muridRes] = await Promise.all([
-          fetch("http://localhost:3000/api/buku"),
-          fetch("http://localhost:3000/api/guru"),
-          fetch("http://localhost:3000/api/murid"),
+          fetch("https://sistem-perpustakaan-baitul-hikmah-iota.vercel.app//api/buku"),
+          fetch("https://sistem-perpustakaan-baitul-hikmah-iota.vercel.app//api/guru"),
+          fetch("https://sistem-perpustakaan-baitul-hikmah-iota.vercel.app//api/murid"),
         ]);
 
         const [dataBuku, dataGuru, dataMurid] = await Promise.all([

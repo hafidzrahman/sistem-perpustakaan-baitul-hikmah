@@ -82,7 +82,7 @@ const TableGuru = ({ data }: { data: any }) => {
 
               <button
                 onClick={() =>
-                  router.push(`http://localhost:3000/guru/${item.nip}`)
+                  router.push(`https://sistem-perpustakaan-baitul-hikmah-iota.vercel.app//guru/${item.nip}`)
                 }
                 className="w-full bg-dark-primary text-white-custom font-source-sans py-2 px-4 rounded-lg border-2 border-black text-sm hover:shadow-sm transition-all duration-300"
               >
@@ -151,7 +151,7 @@ const TableGuru = ({ data }: { data: any }) => {
                 <td className="px-4 py-2">
                   <button
                     onClick={() =>
-                      router.push(`http://localhost:3000/guru/${item.nip}`)
+                      router.push(`https://sistem-perpustakaan-baitul-hikmah-iota.vercel.app//guru/${item.nip}`)
                     }
                     type="submit"
                     className="bg-dark-primary text-white-custom font-source-sans py-1 px-2 w-full rounded-lg border-2 border-black text-xs hover:shadow-sm transition-all duration-300"
