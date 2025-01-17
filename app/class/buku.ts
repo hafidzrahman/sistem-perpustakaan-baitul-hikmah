@@ -234,6 +234,13 @@ export class Buku {
                       },
                     },
                   },
+                  {
+                    bukuPinjaman: {
+                      none: {
+                        tanggalKembali: null,
+                      },
+                    },
+                  },
                 ],
               },
             },
