@@ -49,7 +49,7 @@ const LoginPage = ({}: LoginPageProps) => {
 
       if (!res?.error) {
         toast.success("Login berhasil!");
-        push(`/panel-kontrol`);
+        // push(`/panel-kontrol`);
       } else {
         // Handle specific error cases
         if (res.error === "CredentialsSignin") {
