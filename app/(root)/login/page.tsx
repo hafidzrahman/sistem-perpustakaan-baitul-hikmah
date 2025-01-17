@@ -41,15 +41,16 @@ const LoginPage = ({}: LoginPageProps) => {
 
     try {
       const res = await signIn("credentials", {
-        redirect: true,
+        redirect: false,
         username: username,
         password: password,
-        callbackUrl: "/panel-kontrol",
       });
 
       if (!res?.error) {
         toast.success("Login berhasil!");
-        router.push(`/panel-kontrol`);
+        setTimeout(() => {
+          router.push(`/panel-kontrol`);
+        }, 1500)
       } else {
         // Handle specific error cases
         if (res.error === "CredentialsSignin") {
